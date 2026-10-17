@@ -12,4 +12,4 @@
 
 ## 3. Pubblicazione
 
-- [ ] 3.1 Check, test, build con `BASE_PATH`, commit e push — verifica: deploy Pages verde e nuove pagine all'URL pubblico
+- [x] 3.1 Check, test, build con `BASE_PATH`, commit e push — verifica: deploy Pages verde e nuove pagine all'URL pubblico

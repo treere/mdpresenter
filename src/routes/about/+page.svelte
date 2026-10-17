@@ -29,7 +29,7 @@
 		line-height: 1.6;
 	}
 	a {
-		color: var(--accento);
+		color: var(--accent);
 		font-weight: 600;
 	}
 </style>

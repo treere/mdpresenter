@@ -131,12 +131,12 @@
 		align-items: center;
 		border-radius: 999px;
 		text-decoration: none;
-		color: var(--text-debole);
+		color: var(--text-muted);
 		font-weight: 600;
 	}
 	header nav a:hover {
 		color: var(--text);
-		background: var(--codice-sfondo);
+		background: var(--code-bg);
 	}
 	.controls {
 		margin-left: auto;
@@ -146,9 +146,9 @@
 	.controls select {
 		padding: 0.5rem 0.7rem;
 		min-height: 44px;
-		border: 1px solid var(--bordo);
+		border: 1px solid var(--border);
 		border-radius: 999px;
-		background: var(--superficie);
+		background: var(--surface);
 		color: var(--text);
 		cursor: pointer;
 	}
@@ -165,11 +165,11 @@
 	footer {
 		margin-top: 2rem;
 		padding-top: 1rem;
-		border-top: 1px solid var(--bordo);
+		border-top: 1px solid var(--border);
 		text-align: center;
 	}
 	footer a {
-		color: var(--text-debole);
+		color: var(--text-muted);
 	}
 	@media print {
 		header,
@@ -191,9 +191,9 @@
 			margin-left: auto;
 			width: 44px;
 			height: 44px;
-			border: 1px solid var(--bordo);
+			border: 1px solid var(--border);
 			border-radius: 12px;
-			background: var(--superficie);
+			background: var(--surface);
 			color: var(--text);
 			cursor: pointer;
 		}

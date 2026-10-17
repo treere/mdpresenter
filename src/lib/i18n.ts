@@ -14,6 +14,7 @@ const it = {
 	nextSlide: 'Slide next',
 	currentSlide: 'Slide current',
 	footer: 'Codice su GitHub',
+	invalidLink: { title: 'Link non valido', text: 'Questo link contiene una presentazione illeggibile. Controlla di averlo copiato tutto.', close: 'Chiudi' },
 	metaDescription: 'mdpresenter: scrivi slide in Markdown e presentale dal browser, gratis e senza account.',
 	error: { title: 'Pagina non trovata', text: "L'indirizzo non esiste o è stato spostato.", home: 'Torna alla home' },
 	examples: {
@@ -48,6 +49,7 @@ const en: Texts = {
 	nextSlide: 'Next slide',
 	currentSlide: 'Current slide',
 	footer: 'Code on GitHub',
+	invalidLink: { title: 'Invalid link', text: 'This link holds an unreadable presentation. Check you copied it whole.', close: 'Dismiss' },
 	metaDescription: 'mdpresenter: write Markdown slides and present them from the browser, free with no account.',
 	error: { title: 'Page not found', text: 'This address does not exist or was moved.', home: 'Back to home' },
 	examples: {

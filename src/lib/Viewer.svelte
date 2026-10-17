@@ -155,7 +155,7 @@
 		border: none;
 		border-radius: 16px;
 		overflow: hidden;
-		background: var(--sfondo);
+		background: var(--background);
 		box-shadow:
 			0 1px 2px rgb(0 0 0 / 0.06),
 			0 8px 24px rgb(0 0 0 / 0.1);
@@ -164,7 +164,7 @@
 			box-shadow 150ms ease;
 	}
 	.slide {
-		background: var(--sfondo);
+		background: var(--background);
 		color: var(--text);
 		padding: 2.5rem clamp(1.25rem, 5vw, 3.5rem);
 		overflow-y: auto;
@@ -197,7 +197,7 @@
 		margin: 0 0 0.6rem;
 	}
 	.slide :global(.hljs) {
-		background: var(--codice-sfondo);
+		background: var(--code-bg);
 		color: var(--hl-base);
 	}
 	.slide :global(.hljs-keyword),
@@ -228,7 +228,7 @@
 		color: var(--hl-builtin);
 	}
 	.slide :global(pre) {
-		background: var(--codice-sfondo);
+		background: var(--code-bg);
 		padding: 1rem;
 		border-radius: 8px;
 		overflow-x: auto;
@@ -243,12 +243,12 @@
 	}
 	.slide :global(th),
 	.slide :global(td) {
-		border: 1px solid var(--bordo);
+		border: 1px solid var(--border);
 		padding: 0.4rem 0.8rem;
 		text-align: left;
 	}
 	.slide :global(thead) {
-		background: var(--tabella-intestazione);
+		background: var(--table-head);
 	}
 	.navbtn {
 		background: transparent;
@@ -261,20 +261,20 @@
 		min-width: 44px;
 		min-height: 44px;
 		align-self: center;
-		color: var(--accento);
+		color: var(--accent);
 		transition:
 			background-color 150ms ease,
 			transform 150ms ease;
 	}
 	.navbtn:hover {
-		background: var(--codice-sfondo);
+		background: var(--code-bg);
 	}
 	.navbtn:active {
 		transform: scale(0.94);
 	}
 	.navbtn:focus-visible,
 	.toolbar button:focus-visible {
-		outline: 2px solid var(--accento);
+		outline: 2px solid var(--accent);
 		outline-offset: 2px;
 	}
 	.counter {
@@ -284,8 +284,8 @@
 		margin: 0;
 		padding: 0.15rem 0.7rem;
 		border-radius: 999px;
-		background: var(--codice-sfondo);
-		color: var(--accento);
+		background: var(--code-bg);
+		color: var(--accent);
 		font-size: 0.85rem;
 		font-weight: 600;
 	}
@@ -302,9 +302,9 @@
 		gap: 0.4rem;
 		padding: 0.5rem 0.9rem;
 		min-height: 44px;
-		border: 1px solid var(--bordo);
+		border: 1px solid var(--border);
 		border-radius: 999px;
-		background: var(--sfondo);
+		background: var(--background);
 		color: var(--text);
 		font-size: 0.9rem;
 		cursor: pointer;
@@ -313,7 +313,7 @@
 			border-color 150ms ease;
 	}
 	.toolbar button:hover {
-		border-color: var(--accento);
+		border-color: var(--accent);
 	}
 	.manual-link {
 		margin-bottom: 0.75rem;
@@ -327,14 +327,14 @@
 	}
 	.manual-link input {
 		padding: 0.5rem 0.8rem;
-		border: 1px solid var(--bordo);
+		border: 1px solid var(--border);
 		border-radius: 8px;
-		background: var(--superficie);
+		background: var(--surface);
 		color: var(--text);
 		font-size: 0.85rem;
 	}
 	.viewer:fullscreen {
-		background: var(--sfondo);
+		background: var(--background);
 		padding: 2rem;
 	}
 	.viewer:fullscreen .slide {

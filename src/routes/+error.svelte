@@ -19,7 +19,7 @@
 		font-size: 1.6rem;
 	}
 	a {
-		color: var(--accento);
+		color: var(--accent);
 		font-weight: 600;
 	}
 </style>

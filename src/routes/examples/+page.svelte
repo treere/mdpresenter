@@ -35,7 +35,7 @@
 		margin: 0 0 0.5rem;
 	}
 	p {
-		color: var(--text-debole);
+		color: var(--text-muted);
 		margin: 0 0 1.5rem;
 	}
 	ul {
@@ -47,23 +47,23 @@
 		grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 	}
 	li {
-		border: 1px solid var(--bordo);
+		border: 1px solid var(--border);
 		border-radius: 16px;
 		padding: 1.25rem;
-		background: var(--superficie);
+		background: var(--surface);
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
 	}
 	li span {
-		color: var(--text-debole);
+		color: var(--text-muted);
 		flex: 1;
 	}
 	a {
 		display: inline-flex;
 		align-items: center;
 		gap: 0.4rem;
-		color: var(--accento);
+		color: var(--accent);
 		font-weight: 600;
 		text-decoration: none;
 	}

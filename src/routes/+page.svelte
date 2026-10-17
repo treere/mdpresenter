@@ -9,6 +9,7 @@
 	let tab: 'editor' | 'preview' = $state('editor');
 	let firstRun = true;
 	let ready = $state(false);
+	let invalidLink = $state(false);
 
 	const isBrowser = typeof window !== 'undefined';
 	const t = $derived(texts[preferences.language]);
@@ -19,8 +20,13 @@
 				text = pending.textToOpen;
 				pending.textToOpen = null;
 			} else if (location.hash.length > 1) {
-				const daUrl = await decode(location.hash.slice(1));
-				if (daUrl !== null) text = daUrl;
+				const decoded = await decode(location.hash.slice(1));
+				if (decoded !== null) {
+					text = decoded;
+				} else {
+					text = '';
+					invalidLink = true;
+				}
 			}
 			ready = true;
 		})();
@@ -29,7 +35,7 @@
 	const slides = $derived(splitSlides(text));
 
 	// Anti-overtake counter: only the latest started encode wins.
-	let sequenzaCodifica = 0;
+	let encodeSeq = 0;
 
 	$effect(() => {
 		if (!isBrowser || !ready) return;
@@ -38,10 +44,10 @@
 			firstRun = false;
 			return;
 		}
-		const mia = ++sequenzaCodifica;
+		const mine = ++encodeSeq;
 		const timer = window.setTimeout(() => {
 			void encode(t).then((c) => {
-				if (mia === sequenzaCodifica) history.replaceState(null, '', '#' + c);
+				if (mine === encodeSeq) history.replaceState(null, '', '#' + c);
 			});
 		}, 500);
 		return () => clearTimeout(timer);
@@ -62,6 +68,13 @@
 		{t.tabs.preview}
 	</button>
 </nav>
+{#if invalidLink}
+	<div class="warning" role="alert">
+		<strong>{t.invalidLink.title}</strong>
+		<span>{t.invalidLink.text}</span>
+		<button onclick={() => (invalidLink = false)}>{t.invalidLink.close}</button>
+	</div>
+{/if}
 <div class="panels" data-tab={tab}>
 	<textarea
 		class="editor"
@@ -81,7 +94,7 @@
 		margin-bottom: 0.75rem;
 		padding: 0.25rem;
 		border-radius: 999px;
-		background: var(--codice-sfondo);
+		background: var(--code-bg);
 	}
 	nav button {
 		flex: 1;
@@ -96,14 +109,14 @@
 		background: transparent;
 		font-size: 0.95rem;
 		font-weight: 600;
-		color: var(--text-debole);
+		color: var(--text-muted);
 		cursor: pointer;
 		transition:
 			background-color 150ms ease,
 			color 150ms ease;
 	}
 	nav button.active {
-		background: var(--superficie);
+		background: var(--surface);
 		color: var(--text);
 		box-shadow: 0 1px 4px rgb(0 0 0 / 0.12);
 	}
@@ -119,9 +132,9 @@
 		font-size: 0.95rem;
 		line-height: 1.6;
 		padding: 1.25rem;
-		border: 1px solid var(--bordo);
+		border: 1px solid var(--border);
 		border-radius: 16px;
-		background: var(--superficie);
+		background: var(--surface);
 		color: var(--text);
 		resize: vertical;
 		transition:
@@ -129,10 +142,31 @@
 			box-shadow 150ms ease,
 			background-color 150ms ease;
 	}
+	.warning {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 0.75rem 1rem;
+		margin-bottom: 0.75rem;
+		border: 1px solid var(--border);
+		border-radius: 12px;
+		background: var(--surface);
+		color: var(--text);
+	}
+	.warning button {
+		margin-left: auto;
+		padding: 0.4rem 0.8rem;
+		min-height: 44px;
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		background: transparent;
+		color: var(--text);
+		cursor: pointer;
+	}
 	.editor:focus {
 		outline: none;
-		border-color: var(--accento);
-		box-shadow: 0 0 0 3px color-mix(in srgb, var(--accento) 25%, transparent);
+		border-color: var(--accent);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
 	}
 	@media (max-width: 700px) {
 		nav {

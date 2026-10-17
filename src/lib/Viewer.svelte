@@ -2,7 +2,7 @@
 	import DOMPurify from 'dompurify';
 	import 'highlight.js/styles/github.css';
 	import { resolve } from '$app/paths';
-	import { Check, ChevronLeft, ChevronRight, FileDown, Link2, Maximize, Minimize } from 'lucide-svelte';
+	import { Check, ChevronLeft, ChevronRight, FileDown, Home, Link2, Maximize, Minimize } from 'lucide-svelte';
 	import { preferences } from './shared.svelte';
 	import { texts } from './i18n';
 	import { tick } from 'svelte';
@@ -119,12 +119,12 @@
 	let showLink = $state(false);
 	let manualLink = $state('');
 
-	async function copyLink() {
+	async function copyLink(fromStart = false) {
 		if (!isBrowser) return;
 		showLink = false;
 		const q = new URLSearchParams();
 		q.set('t', await encode(slides.join('\n---\n')));
-		q.set('s', String(index));
+		q.set('s', String(fromStart ? 0 : index));
 		const url = location.origin + resolve('/v') + '?' + q.toString();
 		try {
 			await navigator.clipboard.writeText(url);
@@ -152,9 +152,13 @@
 		<FileDown size={18} />
 		<span>{t.toolbar.pdf}</span>
 	</button>
-	<button onclick={copyLink} aria-label={t.sharing.copy}>
+	<button onclick={() => copyLink(false)} aria-label={t.sharing.copy}>
 		{#if copied}<Check size={18} />{:else}<Link2 size={18} />{/if}
 		<span>{copied ? t.sharing.copied : t.sharing.copy}</span>
+	</button>
+	<button onclick={() => copyLink(true)} aria-label={t.sharing.copyFromStart}>
+		<Home size={18} />
+		<span>{t.sharing.copyFromStart}</span>
 	</button>
 </div>
 {#if showLink}

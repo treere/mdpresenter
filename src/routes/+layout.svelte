@@ -1,6 +1,7 @@
 <script lang="ts">
 	import favicon from '#lib/assets/favicon.svg';
 	import { resolve } from '$app/paths';
+	import { Menu, X } from 'lucide-svelte';
 	import { preferenze } from '../lib/condiviso.svelte';
 	import { testi, type Lingua, type Tema } from '../lib/i18n';
 	import type { LayoutProps } from './$types';
@@ -8,6 +9,7 @@
 	import '../tema.css';
 
 	let { children }: LayoutProps = $props();
+	let menuAperto = $state(false);
 
 	const suBrowser = typeof window !== 'undefined';
 	const t = $derived(testi[preferenze.lingua]);
@@ -33,13 +35,28 @@
 	<meta name="description" content={t.metaDescrizione} />
 </svelte:head>
 
+<svelte:window
+	onkeydown={(e) => {
+		if (e.key === 'Escape') menuAperto = false;
+	}}
+/>
+
 <div class="sito">
-	<header>
+	<header data-aperto={menuAperto}>
 		<a class="marchio" href={resolve('/')}>mdpresenter</a>
+		<button
+			class="menu-pulsante"
+			onclick={() => (menuAperto = !menuAperto)}
+			aria-expanded={menuAperto}
+			aria-label="Menu"
+		>
+			{#if menuAperto}<X size={22} />{:else}<Menu size={22} />{/if}
+		</button>
+		<div class="menu">
 		<nav aria-label="Pagine">
-			<a href={resolve('/')}>{t.nav.home}</a>
-			<a href={resolve('/esempi')}>{t.nav.esempi}</a>
-			<a href={resolve('/progetto')}>{t.nav.progetto}</a>
+			<a href={resolve('/')} onclick={() => (menuAperto = false)}>{t.nav.home}</a>
+			<a href={resolve('/esempi')} onclick={() => (menuAperto = false)}>{t.nav.esempi}</a>
+			<a href={resolve('/progetto')} onclick={() => (menuAperto = false)}>{t.nav.progetto}</a>
 		</nav>
 		<div class="scelte">
 			<label>
@@ -65,6 +82,7 @@
 					<option value="vivace">{t.temi.vivace}</option>
 				</select>
 			</label>
+		</div>
 		</div>
 	</header>
 
@@ -92,6 +110,9 @@
 		align-items: center;
 		gap: 1rem;
 		margin-bottom: 1rem;
+	}
+	.menu-pulsante {
+		display: none;
 	}
 	.marchio {
 		font-weight: 800;
@@ -156,7 +177,42 @@
 			display: none;
 		}
 	}
+	.menu {
+		display: contents;
+	}
 	@media (max-width: 700px) {
+		header {
+			flex-wrap: wrap;
+		}
+		.menu-pulsante {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			margin-left: auto;
+			width: 44px;
+			height: 44px;
+			border: 1px solid var(--bordo);
+			border-radius: 12px;
+			background: var(--superficie);
+			color: var(--testo);
+			cursor: pointer;
+		}
+		.menu {
+			display: none;
+			flex-basis: 100%;
+			flex-direction: column;
+			gap: 0.75rem;
+			padding: 0.75rem 0;
+		}
+		header[data-aperto='true'] .menu {
+			display: flex;
+		}
+		header nav {
+			flex-direction: column;
+		}
+		.scelte {
+			margin-left: 0;
+		}
 		header nav a {
 			padding: 0.5rem;
 		}

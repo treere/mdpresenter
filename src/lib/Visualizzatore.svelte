@@ -23,10 +23,17 @@
 
 	const totale = $derived(slides.length);
 	const corrente = $derived(slides[Math.min(indice, totale - 1)] ?? '');
-	const html = $derived(suBrowser ? DOMPurify.sanitize(renderMarkdown(corrente)) : '');
-	const tutteHtml = $derived(
-		suBrowser ? slides.map((s) => DOMPurify.sanitize(renderMarkdown(s))) : []
-	);
+	// HTML calcolato in $effect (e non in $derived): suBrowser non è reattivo e
+	// l'{@html} prerenderizzato vuoto non verrebbe aggiornato all'hydration.
+	let html = $state('');
+	let tutteHtml: string[] = $state([]);
+	$effect(() => {
+		const c = corrente;
+		const ss = slides;
+		if (!suBrowser) return;
+		html = DOMPurify.sanitize(renderMarkdown(c));
+		tutteHtml = ss.map((s) => DOMPurify.sanitize(renderMarkdown(s)));
+	});
 
 	$effect(() => {
 		if (indice > totale - 1) indice = Math.max(totale - 1, 0);

@@ -31,4 +31,16 @@ describe('renderMarkdown', () => {
 	});
 	// Note: sanitizing (e.g. blocking javascript:) happens with DOMPurify
 	// nel visualizzatore, non in renderMarkdown.
+
+	it('emits a placeholder for mermaid blocks', () => {
+		const html = renderMarkdown('```mermaid\ngraph TD\nA-->B\n```');
+		expect(html).toContain('mermaid-block');
+		expect(html).toContain('data-source');
+	});
+
+	it('shows mermaid-code as a code block', () => {
+		const html = renderMarkdown('```mermaid-code\ngraph TD\n```');
+		expect(html).not.toContain('mermaid-block');
+		expect(html).toContain('graph TD');
+	});
 });

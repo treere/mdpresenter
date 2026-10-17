@@ -23,6 +23,30 @@ export const EXAMPLES: Record<Language, Esempio[]> = {
 			description: 'Blocco di codice evidenziato per themes tecnici.',
 			text: `# Somma in JavaScript\n\nUna funzione semplice, spiegata riga per riga.\n\n---\n\n# Il codice\n\n\`\`\`js\nfunction somma(a, b) {\n  return a + b;\n}\n\nconsole.log(somma(2, 3));\n\`\`\``
 		},
+					title: 'Diagrammi',
+			description: 'Grafici mermaid resi nelle slide.',
+			text: `# Flusso di lavoro
+
+Da idea a produzione in tre passi.
+
+\`\`\`mermaid
+graph TD
+A[Idea] --> B[Codice]
+B --> C[Test]
+C --> D[Produzione]
+\`\`\`
+
+---
+
+# Anche come codice
+
+Con mermaid-code mostri il sorgente:
+
+\`\`\`mermaid-code
+graph TD
+A[Idea] --> B[Codice]
+\`\`\``
+		},
 		{
 			title: 'Link e immagini',
 			description: 'Collegamenti e foto dentro le slide.',
@@ -44,6 +68,30 @@ export const EXAMPLES: Record<Language, Esempio[]> = {
 			title: 'Code',
 			description: 'Highlighted code block for technical topics.',
 			text: `# Sum in JavaScript\n\nA simple function, explained line by line.\n\n---\n\n# The code\n\n\`\`\`js\nfunction sum(a, b) {\n  return a + b;\n}\n\nconsole.log(sum(2, 3));\n\`\`\``
+		},
+					title: 'Diagrams',
+			description: 'Mermaid graphs rendered in slides.',
+			text: `# Workflow
+
+From idea to production in three steps.
+
+\`\`\`mermaid
+graph TD
+A[Idea] --> B[Code]
+B --> C[Test]
+C --> D[Production]
+\`\`\`
+
+---
+
+# Also as code
+
+With mermaid-code you show the source:
+
+\`\`\`mermaid-code
+graph TD
+A[Idea] --> B[Code]
+\`\`\``
 		},
 		{
 			title: 'Links and images',

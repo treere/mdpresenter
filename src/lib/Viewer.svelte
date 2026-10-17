@@ -5,6 +5,7 @@
 	import { Check, ChevronLeft, ChevronRight, FileDown, Link2, Maximize, Minimize } from 'lucide-svelte';
 	import { preferences } from './shared.svelte';
 	import { texts } from './i18n';
+	import { tick } from 'svelte';
 	import { renderMarkdown } from './markdown';
 	import { encode } from './slides';
 
@@ -14,6 +15,7 @@
 	let index = $state(0);
 	let startX = $state<number | null>(null);
 	let container: HTMLDivElement | undefined = $state();
+	let root: HTMLDivElement | undefined = $state();
 	let fullscreen = $state(false);
 
 	const isBrowser = typeof window !== 'undefined';
@@ -24,13 +26,55 @@
 	// the empty prerendered {@html} would not update on hydration.
 	let html = $state('');
 	let allHtml: string[] = $state([]);
+	let renderSeq = 0;
+	let mermaidReady: Promise<unknown> | null = null;
 	$effect(() => {
 		const c = current;
 		const ss = slides;
+		void preferences.theme;
 		if (!isBrowser) return;
 		html = DOMPurify.sanitize(renderMarkdown(c));
 		allHtml = ss.map((s) => DOMPurify.sanitize(renderMarkdown(s)));
+		const mine = ++renderSeq;
+		void tick().then(() => {
+			if (mine === renderSeq) void renderMermaid();
+		});
 	});
+
+	async function getMermaid() {
+		if (!mermaidReady) {
+			mermaidReady = import('mermaid').then((m) => m.default);
+		}
+		const mermaid = (await mermaidReady) as {
+			initialize: (config: Record<string, unknown>) => void;
+			render: (id: string, code: string) => Promise<{ svg: string }>;
+		};
+		const dark = document.documentElement.dataset.theme === 'dark';
+		mermaid.initialize({ startOnLoad: false, theme: dark ? 'dark' : 'default' });
+		return mermaid;
+	}
+
+	async function renderMermaid() {
+		const blocks = Array.from(root?.querySelectorAll('.mermaid-block') ?? []);
+		if (blocks.length === 0) return;
+		try {
+			const mermaid = await getMermaid();
+			for (const [i, el] of blocks.entries()) {
+				const source = decodeURIComponent(el.getAttribute('data-source') ?? '');
+				try {
+					const { svg } = await mermaid.render(`mermaid-${renderSeq}-${i}`, source);
+					el.innerHTML = DOMPurify.sanitize(svg);
+				} catch {
+					el.innerHTML = DOMPurify.sanitize(
+						`<div class="mermaid-error"><strong>${t.invalidDiagram}</strong><pre></pre></div>`
+					);
+					el.querySelector('pre')?.append(document.createTextNode(source));
+				}
+			}
+		} catch {
+			// mermaid failed to load: blocks stay empty without breaking the slide
+		}
+	}
 
 	$effect(() => {
 		if (index > total - 1) index = Math.max(total - 1, 0);
@@ -92,7 +136,7 @@
 	onfullscreenchange={() => (fullscreen = isBrowser && !!document.fullscreenElement)}
 />
 
-<div class="app">
+<div class="app" bind:this={root}>
 <div class="toolbar">
 	<button onclick={toggleFullscreen} aria-label={fullscreen ? t.toolbar.exitFullscreen : t.toolbar.fullscreen}>
 		{#if fullscreen}<Minimize size={18} />{:else}<Maximize size={18} />{/if}
@@ -314,6 +358,16 @@
 	}
 	.toolbar button:hover {
 		border-color: var(--accent);
+	}
+	:global(.mermaid-error) {
+		padding: 1rem;
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		background: var(--code-bg);
+	}
+	:global(.mermaid-error) :global(pre) {
+		margin: 0.5rem 0 0;
+		white-space: pre-wrap;
 	}
 	.manual-link {
 		margin-bottom: 0.75rem;

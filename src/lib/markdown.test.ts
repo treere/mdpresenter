@@ -18,4 +18,17 @@ describe('renderMarkdown', () => {
 		expect(html).toContain('<table>');
 		expect(html).toContain('<th>A</th>');
 	});
+
+	it('rende i link', () => {
+		const html = renderMarkdown('[Svelte](https://svelte.dev)');
+		expect(html).toContain('<a href="https://svelte.dev"');
+	});
+
+	it('rende le immagini', () => {
+		const html = renderMarkdown('![Alt](https://picsum.photos/seed/x/600/400)');
+		expect(html).toContain('<img');
+		expect(html).toContain('picsum.photos');
+	});
+	// Nota: la sanificazione (es. blocco di javascript:) avviene con DOMPurify
+	// nel visualizzatore, non in renderMarkdown.
 });

@@ -22,6 +22,11 @@ export const ESEMPI: Record<Lingua, Esempio[]> = {
 			titolo: 'Codice',
 			descrizione: 'Blocco di codice evidenziato per temi tecnici.',
 			testo: `# Somma in JavaScript\n\nUna funzione semplice, spiegata riga per riga.\n\n---\n\n# Il codice\n\n\`\`\`js\nfunction somma(a, b) {\n  return a + b;\n}\n\nconsole.log(somma(2, 3));\n\`\`\``
+		},
+		{
+			titolo: 'Link e immagini',
+			descrizione: 'Collegamenti e foto dentro le slide.',
+			testo: `# Un gatto per iniziare\n\nLe immagini rendono tutto più chiaro.\n\n![Gatto](https://picsum.photos/seed/gatto/600/400)\n\n---\n\n# Approfondisci\n\nLeggi la [documentazione](https://svelte.dev) per saperne di più.`
 		}
 	],
 	en: [
@@ -39,6 +44,11 @@ export const ESEMPI: Record<Lingua, Esempio[]> = {
 			titolo: 'Code',
 			descrizione: 'Highlighted code block for technical topics.',
 			testo: `# Sum in JavaScript\n\nA simple function, explained line by line.\n\n---\n\n# The code\n\n\`\`\`js\nfunction sum(a, b) {\n  return a + b;\n}\n\nconsole.log(sum(2, 3));\n\`\`\``
+		},
+		{
+			titolo: 'Links and images',
+			descrizione: 'Links and photos inside slides.',
+			testo: `# A cat to start\n\nImages make everything clearer.\n\n![Cat](https://picsum.photos/seed/cat/600/400)\n\n---\n\n# Learn more\n\nRead the [documentation](https://svelte.dev) to learn more.`
 		}
 	]
 };

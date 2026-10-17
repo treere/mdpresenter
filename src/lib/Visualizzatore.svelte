@@ -118,7 +118,7 @@
 	.viewer {
 		position: relative;
 		display: grid;
-		grid-template-columns: auto 1fr auto;
+		grid-template-columns: 44px 1fr 44px;
 		min-height: 60vh;
 		border: none;
 		border-radius: 16px;
@@ -139,15 +139,29 @@
 		--codice-sfondo: #f4f6fa;
 		--tabella-intestazione: #eef1f6;
 		--ombra: 0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px rgb(0 0 0 / 0.1);
+		--hl-base: #24292e;
+		--hl-keyword: #d73a49;
+		--hl-string: #032f62;
+		--hl-comment: #6a737d;
+		--hl-title: #6f42c1;
+		--hl-number: #005cc5;
+		--hl-builtin: #e36209;
 		color: var(--testo);
 	}
 	.app[data-tema='scuro'] {
 		--sfondo: #1e1e1e;
 		--testo: #e8e8e8;
 		--bordo: #555;
-		--accento: #aaa;
+		--accento: #8aa2ff;
 		--codice-sfondo: #2d2d2d;
 		--tabella-intestazione: #2a2a2a;
+		--hl-base: #e8e8e8;
+		--hl-keyword: #ff7b72;
+		--hl-string: #a5d6ff;
+		--hl-comment: #8b949e;
+		--hl-title: #d2a8ff;
+		--hl-number: #79c0ff;
+		--hl-builtin: #ffa657;
 	}
 	.app[data-tema='vivace'] {
 		--sfondo: #0f2a5c;
@@ -156,6 +170,13 @@
 		--accento: #ffd43b;
 		--codice-sfondo: #1b3f7d;
 		--tabella-intestazione: #1b3f7d;
+		--hl-base: #ffffff;
+		--hl-keyword: #ffd43b;
+		--hl-string: #b8e6ff;
+		--hl-comment: #93a7cc;
+		--hl-title: #ffdf80;
+		--hl-number: #9ad1ff;
+		--hl-builtin: #ffc069;
 	}
 	.slide {
 		background: var(--sfondo);
@@ -190,10 +211,36 @@
 	.slide :global(li) {
 		margin: 0 0 0.6rem;
 	}
-	.app[data-tema='scuro'] .slide :global(.hljs),
-	.app[data-tema='vivace'] .slide :global(.hljs) {
+	.slide :global(.hljs) {
 		background: var(--codice-sfondo);
-		color: var(--testo);
+		color: var(--hl-base);
+	}
+	.slide :global(.hljs-keyword),
+	.slide :global(.hljs-selector-tag) {
+		color: var(--hl-keyword);
+	}
+	.slide :global(.hljs-string),
+	.slide :global(.hljs-regexp),
+	.slide :global(.hljs-addition) {
+		color: var(--hl-string);
+	}
+	.slide :global(.hljs-comment),
+	.slide :global(.hljs-quote) {
+		color: var(--hl-comment);
+	}
+	.slide :global(.hljs-title),
+	.slide :global(.hljs-title-function_),
+	.slide :global(.hljs-section) {
+		color: var(--hl-title);
+	}
+	.slide :global(.hljs-number),
+	.slide :global(.hljs-literal) {
+		color: var(--hl-number);
+	}
+	.slide :global(.hljs-built_in),
+	.slide :global(.hljs-attr),
+	.slide :global(.hljs-attribute) {
+		color: var(--hl-builtin);
 	}
 	.slide :global(pre) {
 		background: var(--codice-sfondo);

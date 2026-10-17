@@ -1,32 +1,28 @@
 <script lang="ts">
 	import { Eye, Pencil } from 'lucide-svelte';
-	import Visualizzatore, { type Tema } from '../lib/Visualizzatore.svelte';
+	import Visualizzatore from '../lib/Visualizzatore.svelte';
+	import { appoggio, preferenze } from '../lib/condiviso.svelte';
+	import { testi } from '../lib/i18n';
 	import { ESEMPIO, codifica, decodifica, splitSlides } from '../lib/slides';
 
 	let testo = $state(ESEMPIO);
 	let scheda: 'editor' | 'anteprima' = $state('anteprima');
 	let primoAvvio = true;
-	let tema: Tema = $state('chiaro');
 
 	const suBrowser = typeof window !== 'undefined';
+	const t = $derived(testi[preferenze.lingua]);
 
 	if (suBrowser) {
-		const salvato = localStorage.getItem('mdpresenter-tema');
-		if (salvato === 'chiaro' || salvato === 'scuro' || salvato === 'vivace') tema = salvato;
-		if (location.hash.length > 1) {
+		if (appoggio.testoDaAprire !== null) {
+			testo = appoggio.testoDaAprire;
+			appoggio.testoDaAprire = null;
+		} else if (location.hash.length > 1) {
 			const daUrl = decodifica(location.hash.slice(1));
 			if (daUrl !== null) testo = daUrl;
 		}
 	}
 
 	const slides = $derived(splitSlides(testo));
-
-	$effect(() => {
-		if (suBrowser) {
-			document.documentElement.dataset.tema = tema;
-			localStorage.setItem('mdpresenter-tema', tema);
-		}
-	});
 
 	$effect(() => {
 		if (!suBrowser) return;
@@ -42,43 +38,33 @@
 	});
 </script>
 
-<main>
-	<h1>mdpresenter</h1>
-	<nav>
-		<button class:active={scheda === 'editor'} onclick={() => (scheda = 'editor')}>
-			<Pencil size={16} />
-			Editor
-		</button>
-		<button class:active={scheda === 'anteprima'} onclick={() => (scheda = 'anteprima')}>
-			<Eye size={16} />
-			Anteprima
-		</button>
-	</nav>
-	<div class="pannelli" data-scheda={scheda}>
-		<textarea
-			class="editor"
-			bind:value={testo}
-			aria-label="Testo Markdown della presentazione"
-			spellcheck={false}
-		></textarea>
-		<div class="anteprima">
-			<Visualizzatore {slides} bind:tema />
-		</div>
+<svelte:head>
+	<title>mdpresenter</title>
+</svelte:head>
+
+<nav>
+	<button class:active={scheda === 'editor'} onclick={() => (scheda = 'editor')}>
+		<Pencil size={16} />
+		{t.schede.editor}
+	</button>
+	<button class:active={scheda === 'anteprima'} onclick={() => (scheda = 'anteprima')}>
+		<Eye size={16} />
+		{t.schede.anteprima}
+	</button>
+</nav>
+<div class="pannelli" data-scheda={scheda}>
+	<textarea
+		class="editor"
+		bind:value={testo}
+		aria-label={t.editorEtichetta}
+		spellcheck={false}
+	></textarea>
+	<div class="anteprima">
+		<Visualizzatore {slides} />
 	</div>
-</main>
+</div>
 
 <style>
-	main {
-		max-width: 1200px;
-		margin: 0 auto;
-		padding: 1rem;
-		font-family: system-ui, sans-serif;
-	}
-	h1 {
-		font-size: 1.2rem;
-		margin: 0 0 0.5rem;
-		color: var(--testo);
-	}
 	nav {
 		display: none;
 		gap: 0.5rem;

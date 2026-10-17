@@ -1,12 +1,10 @@
 <script lang="ts">
 	import DOMPurify from 'dompurify';
 	import 'highlight.js/styles/github.css';
-	import { ChevronLeft, ChevronRight, FileDown, Maximize, Minimize, Palette } from 'lucide-svelte';
+	import { ChevronLeft, ChevronRight, FileDown, Maximize, Minimize } from 'lucide-svelte';
 	import { renderMarkdown } from '../lib/markdown';
 
-	export type Tema = 'chiaro' | 'scuro' | 'vivace';
-
-	let { slides, tema = $bindable('chiaro') }: { slides: string[]; tema?: Tema } = $props();
+	let { slides }: { slides: string[] } = $props();
 
 	let indice = $state(0);
 	let xInizio = $state<number | null>(null);
@@ -72,14 +70,6 @@
 		<FileDown size={18} />
 		<span>PDF</span>
 	</button>
-	<label class="tema">
-		<Palette size={18} />
-		<select bind:value={tema} aria-label="Tema delle slide">
-			<option value="chiaro">Chiaro</option>
-			<option value="scuro">Scuro</option>
-			<option value="vivace">Vivace</option>
-		</select>
-	</label>
 </div>
 <div class="viewer" bind:this={contenitore}>
 	<button class="zona sinistra" onclick={indietro} aria-label="Slide precedente">
@@ -239,8 +229,7 @@
 		transform: scale(0.94);
 	}
 	.zona:focus-visible,
-	.barra button:focus-visible,
-	.barra select:focus-visible {
+	.barra button:focus-visible {
 		outline: 2px solid var(--accento);
 		outline-offset: 2px;
 	}
@@ -263,8 +252,7 @@
 		gap: 0.5rem;
 		margin-bottom: 0.75rem;
 	}
-	.barra button,
-	.barra select {
+	.barra button {
 		display: inline-flex;
 		align-items: center;
 		gap: 0.4rem;
@@ -280,17 +268,8 @@
 			background-color 150ms ease,
 			border-color 150ms ease;
 	}
-	.barra button:hover,
-	.barra select:hover {
+	.barra button:hover {
 		border-color: var(--accento);
-	}
-	.tema {
-		margin-left: auto;
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		font-size: 0.9rem;
-		color: var(--testo);
 	}
 	.viewer:fullscreen {
 		background: var(--sfondo);

@@ -151,6 +151,7 @@
 <svelte:window
 	onkeydown={handleKey}
 	onfullscreenchange={() => (fullscreen = isBrowser && !!document.fullscreenElement)}
+	onresize={() => checkOverflow()}
 />
 
 <div class="app" bind:this={root}>
@@ -217,7 +218,8 @@
 		position: relative;
 		display: grid;
 		grid-template-columns: 44px 1fr 44px;
-		min-height: 60vh;
+		grid-template-rows: minmax(0, 1fr);
+		height: 70vh;
 		border: none;
 		border-radius: 16px;
 		overflow: hidden;
@@ -232,6 +234,7 @@
 	.slide {
 		background: var(--background);
 		color: var(--text);
+		min-height: 0;
 		padding: 2.5rem clamp(1.25rem, 5vw, 3.5rem);
 		overflow-y: auto;
 		line-height: 1.6;
@@ -439,6 +442,7 @@
 	.viewer:fullscreen {
 		background: var(--background);
 		padding: 2rem;
+		height: 100%;
 	}
 	.viewer:fullscreen .slide {
 		max-width: 900px;

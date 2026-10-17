@@ -1,10 +1,15 @@
 <script lang="ts">
 	import DOMPurify from 'dompurify';
 	import 'highlight.js/styles/github.css';
-	import { ChevronLeft, ChevronRight, FileDown, Maximize, Minimize } from 'lucide-svelte';
+	import { resolve } from '$app/paths';
+	import { Check, ChevronLeft, ChevronRight, FileDown, Link2, Maximize, Minimize } from 'lucide-svelte';
+	import { preferenze } from './condiviso.svelte';
+	import { testi } from './i18n';
 	import { renderMarkdown } from '../lib/markdown';
+	import { codifica } from '../lib/slides';
 
 	let { slides }: { slides: string[] } = $props();
+	const t = $derived(testi[preferenze.lingua]);
 
 	let indice = $state(0);
 	let xInizio = $state<number | null>(null);
@@ -53,6 +58,24 @@
 	function stampa() {
 		if (suBrowser) window.print();
 	}
+
+	let copiato = $state(false);
+	let mostraLink = $state(false);
+	const link = $derived(
+		suBrowser ? location.origin + resolve('/v') + '#' + codifica(slides.join('\n---\n')) : ''
+	);
+
+	async function copiaLink() {
+		if (!suBrowser) return;
+		mostraLink = false;
+		try {
+			await navigator.clipboard.writeText(link);
+			copiato = true;
+			window.setTimeout(() => (copiato = false), 2000);
+		} catch {
+			mostraLink = true;
+		}
+	}
 </script>
 
 <svelte:window
@@ -62,23 +85,35 @@
 
 <div class="app">
 <div class="barra">
-	<button onclick={alternaSchermoIntero} aria-label={schermoIntero ? 'Esci da schermo intero' : 'Schermo intero'}>
+	<button onclick={alternaSchermoIntero} aria-label={schermoIntero ? t.barra.esciSchermo : t.barra.schermoIntero}>
 		{#if schermoIntero}<Minimize size={18} />{:else}<Maximize size={18} />{/if}
-		<span>Schermo</span>
+		<span>{t.barra.schermo}</span>
 	</button>
 	<button onclick={stampa} aria-label="Esporta PDF">
 		<FileDown size={18} />
-		<span>PDF</span>
+		<span>{t.barra.pdf}</span>
+	</button>
+	<button onclick={copiaLink} aria-label={t.condivisione.copia}>
+		{#if copiato}<Check size={18} />{:else}<Link2 size={18} />{/if}
+		<span>{copiato ? t.condivisione.copiato : t.condivisione.copia}</span>
 	</button>
 </div>
+{#if mostraLink}
+	<div class="link-manuale">
+		<label>
+			{t.condivisione.manuale}
+			<input readonly value={link} onfocus={(e) => e.currentTarget.select()} />
+		</label>
+	</div>
+{/if}
 <div class="viewer" bind:this={contenitore}>
-	<button class="zona sinistra" onclick={indietro} aria-label="Slide precedente">
+	<button class="zona sinistra" onclick={indietro} aria-label={t.slidePrecedente}>
 		<ChevronLeft size={28} />
 	</button>
 	<div
 		class="slide"
 		role="region"
-		aria-label="Slide corrente"
+		aria-label={t.slideCorrente}
 		ontouchstart={(e) => (xInizio = e.touches[0].clientX)}
 		ontouchend={(e) => {
 			if (xInizio === null) return;
@@ -90,7 +125,7 @@
 	>
 		{@html html}
 	</div>
-	<button class="zona destra" onclick={avanti} aria-label="Slide successiva">
+	<button class="zona destra" onclick={avanti} aria-label={t.slideSuccessiva}>
 		<ChevronRight size={28} />
 	</button>
 	<p class="contatore">{indice + 1}/{totale}</p>
@@ -270,6 +305,24 @@
 	}
 	.barra button:hover {
 		border-color: var(--accento);
+	}
+	.link-manuale {
+		margin-bottom: 0.75rem;
+	}
+	.link-manuale label {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		font-size: 0.9rem;
+		color: var(--testo);
+	}
+	.link-manuale input {
+		padding: 0.5rem 0.8rem;
+		border: 1px solid var(--bordo);
+		border-radius: 8px;
+		background: var(--superficie);
+		color: var(--testo);
+		font-size: 0.85rem;
 	}
 	.viewer:fullscreen {
 		background: var(--sfondo);

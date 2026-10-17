@@ -1,11 +1,11 @@
-export const ESEMPIO = `# Benvenuto\n\nScrivi qui la tua presentazione.\n\n---\n\n# Seconda slide\n\n- Un punto\n- Un altro punto\n\n---\n\n# Terza slide\n\n**Grassetto** e *corsivo* funzionano.`;
+export const SAMPLE = `# Benvenuto\n\nScrivi qui la tua presentazione.\n\n---\n\n# Seconda slide\n\n- Un punto\n- Un altro punto\n\n---\n\n# Terza slide\n\n**Grassetto** e *corsivo* funzionano.`;
 
-/** Sotto questa lunghezza resta in chiaro: comprimere allungherebbe. */
-export const SOGLIA_COMPRESSIONE = 200;
+/** Below this length text stays raw: compressing would make it longer. */
+export const COMPRESSION_THRESHOLD = 200;
 
-/** Divide il testo in slide sulla linea `---`. Ritorna sempre almeno 1 slide. */
-export function splitSlides(testo: string): string[] {
-	const parti = testo.split(/^---$/m).map((s) => s.trim());
+/** Splits text into slides on the `---` line. Always returns at least 1 slide. */
+export function splitSlides(text: string): string[] {
+	const parti = text.split(/^---$/m).map((s) => s.trim());
 	const filtrate = parti.filter((s) => s.length > 0);
 	return filtrate.length > 0 ? filtrate : [''];
 }
@@ -38,18 +38,18 @@ async function decomprimi(bytes: Uint8Array): Promise<Uint8Array> {
 }
 
 /**
- * Codifica per l'URL: `0` + chiaro sotto soglia, `1` + gzip sopra.
+ * Codifica per l'URL: `0` + light sotto soglia, `1` + gzip sopra.
  * I vecchi link senza prefisso non sono supportati.
  */
-export async function codifica(testo: string): Promise<string> {
-	if (testo.length < SOGLIA_COMPRESSIONE) {
-		return '0' + aBase64Url(new TextEncoder().encode(testo));
+export async function encode(text: string): Promise<string> {
+	if (text.length < COMPRESSION_THRESHOLD) {
+		return '0' + aBase64Url(new TextEncoder().encode(text));
 	}
-	return '1' + aBase64Url(await comprimi(new TextEncoder().encode(testo)));
+	return '1' + aBase64Url(await comprimi(new TextEncoder().encode(text)));
 }
 
-/** Decodifica `0`/`1`. Ritorna null se formato invalido o gzip assente. */
-export async function decodifica(hash: string): Promise<string | null> {
+/** Decodes `0`/`1`. Returns null on invalid format or missing gzip. */
+export async function decode(hash: string): Promise<string | null> {
 	try {
 		if (hash.startsWith('0')) {
 			return new TextDecoder().decode(daBase64Url(hash.slice(1)));

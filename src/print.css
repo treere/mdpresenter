@@ -14,25 +14,25 @@
 	.pannelli {
 		display: block !important;
 	}
-	.stampa {
+	.print {
 		display: block !important;
 	}
-	.pagina-stampa {
+	.print-page {
 		background: #fff;
 		color: #000;
 	}
-	.pagina-stampa pre {
+	.print-page pre {
 		background: #f6f8fa !important;
 	}
-	.pagina-stampa .hljs {
+	.print-page .hljs {
 		background: #fff !important;
 		color: #24292e !important;
 	}
-	.pagina-stampa {
+	.print-page {
 		break-after: page;
 		break-inside: avoid;
 	}
-	.pagina-stampa:last-child {
+	.print-page:last-child {
 		break-after: auto;
 	}
 }

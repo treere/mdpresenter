@@ -3,29 +3,29 @@
 	import 'highlight.js/styles/github.css';
 	import { resolve } from '$app/paths';
 	import { Check, ChevronLeft, ChevronRight, FileDown, Link2, Maximize, Minimize } from 'lucide-svelte';
-	import { preferenze } from './condiviso.svelte';
-	import { testi } from './i18n';
-	import { renderMarkdown } from '../lib/markdown';
-	import { codifica } from '../lib/slides';
+	import { preferences } from './shared.svelte';
+	import { texts } from './i18n';
+	import { renderMarkdown } from './markdown';
+	import { encode } from './slides';
 
 	let { slides }: { slides: string[] } = $props();
-	const t = $derived(testi[preferenze.lingua]);
+	const t = $derived(texts[preferences.language]);
 
-	let indice = $state(0);
-	let xInizio = $state<number | null>(null);
-	let contenitore: HTMLDivElement | undefined = $state();
-	let schermoIntero = $state(false);
+	let index = $state(0);
+	let startX = $state<number | null>(null);
+	let container: HTMLDivElement | undefined = $state();
+	let fullscreen = $state(false);
 
 	const suBrowser = typeof window !== 'undefined';
 
-	const totale = $derived(slides.length);
-	const corrente = $derived(slides[Math.min(indice, totale - 1)] ?? '');
-	// HTML calcolato in $effect (e non in $derived): suBrowser non è reattivo e
-	// l'{@html} prerenderizzato vuoto non verrebbe aggiornato all'hydration.
+	const total = $derived(slides.length);
+	const current = $derived(slides[Math.min(index, total - 1)] ?? '');
+	// HTML computed in $effect (not $derived): isBrowser is not reactive and
+	// the empty prerendered {@html} would not update on hydration.
 	let html = $state('');
 	let tutteHtml: string[] = $state([]);
 	$effect(() => {
-		const c = corrente;
+		const c = current;
 		const ss = slides;
 		if (!suBrowser) return;
 		html = DOMPurify.sanitize(renderMarkdown(c));
@@ -33,107 +33,107 @@
 	});
 
 	$effect(() => {
-		if (indice > totale - 1) indice = Math.max(totale - 1, 0);
+		if (index > total - 1) index = Math.max(total - 1, 0);
 	});
 
-	function avanti() {
-		if (indice < totale - 1) indice += 1;
+	function next() {
+		if (index < total - 1) index += 1;
 	}
 
-	function indietro() {
-		if (indice > 0) indice -= 1;
+	function prev() {
+		if (index > 0) index -= 1;
 	}
 
-	function tasto(e: KeyboardEvent) {
-		if (e.key === 'ArrowRight') avanti();
-		if (e.key === 'ArrowLeft') indietro();
+	function handleKey(e: KeyboardEvent) {
+		if (e.key === 'ArrowRight') next();
+		if (e.key === 'ArrowLeft') prev();
 	}
 
-	async function alternaSchermoIntero() {
-		if (!suBrowser || !contenitore) return;
+	async function toggleFullscreen() {
+		if (!suBrowser || !container) return;
 		if (document.fullscreenElement) await document.exitFullscreen();
-		else await contenitore.requestFullscreen();
+		else await container.requestFullscreen();
 	}
 
-	function stampa() {
+	function print() {
 		if (suBrowser) window.print();
 	}
 
-	let copiato = $state(false);
-	let mostraLink = $state(false);
-	let linkManuale = $state('');
+	let copied = $state(false);
+	let showLink = $state(false);
+	let manualLink = $state('');
 
 	async function copiaLink() {
 		if (!suBrowser) return;
-		mostraLink = false;
+		showLink = false;
 		const url =
-			location.origin + resolve('/v') + '#' + (await codifica(slides.join('\n---\n')));
+			location.origin + resolve('/v') + '#' + (await encode(slides.join('\n---\n')));
 		try {
 			await navigator.clipboard.writeText(url);
-			copiato = true;
-			window.setTimeout(() => (copiato = false), 2000);
+			copied = true;
+			window.setTimeout(() => (copied = false), 2000);
 		} catch {
-			linkManuale = url;
-			mostraLink = true;
+			manualLink = url;
+			showLink = true;
 		}
 	}
 </script>
 
 <svelte:window
-	onkeydown={tasto}
-	onfullscreenchange={() => (schermoIntero = suBrowser && !!document.fullscreenElement)}
+	onkeydown={handleKey}
+	onfullscreenchange={() => (fullscreen = suBrowser && !!document.fullscreenElement)}
 />
 
 <div class="app">
-<div class="barra">
-	<button onclick={alternaSchermoIntero} aria-label={schermoIntero ? t.barra.esciSchermo : t.barra.schermoIntero}>
-		{#if schermoIntero}<Minimize size={18} />{:else}<Maximize size={18} />{/if}
-		<span>{t.barra.schermo}</span>
+<div class="toolbar">
+	<button onclick={toggleFullscreen} aria-label={fullscreen ? t.toolbar.exitFullscreen : t.toolbar.fullscreen}>
+		{#if fullscreen}<Minimize size={18} />{:else}<Maximize size={18} />{/if}
+		<span>{t.toolbar.screen}</span>
 	</button>
-	<button onclick={stampa} aria-label="Esporta PDF">
+	<button onclick={print} aria-label="Esporta PDF">
 		<FileDown size={18} />
-		<span>{t.barra.pdf}</span>
+		<span>{t.toolbar.pdf}</span>
 	</button>
-	<button onclick={copiaLink} aria-label={t.condivisione.copia}>
-		{#if copiato}<Check size={18} />{:else}<Link2 size={18} />{/if}
-		<span>{copiato ? t.condivisione.copiato : t.condivisione.copia}</span>
+	<button onclick={copiaLink} aria-label={t.sharing.copia}>
+		{#if copied}<Check size={18} />{:else}<Link2 size={18} />{/if}
+		<span>{copied ? t.sharing.copied : t.sharing.copia}</span>
 	</button>
 </div>
-{#if mostraLink}
+{#if showLink}
 	<div class="link-manuale">
 		<label>
-			{t.condivisione.manuale}
-			<input readonly value={linkManuale} onfocus={(e) => e.currentTarget.select()} />
+			{t.sharing.manuale}
+			<input readonly value={manualLink} onfocus={(e) => e.currentTarget.select()} />
 		</label>
 	</div>
 {/if}
-<div class="viewer" bind:this={contenitore}>
-	<button class="zona sinistra" onclick={indietro} aria-label={t.slidePrecedente}>
+<div class="viewer" bind:this={container}>
+	<button class="navbtn left" onclick={prev} aria-label={t.previousSlide}>
 		<ChevronLeft size={28} />
 	</button>
 	<div
 		class="slide"
 		role="region"
-		aria-label={t.slideCorrente}
-		ontouchstart={(e) => (xInizio = e.touches[0].clientX)}
+		aria-label={t.currentSlide}
+		ontouchstart={(e) => (startX = e.touches[0].clientX)}
 		ontouchend={(e) => {
-			if (xInizio === null) return;
-			const dx = e.changedTouches[0].clientX - xInizio;
-			xInizio = null;
-			if (dx < -40) avanti();
-			if (dx > 40) indietro();
+			if (startX === null) return;
+			const dx = e.changedTouches[0].clientX - startX;
+			startX = null;
+			if (dx < -40) next();
+			if (dx > 40) prev();
 		}}
 	>
 		{@html html}
 	</div>
-	<button class="zona destra" onclick={avanti} aria-label={t.slideSuccessiva}>
+	<button class="navbtn right" onclick={next} aria-label={t.nextSlide}>
 		<ChevronRight size={28} />
 	</button>
-	<p class="contatore">{indice + 1}/{totale}</p>
+	<p class="counter">{index + 1}/{total}</p>
 </div>
-<div class="stampa" aria-hidden="true">
+<div class="print" aria-hidden="true">
 	{#each tutteHtml as h}
-		<div class="pagina-stampa">{@html h}</div>
+		<div class="print-page">{@html h}</div>
 	{/each}
 </div>
 </div>
@@ -157,7 +157,7 @@
 	}
 	.slide {
 		background: var(--sfondo);
-		color: var(--testo);
+		color: var(--text);
 		padding: 2.5rem clamp(1.25rem, 5vw, 3.5rem);
 		overflow-y: auto;
 		line-height: 1.6;
@@ -242,7 +242,7 @@
 	.slide :global(thead) {
 		background: var(--tabella-intestazione);
 	}
-	.zona {
+	.navbtn {
 		background: transparent;
 		border: none;
 		border-radius: 12px;
@@ -258,18 +258,18 @@
 			background-color 150ms ease,
 			transform 150ms ease;
 	}
-	.zona:hover {
+	.navbtn:hover {
 		background: var(--codice-sfondo);
 	}
-	.zona:active {
+	.navbtn:active {
 		transform: scale(0.94);
 	}
-	.zona:focus-visible,
-	.barra button:focus-visible {
+	.navbtn:focus-visible,
+	.toolbar button:focus-visible {
 		outline: 2px solid var(--accento);
 		outline-offset: 2px;
 	}
-	.contatore {
+	.counter {
 		position: absolute;
 		bottom: 0.75rem;
 		right: 1rem;
@@ -281,14 +281,14 @@
 		font-size: 0.85rem;
 		font-weight: 600;
 	}
-	.barra {
+	.toolbar {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 0.5rem;
 		margin-bottom: 0.75rem;
 	}
-	.barra button {
+	.toolbar button {
 		display: inline-flex;
 		align-items: center;
 		gap: 0.4rem;
@@ -297,14 +297,14 @@
 		border: 1px solid var(--bordo);
 		border-radius: 999px;
 		background: var(--sfondo);
-		color: var(--testo);
+		color: var(--text);
 		font-size: 0.9rem;
 		cursor: pointer;
 		transition:
 			background-color 150ms ease,
 			border-color 150ms ease;
 	}
-	.barra button:hover {
+	.toolbar button:hover {
 		border-color: var(--accento);
 	}
 	.link-manuale {
@@ -315,14 +315,14 @@
 		flex-direction: column;
 		gap: 0.25rem;
 		font-size: 0.9rem;
-		color: var(--testo);
+		color: var(--text);
 	}
 	.link-manuale input {
 		padding: 0.5rem 0.8rem;
 		border: 1px solid var(--bordo);
 		border-radius: 8px;
 		background: var(--superficie);
-		color: var(--testo);
+		color: var(--text);
 		font-size: 0.85rem;
 	}
 	.viewer:fullscreen {
@@ -334,7 +334,7 @@
 		margin: 0 auto;
 		font-size: 1.4rem;
 	}
-	.stampa {
+	.print {
 		display: none;
 	}
 </style>

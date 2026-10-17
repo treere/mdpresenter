@@ -2,37 +2,37 @@
 	import favicon from '#lib/assets/favicon.svg';
 	import { resolve } from '$app/paths';
 	import { Menu, X } from 'lucide-svelte';
-	import { preferenze } from '../lib/condiviso.svelte';
-	import { testi, type Lingua, type Tema } from '../lib/i18n';
+	import { preferences } from '../lib/shared.svelte';
+	import { texts, type Language, type Theme } from '../lib/i18n';
 	import type { LayoutProps } from './$types';
-	import '../stampa.css';
-	import '../tema.css';
+	import '../print.css';
+	import '../theme.css';
 
 	let { children }: LayoutProps = $props();
 	let menuAperto = $state(false);
 
 	const suBrowser = typeof window !== 'undefined';
-	const t = $derived(testi[preferenze.lingua]);
+	const t = $derived(texts[preferences.language]);
 
 	if (suBrowser) {
-		const lingua = localStorage.getItem('mdpresenter-lingua');
-		if (lingua === 'it' || lingua === 'en') preferenze.lingua = lingua;
-		const tema = localStorage.getItem('mdpresenter-tema');
-		if (tema === 'chiaro' || tema === 'scuro' || tema === 'vivace') preferenze.tema = tema;
+		const language = localStorage.getItem('mdpresenter-language');
+		if (language === 'it' || language === 'en') preferences.language = language;
+		const theme = localStorage.getItem('mdpresenter-theme');
+		if (theme === 'light' || theme === 'dark' || theme === 'vivid') preferences.theme = theme;
 	}
 
 	$effect(() => {
 		if (!suBrowser) return;
-		document.documentElement.dataset.tema = preferenze.tema;
-		document.documentElement.lang = preferenze.lingua;
-		localStorage.setItem('mdpresenter-tema', preferenze.tema);
-		localStorage.setItem('mdpresenter-lingua', preferenze.lingua);
+		document.documentElement.dataset.theme = preferences.theme;
+		document.documentElement.lang = preferences.language;
+		localStorage.setItem('mdpresenter-theme', preferences.theme);
+		localStorage.setItem('mdpresenter-language', preferences.language);
 	});
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
-	<meta name="description" content={t.metaDescrizione} />
+	<meta name="description" content={t.metaDescription} />
 </svelte:head>
 
 <svelte:window
@@ -41,11 +41,11 @@
 	}}
 />
 
-<div class="sito">
+<div class="site">
 	<header data-aperto={menuAperto}>
-		<a class="marchio" href={resolve('/')}>mdpresenter</a>
+		<a class="brand" href={resolve('/')}>mdpresenter</a>
 		<button
-			class="menu-pulsante"
+			class="menu-button"
 			onclick={() => (menuAperto = !menuAperto)}
 			aria-expanded={menuAperto}
 			aria-label="Menu"
@@ -55,38 +55,38 @@
 		<div class="menu">
 		<nav aria-label="Pagine">
 			<a href={resolve('/')} onclick={() => (menuAperto = false)}>{t.nav.home}</a>
-			<a href={resolve('/esempi')} onclick={() => (menuAperto = false)}>{t.nav.esempi}</a>
-			<a href={resolve('/progetto')} onclick={() => (menuAperto = false)}>{t.nav.progetto}</a>
+			<a href={resolve('/examples')} onclick={() => (menuAperto = false)}>{t.nav.examples}</a>
+			<a href={resolve('/about')} onclick={() => (menuAperto = false)}>{t.nav.about}</a>
 		</nav>
-		<div class="scelte">
+		<div class="controls">
 			<label>
-				<span class="nascosto">{t.lingua}</span>
+				<span class="visually-hidden">{t.language}</span>
 				<select
-					aria-label={t.lingua}
-					value={preferenze.lingua}
-					onchange={(e) => (preferenze.lingua = e.currentTarget.value as Lingua)}
+					aria-label={t.language}
+					value={preferences.language}
+					onchange={(e) => (preferences.language = e.currentTarget.value as Language)}
 				>
 					<option value="it">IT</option>
 					<option value="en">EN</option>
 				</select>
 			</label>
 			<label>
-				<span class="nascosto">{t.tema}</span>
+				<span class="visually-hidden">{t.theme}</span>
 				<select
-					aria-label={t.tema}
-					value={preferenze.tema}
-					onchange={(e) => (preferenze.tema = e.currentTarget.value as Tema)}
+					aria-label={t.theme}
+					value={preferences.theme}
+					onchange={(e) => (preferences.theme = e.currentTarget.value as Theme)}
 				>
-					<option value="chiaro">{t.temi.chiaro}</option>
-					<option value="scuro">{t.temi.scuro}</option>
-					<option value="vivace">{t.temi.vivace}</option>
+					<option value="light">{t.themes.light}</option>
+					<option value="dark">{t.themes.dark}</option>
+					<option value="vivid">{t.themes.vivid}</option>
 				</select>
 			</label>
 		</div>
 		</div>
 	</header>
 
-	<div class="contenuto">
+	<div class="content">
 		{@render children()}
 	</div>
 
@@ -96,7 +96,7 @@
 </div>
 
 <style>
-	.sito {
+	.site {
 		max-width: 1200px;
 		margin: 0 auto;
 		padding: 1rem;
@@ -111,14 +111,14 @@
 		gap: 1rem;
 		margin-bottom: 1rem;
 	}
-	.menu-pulsante {
+	.menu-button {
 		display: none;
 	}
-	.marchio {
+	.brand {
 		font-weight: 800;
 		font-size: 1.1rem;
 		text-decoration: none;
-		color: var(--testo);
+		color: var(--text);
 	}
 	header nav {
 		display: flex;
@@ -131,35 +131,35 @@
 		align-items: center;
 		border-radius: 999px;
 		text-decoration: none;
-		color: var(--testo-debole);
+		color: var(--text-debole);
 		font-weight: 600;
 	}
 	header nav a:hover {
-		color: var(--testo);
+		color: var(--text);
 		background: var(--codice-sfondo);
 	}
-	.scelte {
+	.controls {
 		margin-left: auto;
 		display: flex;
 		gap: 0.5rem;
 	}
-	.scelte select {
+	.controls select {
 		padding: 0.5rem 0.7rem;
 		min-height: 44px;
 		border: 1px solid var(--bordo);
 		border-radius: 999px;
 		background: var(--superficie);
-		color: var(--testo);
+		color: var(--text);
 		cursor: pointer;
 	}
-	.nascosto {
+	.visually-hidden {
 		position: absolute;
 		width: 1px;
 		height: 1px;
 		overflow: hidden;
 		clip: rect(0 0 0 0);
 	}
-	.contenuto {
+	.content {
 		flex: 1;
 	}
 	footer {
@@ -169,7 +169,7 @@
 		text-align: center;
 	}
 	footer a {
-		color: var(--testo-debole);
+		color: var(--text-debole);
 	}
 	@media print {
 		header,
@@ -184,7 +184,7 @@
 		header {
 			flex-wrap: wrap;
 		}
-		.menu-pulsante {
+		.menu-button {
 			display: inline-flex;
 			align-items: center;
 			justify-content: center;
@@ -194,7 +194,7 @@
 			border: 1px solid var(--bordo);
 			border-radius: 12px;
 			background: var(--superficie);
-			color: var(--testo);
+			color: var(--text);
 			cursor: pointer;
 		}
 		.menu {
@@ -210,7 +210,7 @@
 		header nav {
 			flex-direction: column;
 		}
-		.scelte {
+		.controls {
 			margin-left: 0;
 		}
 		header nav a {

@@ -2,33 +2,33 @@ import { describe, expect, it } from 'vitest';
 import { renderMarkdown } from './markdown';
 
 describe('renderMarkdown', () => {
-	it('evidenzia il codice con linguaggio', () => {
+	it('highlights code with a language', () => {
 		const html = renderMarkdown('```js\nconst a = 1;\n```');
 		expect(html).toContain('hljs');
 		expect(html).toContain('language-js');
 	});
 
-	it('blocco senza linguaggio senza errori', () => {
-		const html = renderMarkdown('```\ntesto semplice\n```');
-		expect(html).toContain('testo semplice');
+	it('renders a block without language', () => {
+		const html = renderMarkdown('```\nplain text\n```');
+		expect(html).toContain('plain text');
 	});
 
-	it('rende le tabelle', () => {
+	it('renders tables', () => {
 		const html = renderMarkdown('| A | B |\n|---|---|\n| 1 | 2 |');
 		expect(html).toContain('<table>');
 		expect(html).toContain('<th>A</th>');
 	});
 
-	it('rende i link', () => {
+	it('renders links', () => {
 		const html = renderMarkdown('[Svelte](https://svelte.dev)');
 		expect(html).toContain('<a href="https://svelte.dev"');
 	});
 
-	it('rende le immagini', () => {
+	it('renders images', () => {
 		const html = renderMarkdown('![Alt](https://picsum.photos/seed/x/600/400)');
 		expect(html).toContain('<img');
 		expect(html).toContain('picsum.photos');
 	});
-	// Nota: la sanificazione (es. blocco di javascript:) avviene con DOMPurify
+	// Note: sanitizing (e.g. blocking javascript:) happens with DOMPurify
 	// nel visualizzatore, non in renderMarkdown.
 });

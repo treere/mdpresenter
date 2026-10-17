@@ -1,18 +1,18 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { preferenze } from '../lib/condiviso.svelte';
-	import { testi } from '../lib/i18n';
+	import { preferences } from '../lib/shared.svelte';
+	import { texts } from '../lib/i18n';
 
-	const t = $derived(testi[preferenze.lingua]);
+	const t = $derived(texts[preferences.language]);
 </script>
 
 <svelte:head>
 	<title>404 · mdpresenter</title>
 </svelte:head>
 
-<h1>{t.errore.titolo}</h1>
-<p>{t.errore.testo}</p>
-<p><a href={resolve('/')}>{t.errore.home}</a></p>
+<h1>{t.error.title}</h1>
+<p>{t.error.text}</p>
+<p><a href={resolve('/')}>{t.error.home}</a></p>
 
 <style>
 	h1 {

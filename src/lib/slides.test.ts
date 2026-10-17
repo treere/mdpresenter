@@ -1,45 +1,45 @@
 import { describe, expect, it } from 'vitest';
-import { codifica, decodifica, splitSlides } from './slides';
+import { encode, decode, splitSlides } from './slides';
 
 describe('splitSlides', () => {
-	it('2 separatori restituiscono 3 slide', () => {
+	it('splits 2 separators into 3 slides', () => {
 		expect(splitSlides('a\n---\nb\n---\nc')).toEqual(['a', 'b', 'c']);
 	});
 
-	it('senza separatori restituisce 1 slide', () => {
-		expect(splitSlides('# Solo titolo')).toEqual(['# Solo titolo']);
+	it('returns 1 slide without separators', () => {
+		expect(splitSlides('# Solo title')).toEqual(['# Solo title']);
 	});
 
-	it('testo vuoto restituisce 1 slide vuota', () => {
+	it('returns 1 empty slide for empty text', () => {
 		expect(splitSlides('')).toEqual(['']);
 	});
 
-	it('il separatore deve stare su linea propria', () => {
+	it('requires the separator on its own line', () => {
 		expect(splitSlides('a --- b')).toEqual(['a --- b']);
 	});
 });
 
-describe('codifica/decodifica', () => {
-	it('roundtrip con caratteri unicode', async () => {
-		const testo = '# Ciao 👋\n\n---\n\nÈ un test';
-		expect(await decodifica(await codifica(testo))).toBe(testo);
+describe('encode/decode', () => {
+	it('roundtrips unicode characters', async () => {
+		const text = '# Ciao 👋\n\n---\n\nÈ un test';
+		expect(await decode(await encode(text))).toBe(text);
 	});
 
-	it('testo invalido ritorna null', async () => {
-		expect(await decodifica('!!!non-base64!!!')).toBeNull();
+	it('returns null for invalid input', async () => {
+		expect(await decode('!!!non-base64!!!')).toBeNull();
 	});
 
-	it('testo corto resta in chiaro con prefisso 0', async () => {
-		const c = await codifica('ciao');
+	it('keeps short text raw with prefix 0', async () => {
+		const c = await encode('ciao');
 		expect(c.startsWith('0')).toBe(true);
-		expect(await decodifica(c)).toBe('ciao');
+		expect(await decode(c)).toBe('ciao');
 	});
 
-	it('testo lungo è compresso e più corto del chiaro', async () => {
-		const testo = '# Titolo\n\nParagrafo ripetuto. '.repeat(30);
-		const c = await codifica(testo);
+	it('compresses long text shorter than raw', async () => {
+		const text = '# Titolo\n\nParagrafo ripetuto. '.repeat(30);
+		const c = await encode(text);
 		expect(c.startsWith('1')).toBe(true);
-		expect(c.length).toBeLessThan(testo.length);
-		expect(await decodifica(c)).toBe(testo);
+		expect(c.length).toBeLessThan(text.length);
+		expect(await decode(c)).toBe(text);
 	});
 });

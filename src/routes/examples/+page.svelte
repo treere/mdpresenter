@@ -1,29 +1,29 @@
 <script lang="ts">
 	import { BookOpen } from 'lucide-svelte';
 	import { resolve } from '$app/paths';
-	import { appoggio, preferenze } from '../../lib/condiviso.svelte';
-	import { ESEMPI } from '../../lib/esempi';
-	import { testi } from '../../lib/i18n';
+	import { pending, preferences } from '../../lib/shared.svelte';
+	import { EXAMPLES } from '../../lib/examples';
+	import { texts } from '../../lib/i18n';
 
-	const t = $derived(testi[preferenze.lingua]);
-	const esempi = $derived(ESEMPI[preferenze.lingua]);
+	const t = $derived(texts[preferences.language]);
+	const examples = $derived(EXAMPLES[preferences.language]);
 </script>
 
 <svelte:head>
-	<title>{t.esempi.titolo} · mdpresenter</title>
+	<title>{t.examples.title} · mdpresenter</title>
 </svelte:head>
 
-<h1>{t.esempi.titolo}</h1>
-<p>{t.esempi.intro}</p>
+<h1>{t.examples.title}</h1>
+<p>{t.examples.intro}</p>
 
 <ul>
-	{#each esempi as e}
+	{#each examples as e}
 		<li>
-			<strong>{e.titolo}</strong>
-			<span>{e.descrizione}</span>
-			<a href={resolve('/')} onclick={() => (appoggio.testoDaAprire = e.testo)}>
+			<strong>{e.title}</strong>
+			<span>{e.description}</span>
+			<a href={resolve('/')} onclick={() => (pending.textToOpen = e.text)}>
 				<BookOpen size={16} />
-				{t.esempi.apri}
+				{t.examples.open}
 			</a>
 		</li>
 	{/each}
@@ -35,7 +35,7 @@
 		margin: 0 0 0.5rem;
 	}
 	p {
-		color: var(--testo-debole);
+		color: var(--text-debole);
 		margin: 0 0 1.5rem;
 	}
 	ul {
@@ -56,7 +56,7 @@
 		gap: 0.5rem;
 	}
 	li span {
-		color: var(--testo-debole);
+		color: var(--text-debole);
 		flex: 1;
 	}
 	a {

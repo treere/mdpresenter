@@ -4,6 +4,7 @@ context: |
   Write all artifacts in Italian. Rispondi sempre in italiano.
   Repo: app solo frontend (SvelteKit statico) pubblicata su GitHub Pages sotto /mdpresenter, in locale servita su /.
   Convenzioni: commit in italiano, una change per argomento, proposal/design/tasks concisi.
+  Codice (nomi file, variabili, funzioni, commenti) sempre in inglese; solo i testi visibili sono in italiano/inglese.
 
 rules:
   proposal:

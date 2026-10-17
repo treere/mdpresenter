@@ -12,7 +12,7 @@ declare global {
 
 export {};
 
-// SvelteKit 3 non genera più i tipi per $app/*: dichiariamo solo ciò che usiamo.
+// SvelteKit 3 no longer generates types for $app/*: declare only what we use.
 declare module '$app/paths' {
 	export const base: string;
 	export function resolve(path: string): string;

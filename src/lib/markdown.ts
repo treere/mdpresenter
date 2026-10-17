@@ -12,7 +12,7 @@ const marked = new Marked(
 	})
 );
 
-/** Rende Markdown in HTML (da sanificare dal chiamante prima del {@html}). */
-export function renderMarkdown(testo: string): string {
-	return marked.parse(testo, { breaks: true }) as string;
+/** Renders Markdown to HTML (caller must sanitize before {@html}). */
+export function renderMarkdown(text: string): string {
+	return marked.parse(text, { breaks: true }) as string;
 }

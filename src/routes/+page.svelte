@@ -1,46 +1,46 @@
 <script lang="ts">
 	import { Eye, Pencil } from 'lucide-svelte';
-	import Visualizzatore from '../lib/Visualizzatore.svelte';
-	import { appoggio, preferenze } from '../lib/condiviso.svelte';
-	import { testi } from '../lib/i18n';
-	import { ESEMPIO, codifica, decodifica, splitSlides } from '../lib/slides';
+	import Viewer from '../lib/Viewer.svelte';
+	import { pending, preferences } from '../lib/shared.svelte';
+	import { texts } from '../lib/i18n';
+	import { SAMPLE, encode, decode, splitSlides } from '../lib/slides';
 
-	let testo = $state(ESEMPIO);
-	let scheda: 'editor' | 'anteprima' = $state('anteprima');
-	let primoAvvio = true;
-	let pronto = $state(false);
+	let text = $state(SAMPLE);
+	let tab: 'editor' | 'preview' = $state('preview');
+	let firstRun = true;
+	let ready = $state(false);
 
 	const suBrowser = typeof window !== 'undefined';
-	const t = $derived(testi[preferenze.lingua]);
+	const t = $derived(texts[preferences.language]);
 
 	if (suBrowser) {
 		void (async () => {
-			if (appoggio.testoDaAprire !== null) {
-				testo = appoggio.testoDaAprire;
-				appoggio.testoDaAprire = null;
+			if (pending.textToOpen !== null) {
+				text = pending.textToOpen;
+				pending.textToOpen = null;
 			} else if (location.hash.length > 1) {
-				const daUrl = await decodifica(location.hash.slice(1));
-				if (daUrl !== null) testo = daUrl;
+				const daUrl = await decode(location.hash.slice(1));
+				if (daUrl !== null) text = daUrl;
 			}
-			pronto = true;
+			ready = true;
 		})();
 	}
 
-	const slides = $derived(splitSlides(testo));
+	const slides = $derived(splitSlides(text));
 
-	// Contatore anti-sorpasso: vince solo l'ultima codifica avviata.
+	// Anti-overtake counter: only the latest started encode wins.
 	let sequenzaCodifica = 0;
 
 	$effect(() => {
-		if (!suBrowser || !pronto) return;
-		const t = testo;
-		if (primoAvvio) {
-			primoAvvio = false;
+		if (!suBrowser || !ready) return;
+		const t = text;
+		if (firstRun) {
+			firstRun = false;
 			return;
 		}
 		const mia = ++sequenzaCodifica;
 		const timer = window.setTimeout(() => {
-			void codifica(t).then((c) => {
+			void encode(t).then((c) => {
 				if (mia === sequenzaCodifica) history.replaceState(null, '', '#' + c);
 			});
 		}, 500);
@@ -53,24 +53,24 @@
 </svelte:head>
 
 <nav>
-	<button class:active={scheda === 'editor'} onclick={() => (scheda = 'editor')}>
+	<button class:active={tab === 'editor'} onclick={() => (tab = 'editor')}>
 		<Pencil size={16} />
-		{t.schede.editor}
+		{t.tabs.editor}
 	</button>
-	<button class:active={scheda === 'anteprima'} onclick={() => (scheda = 'anteprima')}>
+	<button class:active={tab === 'preview'} onclick={() => (tab = 'preview')}>
 		<Eye size={16} />
-		{t.schede.anteprima}
+		{t.tabs.preview}
 	</button>
 </nav>
-<div class="pannelli" data-scheda={scheda}>
+<div class="panels" data-tab={tab}>
 	<textarea
 		class="editor"
-		bind:value={testo}
-		aria-label={t.editorEtichetta}
+		bind:value={text}
+		aria-label={t.editorLabel}
 		spellcheck={false}
 	></textarea>
-	<div class="anteprima">
-		<Visualizzatore {slides} />
+	<div class="preview">
+		<Viewer {slides} />
 	</div>
 </div>
 
@@ -96,7 +96,7 @@
 		background: transparent;
 		font-size: 0.95rem;
 		font-weight: 600;
-		color: var(--testo-debole);
+		color: var(--text-debole);
 		cursor: pointer;
 		transition:
 			background-color 150ms ease,
@@ -104,10 +104,10 @@
 	}
 	nav button.active {
 		background: var(--superficie);
-		color: var(--testo);
+		color: var(--text);
 		box-shadow: 0 1px 4px rgb(0 0 0 / 0.12);
 	}
-	.pannelli {
+	.panels {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: 1rem;
@@ -122,7 +122,7 @@
 		border: 1px solid var(--bordo);
 		border-radius: 16px;
 		background: var(--superficie);
-		color: var(--testo);
+		color: var(--text);
 		resize: vertical;
 		transition:
 			border-color 150ms ease,
@@ -138,13 +138,13 @@
 		nav {
 			display: flex;
 		}
-		.pannelli {
+		.panels {
 			grid-template-columns: 1fr;
 		}
-		.pannelli[data-scheda='editor'] .anteprima {
+		.panels[data-tab='editor'] .preview {
 			display: none;
 		}
-		.pannelli[data-scheda='anteprima'] .editor {
+		.panels[data-tab='preview'] .editor {
 			display: none;
 		}
 	}

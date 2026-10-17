@@ -1,5 +1,5 @@
-/* Variabili di tema a livello pagina: il data-tema sta su <html>. */
-[data-tema] {
+/* Variabili di tema a livello pagina: il data-theme sta su <html>. */
+[data-theme] {
 	--sfondo: #f2f4f8;
 	--superficie: #fff;
 	--testo: #1f2430;
@@ -18,7 +18,7 @@
 	--hl-builtin: #e36209;
 }
 
-[data-tema='scuro'] {
+[data-theme='dark'] {
 	--sfondo: #14161c;
 	--superficie: #1e1e1e;
 	--testo: #e8e8e8;
@@ -37,7 +37,7 @@
 	--hl-builtin: #ffa657;
 }
 
-[data-tema='vivace'] {
+[data-theme='vivid'] {
 	--sfondo: #0c224e;
 	--superficie: #0f2a5c;
 	--testo: #ffffff;

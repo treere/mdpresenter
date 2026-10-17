@@ -43,4 +43,16 @@ describe('renderMarkdown', () => {
 		expect(html).not.toContain('mermaid-block');
 		expect(html).toContain('graph TD');
 	});
+
+	it('renders two-column blocks', () => {
+		const html = renderMarkdown('::: colonne\n::: sinistra\nciao\n:::\n::: destra\nPippo\n:::\n');
+		expect(html).toContain('colonne');
+		expect(html).toContain('ciao');
+		expect(html).toContain('Pippo');
+	});
+
+	it('leaves unclosed column blocks as text', () => {
+		const html = renderMarkdown('::: colonne\ntext without end');
+		expect(html).not.toContain('colonne"><div');
+	});
 });

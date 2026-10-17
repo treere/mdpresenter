@@ -49,6 +49,23 @@ A[Idea] --> B[Codice]
 \`\`\``
 		},
 		{
+			title: 'Colonne',
+		description: 'Testo e immagini affiancati.',
+		text: `# Confronto
+
+::: colonne
+::: sinistra
+Ciao a sinistra, con un elenco:
+
+- Primo punto
+- Secondo punto
+:::
+::: destra
+![Gatto](https://picsum.photos/seed/colonne/600/400)
+:::
+:::`
+		},
+		{
 			title: 'Link e immagini',
 			description: 'Collegamenti e foto dentro le slide.',
 			text: `# Un gatto per iniziare\n\nLe immagini rendono tutto più light.\n\n![Gatto](https://picsum.photos/seed/gatto/600/400)\n\n---\n\n# Approfondisci\n\nLeggi la [documentazione](https://svelte.dev) per saperne di più.`
@@ -94,6 +111,23 @@ With mermaid-code you show the source:
 graph TD
 A[Idea] --> B[Code]
 \`\`\``
+		},
+		{
+			title: 'Columns',
+		description: 'Text and images side by side.',
+		text: `# Comparison
+
+::: colonne
+::: sinistra
+Hello on the left, with a list:
+
+- First point
+- Second point
+:::
+::: destra
+![Cat](https://picsum.photos/seed/columns/600/400)
+:::
+:::`
 		},
 		{
 			title: 'Links and images',

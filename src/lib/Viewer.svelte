@@ -25,6 +25,8 @@
 	// the empty prerendered {@html} would not update on hydration.
 	let html = $state('');
 	let allHtml: string[] = $state([]);
+	let overflowing = $state(false);
+	let slideEl: HTMLDivElement | undefined = $state();
 	let renderSeq = 0;
 	let mermaidReady: Promise<unknown> | null = null;
 	$effect(() => {
@@ -36,7 +38,8 @@
 		allHtml = ss.map((s) => DOMPurify.sanitize(renderMarkdown(s)));
 		const mine = ++renderSeq;
 		void tick().then(() => {
-			if (mine === renderSeq) void renderMermaid();
+			checkOverflow();
+			if (mine === renderSeq) void renderMermaid().then(() => checkOverflow());
 		});
 	});
 
@@ -119,6 +122,14 @@
 	let showLink = $state(false);
 	let manualLink = $state('');
 
+	function checkOverflow() {
+		if (!slideEl) {
+			overflowing = false;
+			return;
+		}
+		overflowing = slideEl.scrollHeight > slideEl.clientHeight + 4;
+	}
+
 	async function copyLink(fromStart = false) {
 		if (!isBrowser) return;
 		showLink = false;
@@ -175,6 +186,7 @@
 	</button>
 	<div
 		class="slide"
+		bind:this={slideEl}
 		role="region"
 		aria-label={t.currentSlide}
 		ontouchstart={(e) => (startX = e.touches[0].clientX)}
@@ -191,7 +203,7 @@
 	<button class="navbtn right" onclick={next} aria-label={t.nextSlide}>
 		<ChevronRight size={28} />
 	</button>
-	<p class="counter">{index + 1}/{total}</p>
+	<p class="counter">{index + 1}/{total}{#if overflowing}<span class="overflow" title={t.overflow}>!</span>{/if}</p>
 </div>
 <div class="print" aria-hidden="true">
 	{#each allHtml as h}
@@ -396,6 +408,33 @@
 		background: var(--surface);
 		color: var(--text);
 		font-size: 0.85rem;
+	}
+	.slide :global(img) {
+		max-width: 100%;
+		height: auto;
+		border-radius: 8px;
+	}
+	:global(.colonne) {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1rem;
+	}
+	.overflow {
+		display: inline-flex;
+		margin-left: 0.4rem;
+		width: 1.2em;
+		height: 1.2em;
+		align-items: center;
+		justify-content: center;
+		border-radius: 50%;
+		background: var(--accent);
+		color: var(--surface);
+		font-weight: 800;
+	}
+	@media (max-width: 700px) {
+		:global(.colonne) {
+			grid-template-columns: 1fr;
+		}
 	}
 	.viewer:fullscreen {
 		background: var(--background);

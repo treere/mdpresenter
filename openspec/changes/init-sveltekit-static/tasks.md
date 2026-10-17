@@ -8,5 +8,5 @@
 
 ## 2. Pubblicazione
 
-- [ ] 2.1 Commit e push su `main` — verifica: `git log origin/main` contiene il commit
-- [ ] 2.2 Attivazione Pages con sorgente GitHub Actions e verifica URL — verifica: `https://treere.github.io/mdpresenter/` mostra `mdpresenter` (nota: il push del workflow richiede token con scope `workflow`)
+- [x] 2.1 Commit e push su `main` — verifica: `git log origin/main` contiene il commit
+- [x] 2.2 Attivazione Pages con sorgente GitHub Actions e verifica URL — verifica: `https://treere.github.io/mdpresenter/` mostra `mdpresenter` (nota: il push del workflow richiede token con scope `workflow`)

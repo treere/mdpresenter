@@ -28,6 +28,9 @@
 
 	const slides = $derived(splitSlides(testo));
 
+	// Contatore anti-sorpasso: vince solo l'ultima codifica avviata.
+	let sequenzaCodifica = 0;
+
 	$effect(() => {
 		if (!suBrowser || !pronto) return;
 		const t = testo;
@@ -35,8 +38,11 @@
 			primoAvvio = false;
 			return;
 		}
+		const mia = ++sequenzaCodifica;
 		const timer = window.setTimeout(() => {
-			void codifica(t).then((c) => history.replaceState(null, '', '#' + c));
+			void codifica(t).then((c) => {
+				if (mia === sequenzaCodifica) history.replaceState(null, '', '#' + c);
+			});
 		}, 500);
 		return () => clearTimeout(timer);
 	});

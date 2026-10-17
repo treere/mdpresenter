@@ -61,23 +61,19 @@
 
 	let copiato = $state(false);
 	let mostraLink = $state(false);
-	let link = $state('');
-	$effect(() => {
-		const s = slides;
-		if (!suBrowser) return;
-		void codifica(s.join('\n---\n')).then((c) => {
-			link = location.origin + resolve('/v') + '#' + c;
-		});
-	});
+	let linkManuale = $state('');
 
 	async function copiaLink() {
 		if (!suBrowser) return;
 		mostraLink = false;
+		const url =
+			location.origin + resolve('/v') + '#' + (await codifica(slides.join('\n---\n')));
 		try {
-			await navigator.clipboard.writeText(link);
+			await navigator.clipboard.writeText(url);
 			copiato = true;
 			window.setTimeout(() => (copiato = false), 2000);
 		} catch {
+			linkManuale = url;
 			mostraLink = true;
 		}
 	}
@@ -107,7 +103,7 @@
 	<div class="link-manuale">
 		<label>
 			{t.condivisione.manuale}
-			<input readonly value={link} onfocus={(e) => e.currentTarget.select()} />
+			<input readonly value={linkManuale} onfocus={(e) => e.currentTarget.select()} />
 		</label>
 	</div>
 {/if}

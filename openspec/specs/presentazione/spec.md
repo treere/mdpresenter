@@ -76,3 +76,8 @@ La navigazione resta attiva anche in schermo intero.
 
 - **WHEN** l'utente esporta il PDF con qualsiasi tema attivo
 - **THEN** il PDF usa il tema chiaro
+
+#### Scenario: Tema sempre raggiungibile
+
+- **WHEN** l'utente è su qualsiasi pagina o scheda (anche editor su telefono)
+- **THEN** può cambiare tema senza passare dal visualizzatore

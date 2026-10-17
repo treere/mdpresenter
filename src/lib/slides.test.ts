@@ -20,12 +20,26 @@ describe('splitSlides', () => {
 });
 
 describe('codifica/decodifica', () => {
-	it('roundtrip con caratteri unicode', () => {
+	it('roundtrip con caratteri unicode', async () => {
 		const testo = '# Ciao 👋\n\n---\n\nÈ un test';
-		expect(decodifica(codifica(testo))).toBe(testo);
+		expect(await decodifica(await codifica(testo))).toBe(testo);
 	});
 
-	it('testo invalido ritorna null', () => {
-		expect(decodifica('!!!non-base64!!!')).toBeNull();
+	it('testo invalido ritorna null', async () => {
+		expect(await decodifica('!!!non-base64!!!')).toBeNull();
+	});
+
+	it('testo corto resta in chiaro con prefisso 0', async () => {
+		const c = await codifica('ciao');
+		expect(c.startsWith('0')).toBe(true);
+		expect(await decodifica(c)).toBe('ciao');
+	});
+
+	it('testo lungo è compresso e più corto del chiaro', async () => {
+		const testo = '# Titolo\n\nParagrafo ripetuto. '.repeat(30);
+		const c = await codifica(testo);
+		expect(c.startsWith('1')).toBe(true);
+		expect(c.length).toBeLessThan(testo.length);
+		expect(await decodifica(c)).toBe(testo);
 	});
 });

@@ -8,31 +8,35 @@
 	let testo = $state(ESEMPIO);
 	let scheda: 'editor' | 'anteprima' = $state('anteprima');
 	let primoAvvio = true;
+	let pronto = $state(false);
 
 	const suBrowser = typeof window !== 'undefined';
 	const t = $derived(testi[preferenze.lingua]);
 
 	if (suBrowser) {
-		if (appoggio.testoDaAprire !== null) {
-			testo = appoggio.testoDaAprire;
-			appoggio.testoDaAprire = null;
-		} else if (location.hash.length > 1) {
-			const daUrl = decodifica(location.hash.slice(1));
-			if (daUrl !== null) testo = daUrl;
-		}
+		void (async () => {
+			if (appoggio.testoDaAprire !== null) {
+				testo = appoggio.testoDaAprire;
+				appoggio.testoDaAprire = null;
+			} else if (location.hash.length > 1) {
+				const daUrl = await decodifica(location.hash.slice(1));
+				if (daUrl !== null) testo = daUrl;
+			}
+			pronto = true;
+		})();
 	}
 
 	const slides = $derived(splitSlides(testo));
 
 	$effect(() => {
-		if (!suBrowser) return;
+		if (!suBrowser || !pronto) return;
 		const t = testo;
 		if (primoAvvio) {
 			primoAvvio = false;
 			return;
 		}
 		const timer = window.setTimeout(() => {
-			history.replaceState(null, '', '#' + codifica(t));
+			void codifica(t).then((c) => history.replaceState(null, '', '#' + c));
 		}, 500);
 		return () => clearTimeout(timer);
 	});

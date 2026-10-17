@@ -61,9 +61,14 @@
 
 	let copiato = $state(false);
 	let mostraLink = $state(false);
-	const link = $derived(
-		suBrowser ? location.origin + resolve('/v') + '#' + codifica(slides.join('\n---\n')) : ''
-	);
+	let link = $state('');
+	$effect(() => {
+		const s = slides;
+		if (!suBrowser) return;
+		void codifica(s.join('\n---\n')).then((c) => {
+			link = location.origin + resolve('/v') + '#' + c;
+		});
+	});
 
 	async function copiaLink() {
 		if (!suBrowser) return;

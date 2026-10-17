@@ -7,8 +7,9 @@
 	const suBrowser = typeof window !== 'undefined';
 
 	if (suBrowser && location.hash.length > 1) {
-		const daUrl = decodifica(location.hash.slice(1));
-		if (daUrl !== null) testo = daUrl;
+		void decodifica(location.hash.slice(1)).then((daUrl) => {
+			if (daUrl !== null) testo = daUrl;
+		});
 	}
 
 	const slides = $derived(splitSlides(testo));

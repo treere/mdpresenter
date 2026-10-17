@@ -18,7 +18,8 @@ L'utente scrive Markdown nell'editor e vede le slide aggiornarsi mentre scrive.
 
 ### Requirement: Testo persistito nell'URL
 
-Il testo dell'editor è compresso e codificato nel fragment dell'URL e si aggiorna mentre si scrive.
+Il testo dell'editor e l'indice della slide corrente vivono nei query param
+(`t` per il testo compresso, `s` per l'indice) e si aggiornano mentre si usa l'app.
 
 #### Scenario: Condivisione del link
 
@@ -34,3 +35,8 @@ Il testo dell'editor è compresso e codificato nel fragment dell'URL e si aggior
 
 - **WHEN** il testo supera la soglia minima
 - **THEN** l'URL contiene la versione compressa, più corta del testo in chiaro
+
+#### Scenario: Link non valido
+
+- **WHEN** l'URL contiene un codice che non si decodifica
+- **THEN** l'utente vede un avviso e l'editor parte vuoto (non l'esempio)

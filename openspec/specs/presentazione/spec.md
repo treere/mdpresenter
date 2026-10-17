@@ -96,3 +96,13 @@ La navigazione resta attiva anche in schermo intero.
 
 - **WHEN** l'utente è su qualsiasi pagina o scheda (anche editor su telefono)
 - **THEN** può cambiare tema senza passare dal visualizzatore
+
+#### Scenario: Link diretto a slide
+
+- **WHEN** l'utente apre un link con indice slide valido
+- **THEN** la presentazione parte da quella slide
+
+#### Scenario: Indice fuori intervallo
+
+- **WHEN** l'indice nel link supera le slide esistenti
+- **THEN** si parte dall'ultima slide senza errori

@@ -40,3 +40,8 @@ Dalla home l'utente copia con un tocco il link alla vista presentazione del test
 
 - **WHEN** il browser blocca gli appunti
 - **THEN** l'utente vede comunque il link pronto da copiare a mano
+
+#### Scenario: Scelta slide iniziale
+
+- **WHEN** l'utente copia il link scegliendo "dall'inizio" o "dalla slide corrente"
+- **THEN** il link apre la presentazione rispettivamente dalla prima slide o da quella corrente

@@ -9,15 +9,15 @@ La pagina iniziale presenta il progetto con la sua scritta centrata nella viewpo
 
 ### Requirement: Scritta iniziale centrata
 
-La home mostra il testo `mdpresenter` centrato orizzontalmente e verticalmente nella viewport,
-leggibile su telefono e desktop senza interazioni.
+La home non mostra più solo la scritta statica: ospita l'editor e il visualizzatore.
+Con URL senza testo, l'editor parte con un esempio minimo che mostra come separare le slide.
 
 #### Scenario: Apertura della home
 
-- **WHEN** l'utente apre la pagina iniziale
-- **THEN** vede la scritta `mdpresenter` centrata nella viewport
+- **WHEN** l'utente apre la pagina iniziale senza testo nell'URL
+- **THEN** vede editor e visualizzatore con una presentazione di esempio
 
 #### Scenario: Rotazione o ridimensionamento
 
 - **WHEN** l'utente ruota il telefono o ridimensiona la finestra
-- **THEN** la scritta resta centrata e interamente visibile
+- **THEN** editor e visualizzatore restano utilizzabili e la slide resta interamente visibile

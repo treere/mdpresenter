@@ -59,7 +59,6 @@ Ciao a sinistra, con un elenco:
 
 - Primo punto
 - Secondo punto
-:::
 ::: right
 ![Gatto](https://picsum.photos/seed/colonne/600/400)
 :::
@@ -123,7 +122,6 @@ Hello on the left, with a list:
 
 - First point
 - Second point
-:::
 ::: right
 ![Cat](https://picsum.photos/seed/columns/600/400)
 :::

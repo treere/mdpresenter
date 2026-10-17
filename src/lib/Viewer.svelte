@@ -50,7 +50,12 @@
 			render: (id: string, code: string) => Promise<{ svg: string }>;
 		};
 		const dark = document.documentElement.dataset.theme === 'dark';
-		mermaid.initialize({ startOnLoad: false, theme: dark ? 'dark' : 'default' });
+		mermaid.initialize({
+			startOnLoad: false,
+			theme: dark ? 'dark' : 'default',
+			flowchart: { htmlLabels: false },
+			securityLevel: 'strict'
+		});
 		return mermaid;
 	}
 

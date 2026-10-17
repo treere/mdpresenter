@@ -16,20 +16,20 @@
 	let container: HTMLDivElement | undefined = $state();
 	let fullscreen = $state(false);
 
-	const suBrowser = typeof window !== 'undefined';
+	const isBrowser = typeof window !== 'undefined';
 
 	const total = $derived(slides.length);
 	const current = $derived(slides[Math.min(index, total - 1)] ?? '');
 	// HTML computed in $effect (not $derived): isBrowser is not reactive and
 	// the empty prerendered {@html} would not update on hydration.
 	let html = $state('');
-	let tutteHtml: string[] = $state([]);
+	let allHtml: string[] = $state([]);
 	$effect(() => {
 		const c = current;
 		const ss = slides;
-		if (!suBrowser) return;
+		if (!isBrowser) return;
 		html = DOMPurify.sanitize(renderMarkdown(c));
-		tutteHtml = ss.map((s) => DOMPurify.sanitize(renderMarkdown(s)));
+		allHtml = ss.map((s) => DOMPurify.sanitize(renderMarkdown(s)));
 	});
 
 	$effect(() => {
@@ -45,26 +45,28 @@
 	}
 
 	function handleKey(e: KeyboardEvent) {
+		const target = e.target as HTMLElement | null;
+		if (target && (target.tagName === 'TEXTAREA' || target.tagName === 'INPUT')) return;
 		if (e.key === 'ArrowRight') next();
 		if (e.key === 'ArrowLeft') prev();
 	}
 
 	async function toggleFullscreen() {
-		if (!suBrowser || !container) return;
+		if (!isBrowser || !container) return;
 		if (document.fullscreenElement) await document.exitFullscreen();
 		else await container.requestFullscreen();
 	}
 
 	function print() {
-		if (suBrowser) window.print();
+		if (isBrowser) window.print();
 	}
 
 	let copied = $state(false);
 	let showLink = $state(false);
 	let manualLink = $state('');
 
-	async function copiaLink() {
-		if (!suBrowser) return;
+	async function copyLink() {
+		if (!isBrowser) return;
 		showLink = false;
 		const url =
 			location.origin + resolve('/v') + '#' + (await encode(slides.join('\n---\n')));
@@ -81,7 +83,7 @@
 
 <svelte:window
 	onkeydown={handleKey}
-	onfullscreenchange={() => (fullscreen = suBrowser && !!document.fullscreenElement)}
+	onfullscreenchange={() => (fullscreen = isBrowser && !!document.fullscreenElement)}
 />
 
 <div class="app">
@@ -94,15 +96,15 @@
 		<FileDown size={18} />
 		<span>{t.toolbar.pdf}</span>
 	</button>
-	<button onclick={copiaLink} aria-label={t.sharing.copia}>
+	<button onclick={copyLink} aria-label={t.sharing.copy}>
 		{#if copied}<Check size={18} />{:else}<Link2 size={18} />{/if}
-		<span>{copied ? t.sharing.copied : t.sharing.copia}</span>
+		<span>{copied ? t.sharing.copied : t.sharing.copy}</span>
 	</button>
 </div>
 {#if showLink}
-	<div class="link-manuale">
+	<div class="manual-link">
 		<label>
-			{t.sharing.manuale}
+			{t.sharing.manual}
 			<input readonly value={manualLink} onfocus={(e) => e.currentTarget.select()} />
 		</label>
 	</div>
@@ -132,7 +134,7 @@
 	<p class="counter">{index + 1}/{total}</p>
 </div>
 <div class="print" aria-hidden="true">
-	{#each tutteHtml as h}
+	{#each allHtml as h}
 		<div class="print-page">{@html h}</div>
 	{/each}
 </div>
@@ -307,17 +309,17 @@
 	.toolbar button:hover {
 		border-color: var(--accento);
 	}
-	.link-manuale {
+	.manual-link {
 		margin-bottom: 0.75rem;
 	}
-	.link-manuale label {
+	.manual-link label {
 		display: flex;
 		flex-direction: column;
 		gap: 0.25rem;
 		font-size: 0.9rem;
 		color: var(--text);
 	}
-	.link-manuale input {
+	.manual-link input {
 		padding: 0.5rem 0.8rem;
 		border: 1px solid var(--bordo);
 		border-radius: 8px;

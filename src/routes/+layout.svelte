@@ -11,10 +11,10 @@
 	let { children }: LayoutProps = $props();
 	let menuAperto = $state(false);
 
-	const suBrowser = typeof window !== 'undefined';
+	const isBrowser = typeof window !== 'undefined';
 	const t = $derived(texts[preferences.language]);
 
-	if (suBrowser) {
+	if (isBrowser) {
 		const language = localStorage.getItem('mdpresenter-language');
 		if (language === 'it' || language === 'en') preferences.language = language;
 		const theme = localStorage.getItem('mdpresenter-theme');
@@ -22,7 +22,7 @@
 	}
 
 	$effect(() => {
-		if (!suBrowser) return;
+		if (!isBrowser) return;
 		document.documentElement.dataset.theme = preferences.theme;
 		document.documentElement.lang = preferences.language;
 		localStorage.setItem('mdpresenter-theme', preferences.theme);

@@ -4,9 +4,9 @@
 
 	let text = $state(SAMPLE);
 
-	const suBrowser = typeof window !== 'undefined';
+	const isBrowser = typeof window !== 'undefined';
 
-	if (suBrowser && location.hash.length > 1) {
+	if (isBrowser && location.hash.length > 1) {
 		void decode(location.hash.slice(1)).then((daUrl) => {
 			if (daUrl !== null) text = daUrl;
 		});

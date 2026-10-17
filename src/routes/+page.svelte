@@ -10,10 +10,10 @@
 	let firstRun = true;
 	let ready = $state(false);
 
-	const suBrowser = typeof window !== 'undefined';
+	const isBrowser = typeof window !== 'undefined';
 	const t = $derived(texts[preferences.language]);
 
-	if (suBrowser) {
+	if (isBrowser) {
 		void (async () => {
 			if (pending.textToOpen !== null) {
 				text = pending.textToOpen;
@@ -32,7 +32,7 @@
 	let sequenzaCodifica = 0;
 
 	$effect(() => {
-		if (!suBrowser || !ready) return;
+		if (!isBrowser || !ready) return;
 		const t = text;
 		if (firstRun) {
 			firstRun = false;

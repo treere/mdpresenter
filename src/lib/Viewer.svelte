@@ -53,7 +53,7 @@
 		mermaid.initialize({
 			startOnLoad: false,
 			theme: dark ? 'dark' : 'default',
-			flowchart: { htmlLabels: false },
+			htmlLabels: false,
 			securityLevel: 'strict'
 		});
 		return mermaid;

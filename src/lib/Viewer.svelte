@@ -47,8 +47,14 @@
 	function handleKey(e: KeyboardEvent) {
 		const target = e.target as HTMLElement | null;
 		if (target && (target.tagName === 'TEXTAREA' || target.tagName === 'INPUT')) return;
-		if (e.key === 'ArrowRight') next();
-		if (e.key === 'ArrowLeft') prev();
+		if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+			e.preventDefault();
+			next();
+		}
+		if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+			e.preventDefault();
+			prev();
+		}
 	}
 
 	async function toggleFullscreen() {

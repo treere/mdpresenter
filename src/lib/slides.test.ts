@@ -17,6 +17,10 @@ describe('splitSlides', () => {
 	it('requires the separator on its own line', () => {
 		expect(splitSlides('a --- b')).toEqual(['a --- b']);
 	});
+
+	it('ignores separators inside fenced code', () => {
+		expect(splitSlides('```\n---\n```\n---\ntext')).toEqual(['```\n---\n```', 'text']);
+	});
 });
 
 describe('encode/decode', () => {

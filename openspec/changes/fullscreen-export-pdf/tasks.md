@@ -7,4 +7,4 @@
 
 ## 2. Pubblicazione
 
-- [ ] 2.1 Check, test, build con `BASE_PATH`, commit e push — verifica: deploy Pages verde e fullscreen + stampa funzionanti dall'URL pubblico
+- [x] 2.1 Check, test, build con `BASE_PATH`, commit e push — verifica: deploy Pages verde e fullscreen + stampa funzionanti dall'URL pubblico

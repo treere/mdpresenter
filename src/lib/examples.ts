@@ -54,13 +54,13 @@ A[Idea] --> B[Codice]
 		text: `# Confronto
 
 ::: colonne
-::: sinistra
+::: left
 Ciao a sinistra, con un elenco:
 
 - Primo punto
 - Secondo punto
 :::
-::: destra
+::: right
 ![Gatto](https://picsum.photos/seed/colonne/600/400)
 :::
 :::`
@@ -118,13 +118,13 @@ A[Idea] --> B[Code]
 		text: `# Comparison
 
 ::: colonne
-::: sinistra
+::: left
 Hello on the left, with a list:
 
 - First point
 - Second point
 :::
-::: destra
+::: right
 ![Cat](https://picsum.photos/seed/columns/600/400)
 :::
 :::`

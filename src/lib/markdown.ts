@@ -13,21 +13,23 @@ const colonneExtension = {
 	name: 'colonne',
 	level: 'block',
 	start(src: string) {
-		return src.indexOf('::: colonne');
+		const i = src.search(/^::: +colonne *(?:
+|$)/im);
+		return i === -1 ? undefined : i;
 	},
 	tokenizer(this: any, src: string) {
-		const match = /^::: colonne\n([\s\S]*?)\n:::\s*(?:\n|$)/.exec(src);
+		const match = /^::: +colonne *\n([\s\S]*?)\n::: *(?:\n|$)/i.exec(src);
 		if (!match) return undefined;
 		const inner = match[1].split('\n');
 		let side: 'left' | 'right' | null = null;
 		const left: string[] = [];
 		const right: string[] = [];
 		for (const line of inner) {
-			if (/^::: sinistra\s*$/.test(line)) {
+			if (/^:::\s*left\s*$/i.test(line)) {
 				side = 'left';
 				continue;
 			}
-			if (/^::: destra\s*$/.test(line)) {
+			if (/^:::\s*right\s*$/i.test(line)) {
 				side = 'right';
 				continue;
 			}

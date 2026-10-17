@@ -45,7 +45,7 @@ describe('renderMarkdown', () => {
 	});
 
 	it('renders two-column blocks', () => {
-		const html = renderMarkdown('::: colonne\n::: sinistra\nciao\n:::\n::: destra\nPippo\n:::\n');
+		const html = renderMarkdown('::: colonne\n::: left\nciao\n:::\n::: right\nPippo\n:::\n');
 		expect(html).toContain('colonne');
 		expect(html).toContain('ciao');
 		expect(html).toContain('Pippo');

@@ -8,7 +8,7 @@ e nessuno avvisa quando una slide sborda.
 
 ## What Changes
 
-- Blocchi a due colonne con sintassi autore: `::: colonne`, `::: sinistra`, `::: destra`
+- Blocchi a due colonne con sintassi autore: `::: colonne`, `::: left`, `::: right`
 - Immagini sempre contenute nella slide (mai fuori dai bordi)
 - Avviso visivo quando una slide supera la viewport (i titoli restano intoccabili)
 

@@ -18,7 +18,7 @@ contenimento immagini, segnale di sbordo. Vedi proposal.md (Why).
 ## Decisions
 
 - **Sintassi a recinti**:
-  `::: colonne` apre, `::: sinistra` e `::: destra` dividono, `:::` chiude.
+  `::: colonne` apre, `::: left` e `::: right` dividono, `:::` chiude.
   Implementata come estensione `marked` (tokenizer custom) che emette
   `<div class="colonne"><div>…</div><div>…</div></div>` con inner Markdown
   renderizzato ricorsivamente. Alternativa: `<div>` HTML scritto a mano

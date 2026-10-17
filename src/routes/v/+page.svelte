@@ -2,24 +2,37 @@
 	import Viewer from '../../lib/Viewer.svelte';
 	import { preferences } from '../../lib/shared.svelte';
 	import { texts } from '../../lib/i18n';
-	import { SAMPLE, decode, splitSlides } from '../../lib/slides';
+	import { SAMPLE, decode, readQuery, splitSlides, writeQuery } from '../../lib/slides';
 
 	let text = $state(SAMPLE);
 	let invalidLink = $state(false);
+	let slideIndex = $state(0);
+	let rawText: string | null = null;
 	const t = $derived(texts[preferences.language]);
 
 	const isBrowser = typeof window !== 'undefined';
 
-	if (isBrowser && location.hash.length > 1) {
-		void decode(location.hash.slice(1)).then((decoded) => {
-			if (decoded !== null) {
-				text = decoded;
-			} else {
-				text = '';
-				invalidLink = true;
-			}
-		});
+	if (isBrowser) {
+		const { raw, slide } = readQuery();
+		rawText = raw;
+		if (raw !== null) {
+			void decode(raw).then((decoded) => {
+				if (decoded !== null) {
+					text = decoded;
+					slideIndex = slide;
+				} else {
+					text = '';
+					invalidLink = true;
+				}
+			});
+		}
 	}
+
+	$effect(() => {
+		if (!isBrowser || rawText === null) return;
+		const s = slideIndex;
+		writeQuery(rawText, s);
+	});
 
 	const slides = $derived(splitSlides(text));
 </script>
@@ -35,7 +48,7 @@
 		<button onclick={() => (invalidLink = false)}>{t.invalidLink.close}</button>
 	</div>
 {/if}
-<Viewer {slides} />
+<Viewer {slides} bind:index={slideIndex} />
 
 <style>
 	.warning {

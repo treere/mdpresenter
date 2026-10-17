@@ -3,13 +3,14 @@
 	import Viewer from '../lib/Viewer.svelte';
 	import { pending, preferences } from '../lib/shared.svelte';
 	import { texts } from '../lib/i18n';
-	import { SAMPLE, encode, decode, splitSlides } from '../lib/slides';
+	import { SAMPLE, encode, decode, readQuery, splitSlides, writeQuery } from '../lib/slides';
 
 	let text = $state(SAMPLE);
 	let tab: 'editor' | 'preview' = $state('editor');
 	let firstRun = true;
 	let ready = $state(false);
 	let invalidLink = $state(false);
+	let slideIndex = $state(0);
 
 	const isBrowser = typeof window !== 'undefined';
 	const t = $derived(texts[preferences.language]);
@@ -19,13 +20,17 @@
 			if (pending.textToOpen !== null) {
 				text = pending.textToOpen;
 				pending.textToOpen = null;
-			} else if (location.hash.length > 1) {
-				const decoded = await decode(location.hash.slice(1));
-				if (decoded !== null) {
-					text = decoded;
-				} else {
-					text = '';
-					invalidLink = true;
+			} else {
+				const { raw, slide } = readQuery();
+				if (raw !== null) {
+					const decoded = await decode(raw);
+					if (decoded !== null) {
+						text = decoded;
+						slideIndex = slide;
+					} else {
+						text = '';
+						invalidLink = true;
+					}
 				}
 			}
 			ready = true;
@@ -40,6 +45,7 @@
 	$effect(() => {
 		if (!isBrowser || !ready) return;
 		const t = text;
+		const s = slideIndex;
 		if (firstRun) {
 			firstRun = false;
 			return;
@@ -47,7 +53,7 @@
 		const mine = ++encodeSeq;
 		const timer = window.setTimeout(() => {
 			void encode(t).then((c) => {
-				if (mine === encodeSeq) history.replaceState(null, '', '#' + c);
+				if (mine === encodeSeq) writeQuery(c, s);
 			});
 		}, 500);
 		return () => clearTimeout(timer);
@@ -83,7 +89,7 @@
 		spellcheck={false}
 	></textarea>
 	<div class="preview">
-		<Viewer {slides} />
+		<Viewer {slides} bind:index={slideIndex} />
 	</div>
 </div>
 

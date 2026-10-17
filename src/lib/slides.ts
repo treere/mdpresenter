@@ -58,6 +58,22 @@ export async function encode(text: string): Promise<string> {
 	return '1' + toBase64Url(compress(new TextEncoder().encode(text)));
 }
 
+
+/** Reads share params from the URL query: t (text) and s (slide index). */
+export function readQuery(): { raw: string | null; slide: number } {
+	const q = new URLSearchParams(location.search);
+	const s = Number.parseInt(q.get('s') ?? '', 10);
+	return { raw: q.get('t'), slide: Number.isNaN(s) ? 0 : Math.max(0, s) };
+}
+
+/** Writes share params, keeping the current path (with base). */
+export function writeQuery(encoded: string, slide: number): void {
+	const q = new URLSearchParams();
+	q.set('t', encoded);
+	q.set('s', String(slide));
+	history.replaceState(null, '', `${location.pathname}?${q.toString()}`);
+}
+
 /** Decodes `0`/`1`. Returns null on invalid format or missing gzip. */
 export async function decode(hash: string): Promise<string | null> {
 	try {

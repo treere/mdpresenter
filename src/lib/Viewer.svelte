@@ -9,10 +9,9 @@
 	import { renderMarkdown } from './markdown';
 	import { encode } from './slides';
 
-	let { slides }: { slides: string[] } = $props();
+	let { slides, index = $bindable(0) }: { slides: string[]; index?: number } = $props();
 	const t = $derived(texts[preferences.language]);
 
-	let index = $state(0);
 	let startX = $state<number | null>(null);
 	let container: HTMLDivElement | undefined = $state();
 	let root: HTMLDivElement | undefined = $state();
@@ -123,8 +122,10 @@
 	async function copyLink() {
 		if (!isBrowser) return;
 		showLink = false;
-		const url =
-			location.origin + resolve('/v') + '#' + (await encode(slides.join('\n---\n')));
+		const q = new URLSearchParams();
+		q.set('t', await encode(slides.join('\n---\n')));
+		q.set('s', String(index));
+		const url = location.origin + resolve('/v') + '?' + q.toString();
 		try {
 			await navigator.clipboard.writeText(url);
 			copied = true;

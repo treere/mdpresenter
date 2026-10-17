@@ -29,7 +29,9 @@ function toBase64Url(bytes: Uint8Array): string {
 }
 
 function fromBase64Url(s: string): Uint8Array {
-	const bin = atob(s.replaceAll('-', '+').replaceAll('_', '/'));
+	let b64 = s.replaceAll('-', '+').replaceAll('_', '/');
+	while (b64.length % 4 !== 0) b64 += '=';
+	const bin = atob(b64);
 	return Uint8Array.from(bin, (c) => c.charCodeAt(0));
 }
 

@@ -1,0 +1,65 @@
+/* Variabili di tema a livello pagina: il data-tema sta su <html>. */
+[data-tema] {
+	--sfondo: #f2f4f8;
+	--superficie: #fff;
+	--testo: #1f2430;
+	--testo-debole: #5b6472;
+	--bordo: #e3e6eb;
+	--accento: #4f6df5;
+	--codice-sfondo: #f4f6fa;
+	--tabella-intestazione: #eef1f6;
+	--ombra: 0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px rgb(0 0 0 / 0.1);
+	--hl-base: #24292e;
+	--hl-keyword: #d73a49;
+	--hl-string: #032f62;
+	--hl-comment: #6a737d;
+	--hl-title: #6f42c1;
+	--hl-number: #005cc5;
+	--hl-builtin: #e36209;
+}
+
+[data-tema='scuro'] {
+	--sfondo: #14161c;
+	--superficie: #1e1e1e;
+	--testo: #e8e8e8;
+	--testo-debole: #a8b0bd;
+	--bordo: #3a3f4b;
+	--accento: #8aa2ff;
+	--codice-sfondo: #2d2d2d;
+	--tabella-intestazione: #2a2a2a;
+	--ombra: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.4);
+	--hl-base: #e8e8e8;
+	--hl-keyword: #ff7b72;
+	--hl-string: #a5d6ff;
+	--hl-comment: #8b949e;
+	--hl-title: #d2a8ff;
+	--hl-number: #79c0ff;
+	--hl-builtin: #ffa657;
+}
+
+[data-tema='vivace'] {
+	--sfondo: #0c224e;
+	--superficie: #0f2a5c;
+	--testo: #ffffff;
+	--testo-debole: #c3d2f5;
+	--bordo: #3d5a94;
+	--accento: #ffd43b;
+	--codice-sfondo: #1b3f7d;
+	--tabella-intestazione: #1b3f7d;
+	--ombra: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.4);
+	--hl-base: #ffffff;
+	--hl-keyword: #ffd43b;
+	--hl-string: #b8e6ff;
+	--hl-comment: #93a7cc;
+	--hl-title: #ffdf80;
+	--hl-number: #9ad1ff;
+	--hl-builtin: #ffc069;
+}
+
+body {
+	background: var(--sfondo);
+	color: var(--testo);
+	transition:
+		background-color 150ms ease,
+		color 150ms ease;
+}

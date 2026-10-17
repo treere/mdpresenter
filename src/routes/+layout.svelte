@@ -1,6 +1,7 @@
 <script lang="ts">
 	import favicon from '#lib/assets/favicon.svg';
 	import '../stampa.css';
+	import '../tema.css';
 	import type { LayoutProps } from './$types';
 
 	let { children }: LayoutProps = $props();

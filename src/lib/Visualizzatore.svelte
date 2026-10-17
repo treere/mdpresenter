@@ -1,9 +1,12 @@
 <script lang="ts">
 	import DOMPurify from 'dompurify';
 	import 'highlight.js/styles/github.css';
+	import { ChevronLeft, ChevronRight, FileDown, Maximize, Minimize, Palette } from 'lucide-svelte';
 	import { renderMarkdown } from '../lib/markdown';
 
-	let { slides }: { slides: string[] } = $props();
+	export type Tema = 'chiaro' | 'scuro' | 'vivace';
+
+	let { slides, tema = $bindable('chiaro') }: { slides: string[]; tema?: Tema } = $props();
 
 	let indice = $state(0);
 	let xInizio = $state<number | null>(null);
@@ -11,15 +14,6 @@
 	let schermoIntero = $state(false);
 
 	const suBrowser = typeof window !== 'undefined';
-
-	const TEMI = ['chiaro', 'scuro', 'vivace'] as const;
-	type Tema = (typeof TEMI)[number];
-	let tema: Tema = $state('chiaro');
-
-	if (suBrowser) {
-		const salvato = localStorage.getItem('mdpresenter-tema');
-		if (salvato === 'scuro' || salvato === 'vivace' || salvato === 'chiaro') tema = salvato;
-	}
 
 	const totale = $derived(slides.length);
 	const corrente = $derived(slides[Math.min(indice, totale - 1)] ?? '');
@@ -37,10 +31,6 @@
 
 	$effect(() => {
 		if (indice > totale - 1) indice = Math.max(totale - 1, 0);
-	});
-
-	$effect(() => {
-		if (suBrowser) localStorage.setItem('mdpresenter-tema', tema);
 	});
 
 	function avanti() {
@@ -72,14 +62,18 @@
 	onfullscreenchange={() => (schermoIntero = suBrowser && !!document.fullscreenElement)}
 />
 
-<div class="app" data-tema={tema}>
+<div class="app">
 <div class="barra">
-	<button onclick={alternaSchermoIntero}>
-		{schermoIntero ? 'Esci da schermo intero' : 'Schermo intero'}
+	<button onclick={alternaSchermoIntero} aria-label={schermoIntero ? 'Esci da schermo intero' : 'Schermo intero'}>
+		{#if schermoIntero}<Minimize size={18} />{:else}<Maximize size={18} />{/if}
+		<span>Schermo</span>
 	</button>
-	<button onclick={stampa}>PDF</button>
+	<button onclick={stampa} aria-label="Esporta PDF">
+		<FileDown size={18} />
+		<span>PDF</span>
+	</button>
 	<label class="tema">
-		Tema
+		<Palette size={18} />
 		<select bind:value={tema} aria-label="Tema delle slide">
 			<option value="chiaro">Chiaro</option>
 			<option value="scuro">Scuro</option>
@@ -88,7 +82,9 @@
 	</label>
 </div>
 <div class="viewer" bind:this={contenitore}>
-	<button class="zona sinistra" onclick={indietro} aria-label="Slide precedente">‹</button>
+	<button class="zona sinistra" onclick={indietro} aria-label="Slide precedente">
+		<ChevronLeft size={28} />
+	</button>
 	<div
 		class="slide"
 		role="region"
@@ -104,7 +100,9 @@
 	>
 		{@html html}
 	</div>
-	<button class="zona destra" onclick={avanti} aria-label="Slide successiva">›</button>
+	<button class="zona destra" onclick={avanti} aria-label="Slide successiva">
+		<ChevronRight size={28} />
+	</button>
 	<p class="contatore">{indice + 1}/{totale}</p>
 </div>
 <div class="stampa" aria-hidden="true">
@@ -130,53 +128,6 @@
 		transition:
 			background-color 150ms ease,
 			box-shadow 150ms ease;
-	}
-	.app {
-		--sfondo: #fff;
-		--testo: #1f2430;
-		--bordo: #e3e6eb;
-		--accento: #4f6df5;
-		--codice-sfondo: #f4f6fa;
-		--tabella-intestazione: #eef1f6;
-		--ombra: 0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px rgb(0 0 0 / 0.1);
-		--hl-base: #24292e;
-		--hl-keyword: #d73a49;
-		--hl-string: #032f62;
-		--hl-comment: #6a737d;
-		--hl-title: #6f42c1;
-		--hl-number: #005cc5;
-		--hl-builtin: #e36209;
-		color: var(--testo);
-	}
-	.app[data-tema='scuro'] {
-		--sfondo: #1e1e1e;
-		--testo: #e8e8e8;
-		--bordo: #555;
-		--accento: #8aa2ff;
-		--codice-sfondo: #2d2d2d;
-		--tabella-intestazione: #2a2a2a;
-		--hl-base: #e8e8e8;
-		--hl-keyword: #ff7b72;
-		--hl-string: #a5d6ff;
-		--hl-comment: #8b949e;
-		--hl-title: #d2a8ff;
-		--hl-number: #79c0ff;
-		--hl-builtin: #ffa657;
-	}
-	.app[data-tema='vivace'] {
-		--sfondo: #0f2a5c;
-		--testo: #ffffff;
-		--bordo: #ffd43b;
-		--accento: #ffd43b;
-		--codice-sfondo: #1b3f7d;
-		--tabella-intestazione: #1b3f7d;
-		--hl-base: #ffffff;
-		--hl-keyword: #ffd43b;
-		--hl-string: #b8e6ff;
-		--hl-comment: #93a7cc;
-		--hl-title: #ffdf80;
-		--hl-number: #9ad1ff;
-		--hl-builtin: #ffc069;
 	}
 	.slide {
 		background: var(--sfondo);
@@ -314,6 +265,9 @@
 	}
 	.barra button,
 	.barra select {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
 		padding: 0.5rem 0.9rem;
 		min-height: 44px;
 		border: 1px solid var(--bordo);

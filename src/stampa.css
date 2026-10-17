@@ -1,5 +1,9 @@
 /* Foglio di stampa: solo le slide, una per pagina. */
 @media print {
+	body {
+		background: #fff !important;
+		color: #000 !important;
+	}
 	main > h1,
 	main > nav,
 	.pannelli > .editor,

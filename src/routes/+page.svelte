@@ -1,19 +1,32 @@
 <script lang="ts">
-	import Visualizzatore from '../lib/Visualizzatore.svelte';
+	import { Eye, Pencil } from 'lucide-svelte';
+	import Visualizzatore, { type Tema } from '../lib/Visualizzatore.svelte';
 	import { ESEMPIO, codifica, decodifica, splitSlides } from '../lib/slides';
 
 	let testo = $state(ESEMPIO);
 	let scheda: 'editor' | 'anteprima' = $state('anteprima');
 	let primoAvvio = true;
+	let tema: Tema = $state('chiaro');
 
 	const suBrowser = typeof window !== 'undefined';
 
-	if (suBrowser && location.hash.length > 1) {
-		const daUrl = decodifica(location.hash.slice(1));
-		if (daUrl !== null) testo = daUrl;
+	if (suBrowser) {
+		const salvato = localStorage.getItem('mdpresenter-tema');
+		if (salvato === 'chiaro' || salvato === 'scuro' || salvato === 'vivace') tema = salvato;
+		if (location.hash.length > 1) {
+			const daUrl = decodifica(location.hash.slice(1));
+			if (daUrl !== null) testo = daUrl;
+		}
 	}
 
 	const slides = $derived(splitSlides(testo));
+
+	$effect(() => {
+		if (suBrowser) {
+			document.documentElement.dataset.tema = tema;
+			localStorage.setItem('mdpresenter-tema', tema);
+		}
+	});
 
 	$effect(() => {
 		if (!suBrowser) return;
@@ -32,8 +45,12 @@
 <main>
 	<h1>mdpresenter</h1>
 	<nav>
-		<button class:active={scheda === 'editor'} onclick={() => (scheda = 'editor')}>Editor</button>
+		<button class:active={scheda === 'editor'} onclick={() => (scheda = 'editor')}>
+			<Pencil size={16} />
+			Editor
+		</button>
 		<button class:active={scheda === 'anteprima'} onclick={() => (scheda = 'anteprima')}>
+			<Eye size={16} />
 			Anteprima
 		</button>
 	</nav>
@@ -45,7 +62,7 @@
 			spellcheck={false}
 		></textarea>
 		<div class="anteprima">
-			<Visualizzatore {slides} />
+			<Visualizzatore {slides} bind:tema />
 		</div>
 	</div>
 </main>
@@ -60,6 +77,7 @@
 	h1 {
 		font-size: 1.2rem;
 		margin: 0 0 0.5rem;
+		color: var(--testo);
 	}
 	nav {
 		display: none;
@@ -67,10 +85,14 @@
 		margin-bottom: 0.75rem;
 		padding: 0.25rem;
 		border-radius: 999px;
-		background: #eef1f6;
+		background: var(--codice-sfondo);
 	}
 	nav button {
 		flex: 1;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.4rem;
 		padding: 0.6rem;
 		min-height: 44px;
 		border: none;
@@ -78,15 +100,15 @@
 		background: transparent;
 		font-size: 0.95rem;
 		font-weight: 600;
-		color: #5b6472;
+		color: var(--testo-debole);
 		cursor: pointer;
 		transition:
 			background-color 150ms ease,
 			color 150ms ease;
 	}
 	nav button.active {
-		background: #fff;
-		color: #1f2430;
+		background: var(--superficie);
+		color: var(--testo);
 		box-shadow: 0 1px 4px rgb(0 0 0 / 0.12);
 	}
 	.pannelli {
@@ -101,19 +123,20 @@
 		font-size: 0.95rem;
 		line-height: 1.6;
 		padding: 1.25rem;
-		border: 1px solid #e3e6eb;
+		border: 1px solid var(--bordo);
 		border-radius: 16px;
-		background: #f7f9fc;
+		background: var(--superficie);
+		color: var(--testo);
 		resize: vertical;
 		transition:
 			border-color 150ms ease,
-			box-shadow 150ms ease;
+			box-shadow 150ms ease,
+			background-color 150ms ease;
 	}
 	.editor:focus {
 		outline: none;
-		border-color: #4f6df5;
-		box-shadow: 0 0 0 3px rgb(79 109 245 / 0.15);
-		background: #fff;
+		border-color: var(--accento);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--accento) 25%, transparent);
 	}
 	@media (max-width: 700px) {
 		nav {

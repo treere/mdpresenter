@@ -52,6 +52,21 @@ con codice evidenziato e tabelle formattate.
 - **WHEN** un blocco ```mermaid contiene sintassi errata
 - **THEN** la slide mostra un segnaposto di errore al posto del diagramma
 
+#### Scenario: Due colonne
+
+- **WHEN** una slide contiene un blocco colonne con parte sinistra e destra
+- **THEN** le due parti stanno affiancate su desktop e impilate su telefono
+
+#### Scenario: Immagine contenuta
+
+- **WHEN** una slide contiene un'immagine più larga della slide
+- **THEN** l'immagine si ridimensiona per stare dentro senza deformarsi
+
+#### Scenario: Avviso di sbordo
+
+- **WHEN** il contenuto di una slide supera l'altezza visibile
+- **THEN** la slide mostra un avviso discreto senza cambiare le dimensioni del testo
+
 ### Requirement: Navigazione tra slide
 
 L'utente si sposta tra le slide con frecce tastiera, click e swipe, con indicatore di posizione.

@@ -6,7 +6,7 @@
 	import { SAMPLE, encode, decode, splitSlides } from '../lib/slides';
 
 	let text = $state(SAMPLE);
-	let tab: 'editor' | 'preview' = $state('preview');
+	let tab: 'editor' | 'preview' = $state('editor');
 	let firstRun = true;
 	let ready = $state(false);
 

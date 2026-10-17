@@ -37,6 +37,21 @@ con codice evidenziato e tabelle formattate.
 - **WHEN** una slide contiene una tabella Markdown con riga di intestazione e separatore
 - **THEN** è mostrata come tabella con intestazione distinta e colonne allineate come dichiarato
 
+#### Scenario: Diagramma mermaid
+
+- **WHEN** una slide contiene un blocco ```mermaid valido
+- **THEN** è mostrato il diagramma renderizzato, non il codice
+
+#### Scenario: Codice mermaid visibile
+
+- **WHEN** una slide contiene un blocco ```mermaid-code
+- **THEN** è mostrato come blocco di codice evidenziato
+
+#### Scenario: Mermaid non valido
+
+- **WHEN** un blocco ```mermaid contiene sintassi errata
+- **THEN** la slide mostra un segnaposto di errore al posto del diagramma
+
 ### Requirement: Navigazione tra slide
 
 L'utente si sposta tra le slide con frecce tastiera, click e swipe, con indicatore di posizione.

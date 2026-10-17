@@ -1,0 +1,12 @@
+schema: spec-driven
+
+context: |
+  Write all artifacts in Italian. Rispondi sempre in italiano.
+  Repo: app solo frontend (SvelteKit statico) pubblicata su GitHub Pages sotto /mdpresenter, in locale servita su /.
+  Convenzioni: commit in italiano, una change per argomento, proposal/design/tasks concisi.
+
+rules:
+  proposal:
+    - Resta sotto le 500 parole, sezione Why / What / Non-goals obbligatoria.
+  tasks:
+    - Ogni task deve essere eseguibile in ordine da un agente, con criteri di verifica espliciti.

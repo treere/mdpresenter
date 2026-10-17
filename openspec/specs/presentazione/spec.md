@@ -65,7 +65,7 @@ La navigazione resta attiva anche in schermo intero.
 #### Scenario: Cambio tema
 
 - **WHEN** l'utente sceglie un tema dal selettore
-- **THEN** tutte le slide usano i colori del tema scelto
+- **THEN** tutta l'interfaccia (slide, editor, barra, schede) usa i colori del tema scelto
 
 #### Scenario: Tema ricordato
 

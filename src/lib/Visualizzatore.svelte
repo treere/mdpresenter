@@ -72,6 +72,7 @@
 	onfullscreenchange={() => (schermoIntero = suBrowser && !!document.fullscreenElement)}
 />
 
+<div class="app" data-tema={tema}>
 <div class="barra">
 	<button onclick={alternaSchermoIntero}>
 		{schermoIntero ? 'Esci da schermo intero' : 'Schermo intero'}
@@ -86,7 +87,7 @@
 		</select>
 	</label>
 </div>
-<div class="viewer" bind:this={contenitore} data-tema={tema}>
+<div class="viewer" bind:this={contenitore}>
 	<button class="zona sinistra" onclick={indietro} aria-label="Slide precedente">‹</button>
 	<div
 		class="slide"
@@ -111,6 +112,7 @@
 		<div class="pagina-stampa">{@html h}</div>
 	{/each}
 </div>
+</div>
 
 <style>
 	.viewer {
@@ -118,20 +120,28 @@
 		display: grid;
 		grid-template-columns: auto 1fr auto;
 		min-height: 60vh;
-		border: 1px solid #ddd;
-		border-radius: 8px;
+		border: none;
+		border-radius: 16px;
 		overflow: hidden;
-	}
-	.viewer {
-		--sfondo: #fff;
-		--testo: #222;
-		--bordo: #ddd;
-		--accento: #888;
-		--codice-sfondo: #f6f8fa;
-		--tabella-intestazione: #f0f0f0;
 		background: var(--sfondo);
+		box-shadow:
+			0 1px 2px rgb(0 0 0 / 0.06),
+			0 8px 24px rgb(0 0 0 / 0.1);
+		transition:
+			background-color 150ms ease,
+			box-shadow 150ms ease;
 	}
-	.viewer[data-tema='scuro'] {
+	.app {
+		--sfondo: #fff;
+		--testo: #1f2430;
+		--bordo: #e3e6eb;
+		--accento: #4f6df5;
+		--codice-sfondo: #f4f6fa;
+		--tabella-intestazione: #eef1f6;
+		--ombra: 0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px rgb(0 0 0 / 0.1);
+		color: var(--testo);
+	}
+	.app[data-tema='scuro'] {
 		--sfondo: #1e1e1e;
 		--testo: #e8e8e8;
 		--bordo: #555;
@@ -139,7 +149,7 @@
 		--codice-sfondo: #2d2d2d;
 		--tabella-intestazione: #2a2a2a;
 	}
-	.viewer[data-tema='vivace'] {
+	.app[data-tema='vivace'] {
 		--sfondo: #0f2a5c;
 		--testo: #ffffff;
 		--bordo: #ffd43b;
@@ -150,11 +160,38 @@
 	.slide {
 		background: var(--sfondo);
 		color: var(--testo);
-		padding: 2rem;
+		padding: 2.5rem clamp(1.25rem, 5vw, 3.5rem);
 		overflow-y: auto;
+		line-height: 1.6;
+		font-size: 1.05rem;
+		transition:
+			background-color 150ms ease,
+			color 150ms ease;
 	}
-	.viewer[data-tema='scuro'] .slide :global(.hljs),
-	.viewer[data-tema='vivace'] .slide :global(.hljs) {
+	.slide :global(h1),
+	.slide :global(h2),
+	.slide :global(p),
+	.slide :global(ul),
+	.slide :global(ol) {
+		max-width: 44rem;
+	}
+	.slide :global(h1) {
+		font-size: 1.9rem;
+		line-height: 1.25;
+		margin: 0 0 1rem;
+		letter-spacing: -0.01em;
+	}
+	.slide :global(h2) {
+		font-size: 1.45rem;
+		line-height: 1.3;
+		margin: 1.5rem 0 0.75rem;
+	}
+	.slide :global(p),
+	.slide :global(li) {
+		margin: 0 0 0.6rem;
+	}
+	.app[data-tema='scuro'] .slide :global(.hljs),
+	.app[data-tema='vivace'] .slide :global(.hljs) {
 		background: var(--codice-sfondo);
 		color: var(--testo);
 	}
@@ -182,32 +219,77 @@
 		background: var(--tabella-intestazione);
 	}
 	.zona {
-		background: var(--sfondo);
+		background: transparent;
 		border: none;
-		font-size: 2rem;
+		border-radius: 12px;
+		font-size: 1.8rem;
+		line-height: 1;
 		cursor: pointer;
 		padding: 0 0.5rem;
+		min-width: 44px;
+		min-height: 44px;
+		align-self: center;
 		color: var(--accento);
+		transition:
+			background-color 150ms ease,
+			transform 150ms ease;
+	}
+	.zona:hover {
+		background: var(--codice-sfondo);
+	}
+	.zona:active {
+		transform: scale(0.94);
+	}
+	.zona:focus-visible,
+	.barra button:focus-visible,
+	.barra select:focus-visible {
+		outline: 2px solid var(--accento);
+		outline-offset: 2px;
 	}
 	.contatore {
 		position: absolute;
-		bottom: 0.5rem;
+		bottom: 0.75rem;
 		right: 1rem;
 		margin: 0;
-		color: #888;
+		padding: 0.15rem 0.7rem;
+		border-radius: 999px;
+		background: var(--codice-sfondo);
+		color: var(--accento);
 		font-size: 0.85rem;
+		font-weight: 600;
 	}
 	.barra {
 		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
 		gap: 0.5rem;
-		margin-bottom: 0.5rem;
+		margin-bottom: 0.75rem;
 	}
-	.barra button {
-		padding: 0.4rem 0.8rem;
-		border: 1px solid #ddd;
-		border-radius: 8px;
-		background: #f5f5f5;
+	.barra button,
+	.barra select {
+		padding: 0.5rem 0.9rem;
+		min-height: 44px;
+		border: 1px solid var(--bordo);
+		border-radius: 999px;
+		background: var(--sfondo);
+		color: var(--testo);
+		font-size: 0.9rem;
 		cursor: pointer;
+		transition:
+			background-color 150ms ease,
+			border-color 150ms ease;
+	}
+	.barra button:hover,
+	.barra select:hover {
+		border-color: var(--accento);
+	}
+	.tema {
+		margin-left: auto;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-size: 0.9rem;
+		color: var(--testo);
 	}
 	.viewer:fullscreen {
 		background: var(--sfondo);

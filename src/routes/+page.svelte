@@ -64,31 +64,56 @@
 	nav {
 		display: none;
 		gap: 0.5rem;
-		margin-bottom: 0.5rem;
+		margin-bottom: 0.75rem;
+		padding: 0.25rem;
+		border-radius: 999px;
+		background: #eef1f6;
 	}
 	nav button {
 		flex: 1;
-		padding: 0.5rem;
-		border: 1px solid #ddd;
-		border-radius: 8px;
-		background: #f5f5f5;
+		padding: 0.6rem;
+		min-height: 44px;
+		border: none;
+		border-radius: 999px;
+		background: transparent;
+		font-size: 0.95rem;
+		font-weight: 600;
+		color: #5b6472;
+		cursor: pointer;
+		transition:
+			background-color 150ms ease,
+			color 150ms ease;
 	}
 	nav button.active {
-		background: #333;
-		color: #fff;
+		background: #fff;
+		color: #1f2430;
+		box-shadow: 0 1px 4px rgb(0 0 0 / 0.12);
 	}
 	.pannelli {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: 1rem;
+		align-items: start;
 	}
 	.editor {
 		min-height: 60vh;
-		font-family: monospace;
-		padding: 1rem;
-		border: 1px solid #ddd;
-		border-radius: 8px;
+		font-family: ui-monospace, monospace;
+		font-size: 0.95rem;
+		line-height: 1.6;
+		padding: 1.25rem;
+		border: 1px solid #e3e6eb;
+		border-radius: 16px;
+		background: #f7f9fc;
 		resize: vertical;
+		transition:
+			border-color 150ms ease,
+			box-shadow 150ms ease;
+	}
+	.editor:focus {
+		outline: none;
+		border-color: #4f6df5;
+		box-shadow: 0 0 0 3px rgb(79 109 245 / 0.15);
+		background: #fff;
 	}
 	@media (max-width: 700px) {
 		nav {

@@ -35,20 +35,16 @@ function fromBase64Url(s: string): Uint8Array {
 	return Uint8Array.from(bin, (c) => c.charCodeAt(0));
 }
 
-async function comprimi(bytes: Uint8Array): Promise<Uint8Array> {
-	const stream = new CompressionStream('gzip');
-	const writer = stream.writable.getWriter();
-	await writer.write(bytes.slice());
-	await writer.close();
-	return new Uint8Array(await new Response(stream.readable).arrayBuffer());
+// fflate puro JS: stesso formato gzip, ma funziona su ogni browser
+// (le CompressionStream native mancano su alcuni Firefox).
+import { gunzipSync, gzipSync } from 'fflate';
+
+function compress(bytes: Uint8Array): Uint8Array {
+	return gzipSync(bytes);
 }
 
-async function decomprimi(bytes: Uint8Array): Promise<Uint8Array> {
-	const stream = new DecompressionStream('gzip');
-	const writer = stream.writable.getWriter();
-	await writer.write(bytes.slice());
-	await writer.close();
-	return new Uint8Array(await new Response(stream.readable).arrayBuffer());
+function decompress(bytes: Uint8Array): Uint8Array {
+	return gunzipSync(bytes);
 }
 
 /**
@@ -59,7 +55,7 @@ export async function encode(text: string): Promise<string> {
 	if (text.length < COMPRESSION_THRESHOLD) {
 		return '0' + toBase64Url(new TextEncoder().encode(text));
 	}
-	return '1' + toBase64Url(await comprimi(new TextEncoder().encode(text)));
+	return '1' + toBase64Url(compress(new TextEncoder().encode(text)));
 }
 
 /** Decodes `0`/`1`. Returns null on invalid format or missing gzip. */
@@ -69,7 +65,7 @@ export async function decode(hash: string): Promise<string | null> {
 			return new TextDecoder().decode(fromBase64Url(hash.slice(1)));
 		}
 		if (hash.startsWith('1')) {
-			return new TextDecoder().decode(await decomprimi(fromBase64Url(hash.slice(1))));
+			return new TextDecoder().decode(decompress(fromBase64Url(hash.slice(1))));
 		}
 		return null;
 	} catch {

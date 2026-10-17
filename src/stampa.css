@@ -1,0 +1,23 @@
+/* Foglio di stampa: solo le slide, una per pagina. */
+@media print {
+	main > h1,
+	main > nav,
+	.pannelli > .editor,
+	.viewer,
+	.barra {
+		display: none !important;
+	}
+	.pannelli {
+		display: block !important;
+	}
+	.stampa {
+		display: block !important;
+	}
+	.pagina-stampa {
+		break-after: page;
+		break-inside: avoid;
+	}
+	.pagina-stampa:last-child {
+		break-after: auto;
+	}
+}

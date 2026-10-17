@@ -7,11 +7,16 @@
 
 	let indice = $state(0);
 	let xInizio = $state<number | null>(null);
+	let contenitore: HTMLDivElement | undefined = $state();
+	let schermoIntero = $state(false);
 
 	const suBrowser = typeof window !== 'undefined';
 	const totale = $derived(slides.length);
 	const corrente = $derived(slides[Math.min(indice, totale - 1)] ?? '');
 	const html = $derived(suBrowser ? DOMPurify.sanitize(renderMarkdown(corrente)) : '');
+	const tutteHtml = $derived(
+		suBrowser ? slides.map((s) => DOMPurify.sanitize(renderMarkdown(s))) : []
+	);
 
 	$effect(() => {
 		if (indice > totale - 1) indice = Math.max(totale - 1, 0);
@@ -29,11 +34,30 @@
 		if (e.key === 'ArrowRight') avanti();
 		if (e.key === 'ArrowLeft') indietro();
 	}
+
+	async function alternaSchermoIntero() {
+		if (!suBrowser || !contenitore) return;
+		if (document.fullscreenElement) await document.exitFullscreen();
+		else await contenitore.requestFullscreen();
+	}
+
+	function stampa() {
+		if (suBrowser) window.print();
+	}
 </script>
 
-<svelte:window onkeydown={tasto} />
+<svelte:window
+	onkeydown={tasto}
+	onfullscreenchange={() => (schermoIntero = suBrowser && !!document.fullscreenElement)}
+/>
 
-<div class="viewer">
+<div class="barra">
+	<button onclick={alternaSchermoIntero}>
+		{schermoIntero ? 'Esci da schermo intero' : 'Schermo intero'}
+	</button>
+	<button onclick={stampa}>PDF</button>
+</div>
+<div class="viewer" bind:this={contenitore}>
 	<button class="zona sinistra" onclick={indietro} aria-label="Slide precedente">‹</button>
 	<div
 		class="slide"
@@ -52,6 +76,11 @@
 	</div>
 	<button class="zona destra" onclick={avanti} aria-label="Slide successiva">›</button>
 	<p class="contatore">{indice + 1}/{totale}</p>
+</div>
+<div class="stampa" aria-hidden="true">
+	{#each tutteHtml as h}
+		<div class="pagina-stampa">{@html h}</div>
+	{/each}
 </div>
 
 <style>
@@ -106,5 +135,29 @@
 		margin: 0;
 		color: #888;
 		font-size: 0.85rem;
+	}
+	.barra {
+		display: flex;
+		gap: 0.5rem;
+		margin-bottom: 0.5rem;
+	}
+	.barra button {
+		padding: 0.4rem 0.8rem;
+		border: 1px solid #ddd;
+		border-radius: 8px;
+		background: #f5f5f5;
+		cursor: pointer;
+	}
+	.viewer:fullscreen {
+		background: #fff;
+		padding: 2rem;
+	}
+	.viewer:fullscreen .slide {
+		max-width: 900px;
+		margin: 0 auto;
+		font-size: 1.4rem;
+	}
+	.stampa {
+		display: none;
 	}
 </style>

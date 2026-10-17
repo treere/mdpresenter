@@ -11,6 +11,16 @@
 	let schermoIntero = $state(false);
 
 	const suBrowser = typeof window !== 'undefined';
+
+	const TEMI = ['chiaro', 'scuro', 'vivace'] as const;
+	type Tema = (typeof TEMI)[number];
+	let tema: Tema = $state('chiaro');
+
+	if (suBrowser) {
+		const salvato = localStorage.getItem('mdpresenter-tema');
+		if (salvato === 'scuro' || salvato === 'vivace' || salvato === 'chiaro') tema = salvato;
+	}
+
 	const totale = $derived(slides.length);
 	const corrente = $derived(slides[Math.min(indice, totale - 1)] ?? '');
 	const html = $derived(suBrowser ? DOMPurify.sanitize(renderMarkdown(corrente)) : '');
@@ -20,6 +30,10 @@
 
 	$effect(() => {
 		if (indice > totale - 1) indice = Math.max(totale - 1, 0);
+	});
+
+	$effect(() => {
+		if (suBrowser) localStorage.setItem('mdpresenter-tema', tema);
 	});
 
 	function avanti() {
@@ -56,8 +70,16 @@
 		{schermoIntero ? 'Esci da schermo intero' : 'Schermo intero'}
 	</button>
 	<button onclick={stampa}>PDF</button>
+	<label class="tema">
+		Tema
+		<select bind:value={tema} aria-label="Tema delle slide">
+			<option value="chiaro">Chiaro</option>
+			<option value="scuro">Scuro</option>
+			<option value="vivace">Vivace</option>
+		</select>
+	</label>
 </div>
-<div class="viewer" bind:this={contenitore}>
+<div class="viewer" bind:this={contenitore} data-tema={tema}>
 	<button class="zona sinistra" onclick={indietro} aria-label="Slide precedente">‹</button>
 	<div
 		class="slide"
@@ -93,12 +115,44 @@
 		border-radius: 8px;
 		overflow: hidden;
 	}
+	.viewer {
+		--sfondo: #fff;
+		--testo: #222;
+		--bordo: #ddd;
+		--accento: #888;
+		--codice-sfondo: #f6f8fa;
+		--tabella-intestazione: #f0f0f0;
+		background: var(--sfondo);
+	}
+	.viewer[data-tema='scuro'] {
+		--sfondo: #1e1e1e;
+		--testo: #e8e8e8;
+		--bordo: #555;
+		--accento: #aaa;
+		--codice-sfondo: #2d2d2d;
+		--tabella-intestazione: #2a2a2a;
+	}
+	.viewer[data-tema='vivace'] {
+		--sfondo: #0f2a5c;
+		--testo: #ffffff;
+		--bordo: #ffd43b;
+		--accento: #ffd43b;
+		--codice-sfondo: #1b3f7d;
+		--tabella-intestazione: #1b3f7d;
+	}
 	.slide {
+		background: var(--sfondo);
+		color: var(--testo);
 		padding: 2rem;
 		overflow-y: auto;
 	}
+	.viewer[data-tema='scuro'] .slide :global(.hljs),
+	.viewer[data-tema='vivace'] .slide :global(.hljs) {
+		background: var(--codice-sfondo);
+		color: var(--testo);
+	}
 	.slide :global(pre) {
-		background: #f6f8fa;
+		background: var(--codice-sfondo);
 		padding: 1rem;
 		border-radius: 8px;
 		overflow-x: auto;
@@ -113,20 +167,20 @@
 	}
 	.slide :global(th),
 	.slide :global(td) {
-		border: 1px solid #ddd;
+		border: 1px solid var(--bordo);
 		padding: 0.4rem 0.8rem;
 		text-align: left;
 	}
 	.slide :global(thead) {
-		background: #f0f0f0;
+		background: var(--tabella-intestazione);
 	}
 	.zona {
-		background: none;
+		background: var(--sfondo);
 		border: none;
 		font-size: 2rem;
 		cursor: pointer;
 		padding: 0 0.5rem;
-		color: #888;
+		color: var(--accento);
 	}
 	.contatore {
 		position: absolute;
@@ -149,7 +203,7 @@
 		cursor: pointer;
 	}
 	.viewer:fullscreen {
-		background: #fff;
+		background: var(--sfondo);
 		padding: 2rem;
 	}
 	.viewer:fullscreen .slide {

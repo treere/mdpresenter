@@ -14,6 +14,17 @@
 		display: block !important;
 	}
 	.pagina-stampa {
+		background: #fff;
+		color: #000;
+	}
+	.pagina-stampa pre {
+		background: #f6f8fa !important;
+	}
+	.pagina-stampa .hljs {
+		background: #fff !important;
+		color: #24292e !important;
+	}
+	.pagina-stampa {
 		break-after: page;
 		break-inside: avoid;
 	}

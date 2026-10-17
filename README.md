@@ -1,25 +1,37 @@
 # mdpresenter
 
-Slide da Markdown, solo frontend. SvelteKit con output statico, pubblicato su GitHub Pages.
+Write Markdown slides and present them from the browser. Frontend only, no account, no server.
 
-## Sviluppo
+Live at <https://treere.github.io/mdpresenter/>
+
+## Features
+
+- Markdown editor with live slide preview (`---` separates slides)
+- Code highlighting, tables, links and images
+- Shareable URL: the text lives in the link (compressed)
+- Viewer-only page (`/v`), fullscreen, PDF export (one slide per page)
+- Light, dark and vivid themes (remembered)
+- Italian and English, example decks, offline-friendly static build
+
+## Develop
 
 ```sh
 npm install
-npm run dev
+npm run dev    # serves on /
+npm test       # unit tests
+npm run check  # types + Svelte diagnostics
 ```
 
-Il sito in locale è su `/`; in produzione sta sotto `/mdpresenter` (gestito con `BASE_PATH`).
+Production is served under `/mdpresenter` (via `BASE_PATH`); locally it stays on `/`.
 
-## Build e deploy
+## Build & deploy
 
 ```sh
-npm run check
 npm run build
 ```
 
-Il push su `main` pubblica in automatico su <https://treere.github.io/mdpresenter/> tramite GitHub Actions.
+Pushing to `main` publishes automatically to GitHub Pages via GitHub Actions.
 
-## Specifiche
+## Specs
 
-Le decisioni stanno in `openspec/` (tutto in italiano): proposta, design e task della change corrente.
+Decisions live in `openspec/` (in Italian): proposal, design and tasks per change, with synced specs as source of truth.

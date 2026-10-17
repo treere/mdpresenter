@@ -13,8 +13,7 @@ const colonneExtension = {
 	name: 'colonne',
 	level: 'block',
 	start(src: string) {
-		const i = src.search(/^::: +colonne *(?:
-|$)/im);
+		const i = src.search(/^::: +colonne *(?:\n|$)/im);
 		return i === -1 ? undefined : i;
 	},
 	tokenizer(this: any, src: string) {

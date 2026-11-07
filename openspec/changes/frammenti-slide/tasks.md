@@ -3,48 +3,49 @@
 ## 1. Grammatica delle direttive (funzione pura)
 
 - [ ] 1.1 In `src/lib/slides.ts` aggiungere `directiveOf(line)` che classifica una riga trimmata
-  come `{ kind: 'open', name: 'passo' | 'colonne' }`, `{ kind: 'separator', name: 'colonna' }`,
+  come `{ kind: 'open', name: 'step' | 'columns' }`, `{ kind: 'separator', name: 'part' }`,
   `{ kind: 'close' }` oppure `null`, con i nomi case-insensitive e gli spazi interni tollerati;
   aggiungere `isFenceLine(line)` e usarlo in `splitSlides` al posto del toggle inline. Verifica:
   `npm run check` senza errori di tipo sul modulo.
 - [ ] 1.2 Aggiungere `initialRevealed(text: string): 0 | 1`: `1` quando il testo prima del primo
-  `::: passo` fuori dalle fence è vuoto, `0` altrimenti. Verifica: `npm run check` verde.
-- [ ] 1.3 In `src/lib/slides.test.ts` coprire: `directiveOf` su `::: passo`, `::: colonne`,
-  `::: colonna`, `::: fine`, con spazi e maiuscole; righe vicine ma diverse (`::::`, `:: :`,
-  `::: passi`, `::: left`, `:::` nudo) → `null`; `initialRevealed` su slide che comincia con un
-  passo, che ha un titolo prima, che ha `::: passo` solo dentro una fence. Verifica: `npm test`
-  verde.
+  `::: step` fuori dalle fence è vuoto, `0` altrimenti. Verifica: `npm run check` verde.
+- [ ] 1.3 In `src/lib/slides.test.ts` coprire: `directiveOf` su `::: step`, `::: columns`,
+  `::: part`, `::: end`, con spazi e maiuscole; righe vicine ma diverse (`::::`, `:: :`,
+  `::: steps`, `::: colonne`, `::: left`, `:::` nudo) → `null`; `initialRevealed` su una slide
+  che comincia con un passo, su una che ha un titolo prima, su una che ha `::: step` solo dentro
+  una fence. Verifica: `npm test` verde.
 - [ ] 1.4 Verificare che `splitSlides` continui a comportarsi come prima dopo l'estrazione
   dell'helper: i test esistenti delle slide devono passare senza modifiche. Verifica: `npm test`
   verde con i casi di `splitSlides` invariati nel diff.
 
 ## 2. Renderer dei blocchi
 
-- [ ] 2.1 In `src/lib/markdown.ts` sostituire l'estensione `colonne` con una che riconosce le
-  direttive tramite `directiveOf`/`isFenceLine`: un blocco è aperto da `::: colonne` o `::: passo`
-  e chiuso dal `::: fine` che riporta la profondità a zero (un blocco annidato non chiude il
-  padre). Un blocco non chiuso o con nome sconosciuto resta testo. Verifica: `npm run check`
-  verde.
-- [ ] 2.2 `::: colonne` divide il contenuto sulle righe `::: colonna` di primo livello, ne fa un
-  token per parte con `this.lexer.blockTokens` ed emette `<div class="colonne">` con un `<div>` per
-  parte, per N qualsiasi; senza `::: colonna` rende una parte sola a piena larghezza. Verifica:
+- [ ] 2.1 In `src/lib/markdown.ts` sostituire l'estensione `colonne` con una `directives` che
+  riconosce le direttive tramite `directiveOf`/`isFenceLine`: un blocco è aperto da `::: columns`
+  o `::: step` e chiuso dal `::: end` che riporta la profondità a zero (un blocco annidato non
+  chiude il padre). Un blocco non chiuso o con nome sconosciuto resta testo. Verifica:
+  `npm run check` verde.
+- [ ] 2.2 `::: columns` divide il contenuto sulle righe `::: part` di primo livello, ne fa un
+  token per parte con `this.lexer.blockTokens` ed emette `<div class="columns">` con un `<div>` per
+  parte, per N qualsiasi; senza `::: part` rende una parte sola a piena larghezza. Verifica:
   `npm run build` verde.
-- [ ] 2.3 `::: passo` emette `<div class="step">` con il contenuto parse-ato, e funziona anche
-  dentro una colonna; un `::: passo` dentro un altro `::: passo` resta testo. Verifica: `npm run
+- [ ] 2.3 `::: step` emette `<div class="step">` con il contenuto parse-ato, e funziona anche
+  dentro una colonna; un `::: step` dentro un altro `::: step` resta testo. Verifica: `npm run
   build` verde.
 - [ ] 2.4 In `src/lib/markdown.test.ts` coprire: due e tre colonne; passo che contiene un blocco
-  colonne; passo dentro una colonna; `::: passo` annidato reso come testo; vecchia sintassi
+  colonne; passo dentro una colonna; `::: step` annidato reso come testo; vecchia sintassi
   `::: left` / `::: right` resa come testo; direttive dentro una fence intatte; blocco non chiuso
   (il test «leaves unclosed column blocks as text» continua a passare). Verifica: `npm test` verde.
 
 ## 3. Stili e testi di esempio
 
-- [ ] 3.1 In `src/lib/Viewer.svelte` portare `.colonne` a
+- [ ] 3.1 In `src/lib/Viewer.svelte` rinominare il selettore `.colonne` in `.columns` (stessa
+  classe emessa da `markdown.ts` al punto 2.2) e portarlo a
   `grid-template-columns: repeat(auto-fit, minmax(0, 1fr))`, lasciando il breakpoint ≤700px a una
   colonna. Verifica: in `/v` un blocco con due e uno con tre colonne hanno larghezze uguali, e su
   viewport 390×844 sono impilate.
 - [ ] 3.2 In `src/lib/examples.ts` riscrivere le due slide «Colonne» con la nuova sintassi
-  (`::: colonne`, `::: colonna`, `::: fine`) e aggiungere un passo dentro una colonna in una delle
+  (`::: columns`, `::: part`, `::: end`) e aggiungere un passo dentro una colonna in una delle
   due. Verifica: nella home gli esempi «Colonne» si vedono senza direttive a schermo e la colonna
   con il passo mostra il contenuto solo avanzando in `/v`.
 
@@ -73,7 +74,7 @@
 - [ ] 5.1 Aggiungere al `Viewer` la prop `showAllSteps = false`; quando è `true` nessun passo viene
   nascosto e la navigazione si muove solo fra le slide. In `src/routes/+page.svelte` passare
   `showAllSteps` al `Viewer` dell'anteprima. Verifica: la scheda Anteprima della home mostra una
-  slide con `::: passo` per intero, mentre `/v` la mostra a passi.
+  slide con `::: step` per intero, mentre `/v` la mostra a passi.
 - [ ] 5.2 Nessun cambiamento a tastiera, swipe, fullscreen, tema e link: le scorciatoie esistenti
   chiamano già `next`/`prev`. Verifica: in `/v` frecce, swipe su viewport da telefono e schermo
   intero si comportano come prima su una presentazione senza direttive.

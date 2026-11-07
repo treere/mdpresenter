@@ -20,5 +20,5 @@ pagina mostra la slide completa, con tutti i suoi elementi visibili.
 
 #### Scenario: Slide con passi
 
-- **WHEN** una slide contiene blocchi `::: passo`, anche dentro un blocco `::: colonne`
+- **WHEN** una slide contiene blocchi `::: step`, anche dentro un blocco `::: columns`
 - **THEN** la pagina di quella slide mostra tutti i passi, senza elementi nascosti e senza pagine in più

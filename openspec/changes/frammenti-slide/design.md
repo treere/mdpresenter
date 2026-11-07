@@ -47,33 +47,58 @@ Vedi proposal.md — Why. Lo stato attuale che conta:
 
 **Vocabolario nominato con prefisso comune `:::`, e niente più direttive anonime.** La revisione
 chiede blocchi parlanti e un passo dentro le colonne: due cose che la forma precedente — riga
-`:::` che separa le parti del contenitore corrente, più `::: fine` — non permetteva, perché
-dentro un blocco `:::` *doveva* significare "colonna" e non poteva significare "passo". Il modo
-per togliersi l'ambiguità non è aggiungere un caso, è dare un nome a ogni direttiva:
+`:::` che separa le parti del contenitore corrente, più una chiusura esplicita — non permetteva,
+perché dentro un blocco `:::` *doveva* significare "colonna" e non poteva significare "passo". Il
+modo per togliersi l'ambiguità non è aggiungere un caso, è dare un nome a ogni direttiva:
 
 | Riga | Significato |
 |---|---|
-| `::: passo` | apre un passo: il contenuto compare a un certo momento |
-| `::: colonne` | apre un blocco di colonne affiancate |
-| `::: colonna` | dentro `::: colonne`, separa una colonna dalla successiva |
-| `::: fine` | chiude il blocco aperto più interno |
+| `::: step` | apre un passo: il contenuto compare a un certo momento |
+| `::: columns` | apre un blocco di colonne affiancate |
+| `::: part` | dentro `::: columns`, inizia la parte successiva, cioè la colonna seguente |
+| `::: end` | chiude il blocco aperto più interno |
 
 Regole, riga per riga (riga trimmata, nome case-insensitive, spazi interni tollerati):
 
-- un blocco aperto senza il suo `::: fine` non è riconosciuto: la sua riga e quelle interne
+- un blocco aperto senza il suo `::: end` non è riconosciuto: la sua riga e quelle interne
   restano testo, come oggi (`markdown.test.ts`, «leaves unclosed column blocks as text»);
-- un nome sconosciuto (`::: passo,` o `::: left`, `:::` nudo) è testo;
-- `::: colonna` vale solo a profondità 1 dentro un `::: colonne`: fuori è testo;
-- `::: passo` dentro un altro `::: passo` è testo: un passo annidato non ha un ordine di comparsa
+- un nome sconosciuto (`::: step,` o `::: left`, `:::` nudo) è testo;
+- `::: part` vale solo a profondità 1 dentro un `::: columns`: fuori è testo;
+- `::: step` dentro un altro `::: step` è testo: un passo annidato non ha un ordine di comparsa
   che si possa dedurre dal testo.
 
 La forma è quella dei *fenced div* di Pandoc e delle *colon fence* di MyST — direttiva su una
 riga, un nome, chiusura esplicita — quindi non è un dialetto inventato qui.
 
-**I blocchi si annidano, e ogni colonna può avere i suoi passi.** Un `::: passo` può contenere un
+**I quattro nomi sono in inglese, e sono scelti per non somigliarsi.** Le direttive si scrivono a
+mano dentro il Markdown: il nome è interfaccia, non dettaglio interno. Tre ragioni, in ordine di
+peso:
+
+1. **Il nome deve essere impossibile da confondere con un altro.** `colonna` e `colonne`
+   differiscono di una lettera, e la coppia significa due cose opposte (separare / aprire): un
+   refuso trasforma un separatore in un blocco che inghiotte il resto della slide. `columns` e
+   `part` non hanno niente in comune, quindi l'errore di battitura resta visibile invece di
+   cambiare il senso.
+2. **`step` dice cosa si sta scrivendo, non dove sta.** `fragment` e `reveal` sono i termini che
+   usano altre librerie, ma il primo dice «pezzo rotto» a chi scrive una slide e il secondo
+   promette un'animazione — che è dichiarata fuori scope: la comparsa è immediata. `step` è anche
+   la parola del contatore (`2/5 · 1/3`) e della navigazione, quindi una parola sola copre
+   sintassi, codice e interfaccia.
+3. **Una sola lingua per la sintassi, l'italiano per la prosa.** Il Markdown che si scrive è già
+   pieno di inglese (`#`, `**`, i nomi delle fence), e mescolare `::: colonne` a `::: step`
+   produrrebbe un vocabolario a due lingue nella stessa riga. I documenti della change, la PR e
+   l'interfaccia restano in italiano: in prosa il concetto continua a chiamarsi «passo» e «blocco
+   colonne», e la tabella qui sopra è la traduzione ufficiale fra i due lessici.
+
+Conseguenza sul codice: la classe emessa dal blocco colonne passa da `colonne` a `columns` (una
+riga in `markdown.ts`, il selettore in `Viewer.svelte`, due asserzioni di `markdown.test.ts`),
+così il nome nella sintassi e quello nel DOM coincidono e restano entrambi in inglese come chiede
+`AGENTS.md`. La classe dei passi è già `.step`, quindi non cambia.
+
+**I blocchi si annidano, e ogni colonna può avere i suoi passi.** Un `::: step` può contenere un
 blocco colonne e un blocco colonne può contenere passi, anche diversi da colonna a colonna. La
-profondità si conta sulle direttive: `::: passo` e `::: colonne` aprono, `::: fine` chiude,
-`::: colonna` non cambia profondità. Il tokenizer cerca quindi il `::: fine` che riporta la
+profondità si conta sulle direttive: `::: step` e `::: columns` aprono, `::: end` chiude,
+`::: part` non cambia profondità. Il tokenizer cerca quindi il `::: end` che riporta la
 profondità a zero, non il primo che incontra — è la correzione dell'errore che oggi chiuderebbe il
 blocco padre.
 
@@ -82,27 +107,27 @@ blocco padre.
 
 il testo che si vede subito
 
-::: passo
+::: step
 
 una riga che compare dopo
 
-::: fine
+::: end
 
-::: colonne
+::: columns
 
-::: colonna
+::: part
 
 a sinistra, subito
 
-::: colonna
+::: part
 
-::: passo
+::: step
 
 a destra, al passo successivo
 
-::: fine
+::: end
 
-::: fine
+::: end
 ```
 
 **L'ordine dei passi è l'ordine del testo (visita in profondità).** I passi si numerano scorrendo
@@ -125,7 +150,7 @@ frammenti di testo. Con la sintassi a separatori una divisione del testo avrebbe
 la slide a metà di un blocco colonne, cioè produrre Markdown non valido; con i contenitori il
 problema non esiste. Sparisce quindi `splitSteps`: non c'è più nulla da spezzare.
 
-**`::: colonne` emette un `<div>` per colonna, N qualsiasi.** `.colonne` passa da `1fr 1fr` a
+**`::: columns` emette un `<div>` per colonna, N qualsiasi.** `.columns` passa da `1fr 1fr` a
 `repeat(auto-fit, minmax(0, 1fr))`: con N figli si ottengono N colonne uguali senza classi per
 ogni numero, e il breakpoint ≤700px resta a una colonna. Una parte sola rende un blocco a piena
 larghezza.
@@ -147,7 +172,7 @@ diagramma a ogni passo.
 
 **Lo stato vive nel `Viewer` e si azzera al cambio slide, con un caso iniziale esplicito.**
 `revealed` è locale; un `$effect` su `index` lo riporta al valore iniziale della slide.
-`initialRevealed(text)` vale `0` quando la slide ha contenuto prima del primo `::: passo`, `1`
+`initialRevealed(text)` vale `0` quando la slide ha contenuto prima del primo `::: step`, `1`
 quando comincia con un passo: aprire una slide su una schermata vuota sarebbe un guasto visibile, e
 la regola è una funzione pura da provare. `next()`: se restano passi ne rivela uno, altrimenti
 slide successiva con il suo valore iniziale. `prev()`: se oltre il valore iniziale toglie un passo,
@@ -170,11 +195,20 @@ dentro la pagina. La regola che nasconde i passi è limitata a `.slide .step`, e
 `aria-label` tradotta (chiave `step` in `it`/`en`). Nessuna nuova stringa visibile oltre a quella,
 così il tipo `Record<Language, Texts>` continua a garantire le due lingue.
 
-Alternative scartate: (a) la forma precedente, `:::` separatore più `::: fine` — è quella appena
+Alternative scartate: (a) la forma precedente, `:::` separatore più `::: end` — è quella appena
 respinta: dentro un blocco non si può distinguere un passo da una colonna; (b) `<!-- passo -->`
-accanto a `::: colonne` — due vocabolari per la stessa idea, e l'annidamento resta impossibile;
+accanto a `::: columns` — due vocabolari per la stessa idea, e l'annidamento resta impossibile;
 (c) `::: left` / `::: right` — nomi di posizione, non di cosa si sta scrivendo, e non regge più di
 due colonne; (d) `===` — è già Markdown valido (setext) e rompe i documenti esistenti.
+
+Sui nomi, in particolare: (e) `::: fragment` — è il termine di reveal.js, ma a chi scrive una slide
+dice «pezzo staccato», e il nome interno della change resta `frammenti-slide` proprio perché
+descrive il risultato e non serve sulla riga; (f) `::: reveal` — promette un'animazione, e la
+comparsa qui è immediata: un nome che descrive un effetto inesistente è peggio di uno neutro;
+(g) `::: beat` / `::: cue` — gergo teatrale, chiaro a chi lo conosce e opaco a chi apre l'editor la
+prima volta; (h) `::: column` accanto a `::: columns` — la coppia a una lettera di distanza, già
+respinta al punto 1 qui sopra: `::: part` toglie l'ambiguità e regge N parti; (i) `::: split` /
+`::: side` — «split» va bene, ma «side» implica due parti e il blocco ne regge quante ne servono.
 
 ## Risks / Trade-offs
 
@@ -186,7 +220,7 @@ due colonne; (d) `===` — è già Markdown valido (setext) e rompe i documenti 
   colonne compare prima tutto ciò che sta a sinistra e poi ciò che sta a destra. È la lettura
   naturale del documento, ma chi si aspetta colonne che avanzano insieme va corretto a voce; è
   l'Open Question aperta in questa revisione.
-- **Un `::: passo` senza `::: fine`** → da lì in poi le direttive si vedono come testo: errore
+- **Un `::: step` senza `::: end`** → da lì in poi le direttive si vedono come testo: errore
   visibile, non silenzioso, ma la slide resta senza passi. È la stessa difesa di oggi per i blocchi
   colonne; un controllo nell'editor è fuori scope.
 - **Markdown reso a blocchi separati dentro un passo** → un passo creato in mezzo a un elenco

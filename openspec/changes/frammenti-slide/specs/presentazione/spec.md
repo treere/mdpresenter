@@ -4,68 +4,68 @@
 
 ### Requirement: Direttive nominate nella slide
 
-Il Markdown di una slide riconosce direttive nominate, ciascuna su una riga da sola: `::: passo`
-apre un passo, `::: colonne` apre un blocco di colonne affiancate, `::: colonna` separa una colonna
-dalla successiva dentro un blocco colonne, `::: fine` chiude il blocco aperto più interno. I nomi
-sono case-insensitive e i blocchi si annidano. Una direttiva dentro un blocco di codice, un nome
-non riconosciuto e una riga di soli `:::` sono testo.
+Il Markdown di una slide riconosce direttive nominate, ciascuna su una riga da sola, con nome in
+inglese: `::: step` apre un passo, `::: columns` apre un blocco di colonne affiancate, `::: part`
+inizia la colonna successiva dentro un blocco colonne, `::: end` chiude il blocco aperto più
+interno. I nomi sono case-insensitive e i blocchi si annidano. Una direttiva dentro un blocco di
+codice, un nome non riconosciuto e una riga di soli `:::` sono testo.
 
 #### Scenario: Blocco colonne
 
-- **WHEN** una slide contiene `::: colonne` … `::: fine` con due righe `::: colonna` all'interno
+- **WHEN** una slide contiene `::: columns` … `::: end` con due righe `::: part` all'interno
 - **THEN** il blocco è reso in tre colonne affiancate su desktop e impilate su telefono
 
 #### Scenario: Blocco colonne senza separatori
 
-- **WHEN** un blocco `::: colonne` … `::: fine` non contiene righe `::: colonna`
+- **WHEN** un blocco `::: columns` … `::: end` non contiene righe `::: part`
 - **THEN** il suo contenuto occupa una sola colonna a piena larghezza
 
 #### Scenario: Passo dentro una colonna
 
-- **WHEN** una colonna di un blocco `::: colonne` contiene un blocco `::: passo` … `::: fine`
+- **WHEN** una colonna di un blocco `::: columns` contiene un blocco `::: step` … `::: end`
 - **THEN** le colonne sono affiancate dall'inizio e il contenuto del passo compare al suo turno, nella colonna a cui appartiene
 
 #### Scenario: Passo che contiene colonne
 
-- **WHEN** il contenuto di un `::: passo` contiene un blocco `::: colonne` … `::: fine`
+- **WHEN** il contenuto di un `::: step` contiene un blocco `::: columns` … `::: end`
 - **THEN** il blocco colonne compare insieme al passo e non ne spezza il contenuto
 
 #### Scenario: Passo dentro un passo
 
-- **WHEN** un blocco `::: passo` contiene un altro `::: passo`
+- **WHEN** un blocco `::: step` contiene un altro `::: step`
 - **THEN** la direttiva interna è mostrata come testo e non crea un secondo passo
 
 #### Scenario: Direttiva dentro un blocco di codice
 
-- **WHEN** una riga `::: passo`, `::: colonne`, `::: colonna` o `::: fine` compare dentro un blocco di codice delimitato
+- **WHEN** una riga `::: step`, `::: columns`, `::: part` o `::: end` compare dentro un blocco di codice delimitato
 - **THEN** è mostrata come codice e non apre, separa o chiude nulla
 
 #### Scenario: Blocco non chiuso
 
-- **WHEN** un blocco `::: colonne` o `::: passo` non ha il suo `::: fine`
+- **WHEN** un blocco `::: columns` o `::: step` non ha il suo `::: end`
 - **THEN** le sue direttive sono mostrate come testo e il resto della slide non viene inghiottito
 
 #### Scenario: Direttiva sconosciuta
 
-- **WHEN** una riga contiene `:::` seguito da una parola diversa da `passo`, `colonne`, `colonna` e `fine`, oppure è una riga di soli `:::`
+- **WHEN** una riga contiene `:::` seguito da una parola diversa da `step`, `columns`, `part` e `end`, oppure è una riga di soli `:::`
 - **THEN** è mostrata come testo
 
 ### Requirement: Passi dentro la slide
 
-Una slide può dichiarare un ordine di comparsa dei propri elementi con blocchi `::: passo`, anche
+Una slide può dichiarare un ordine di comparsa dei propri elementi con blocchi `::: step`, anche
 dentro le colonne di un blocco colonne. La vista presentazione rivela i passi nell'ordine del testo
 — prima ciò che precede il primo passo, poi un passo alla volta — in modo cumulativo: i passi già
 mostrati restano visibili, quelli successivi occupano il proprio spazio ma non sono visibili. Una
-slide senza blocchi `::: passo` è visibile tutta.
+slide senza blocchi `::: step` è visibile tutta.
 
 #### Scenario: Contenuto iniziale di una slide con passi
 
-- **WHEN** una slide contiene tre blocchi `::: passo` dopo un'introduzione
+- **WHEN** una slide contiene tre blocchi `::: step` dopo un'introduzione
 - **THEN** la vista presentazione mostra l'introduzione e il primo passo
 
 #### Scenario: Slide che comincia con un passo
 
-- **WHEN** il testo della slide prima del primo `::: passo` è vuoto
+- **WHEN** il testo della slide prima del primo `::: step` è vuoto
 - **THEN** la presentazione parte dal primo passo e non mostra una slide vuota
 
 #### Scenario: Comparsa del passo successivo
@@ -85,7 +85,7 @@ slide senza blocchi `::: passo` è visibile tutta.
 
 #### Scenario: Slide senza passi
 
-- **WHEN** una slide non contiene blocchi `::: passo`
+- **WHEN** una slide non contiene blocchi `::: step`
 - **THEN** la slide è visibile tutta e la navigazione passa direttamente alla slide successiva
 
 #### Scenario: Anteprima dell'editor

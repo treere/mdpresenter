@@ -9,15 +9,17 @@ quando gli elementi stanno dentro un confronto affiancato.
 
 ## What Changes
 
-- Un vocabolario di direttive **nominato**, con un prefisso comune: `::: <nome>` apre un blocco,
-  `::: fine` chiude il blocco aperto più interno, `::: colonna` separa le colonne dentro un
-  blocco `::: colonne`. Ogni riga dice cosa fa, quindi leggendo il Markdown si capisce la
-  struttura senza ricordare convenzioni.
-- I passi sono blocchi `::: passo` … `::: fine`. La vista presentazione li rivela uno alla volta,
+- Un vocabolario di direttive **nominato**, con un prefisso comune e **nomi in inglese**:
+  `::: step` apre un passo, `::: columns` un blocco di colonne affiancate, `::: part` inizia la
+  colonna successiva dentro un blocco `::: columns`, `::: end` chiude il blocco aperto più
+  interno. Ogni riga dice cosa fa, quindi leggendo il Markdown si capisce la struttura senza
+  ricordare convenzioni; i quattro nomi non si somigliano, quindi un refuso non cambia il senso
+  della riga.
+- I passi sono blocchi `::: step` … `::: end`. La vista presentazione li rivela uno alla volta,
   nell'ordine del testo, in modo cumulativo: quelli già mostrati restano visibili.
 - I blocchi si annidano: un passo può contenere un blocco colonne e un blocco colonne può
   contenere passi, quindi anche il contenuto di una singola colonna può comparire più tardi.
-- `::: colonne` … `::: fine` con due o più parti `::: colonna` rende N colonne affiancate. Il
+- `::: columns` … `::: end` con due o più parti `::: part` rende N colonne affiancate. Il
   vecchio `::: left` / `::: right` sparisce, e con lui la chiusura anonima `:::`.
 - La riga di soli `:::` non è più una direttiva: si vede come testo, come qualunque nome non
   riconosciuto.
@@ -41,7 +43,7 @@ quando gli elementi stanno dentro un confronto affiancato.
 - Nessuna animazione, dissolvenza o transizione fra slide: la comparsa è immediata.
 - Nessuna scelta del passo nell'URL: il link continua a puntare alla slide, non al passo.
 - Nessun ordine dei passi diverso da quello del testo: niente passi fuori sequenza o ripetuti.
-- Nessun passo dentro un passo: un `::: passo` annidato in un altro resta testo, come le altre
+- Nessun passo dentro un passo: un `::: step` annidato in un altro resta testo, come le altre
   direttive non riconosciute nel contesto.
 - Nessun cambio al formato del link condiviso, alla libreria locale o all'editor.
 - Nessun alias e nessun dialetto della vecchia sintassi: una sola forma per ogni cosa.
@@ -55,16 +57,16 @@ _(nessuna)_
 
 ### Modified Capabilities
 
-- `presentazione`: il Markdown di una slide riconosce le direttive nominate `::: passo`,
-  `::: colonne`, `::: colonna` e `::: fine`, annidabili; la navigazione attraversa i passi prima
+- `presentazione`: il Markdown di una slide riconosce le direttive nominate `::: step`,
+  `::: columns`, `::: part` e `::: end`, annidabili; la navigazione attraversa i passi prima
   di cambiare slide.
 - `esportazione-pdf`: la stampa mostra ogni slide completa, indipendentemente dai passi.
 
 ## Impact
 
 Codice: `src/lib/slides.ts` (predicato unico della grammatica e conteggio dei passi, con test in
-`src/lib/slides.test.ts`), `src/lib/markdown.ts` (estensione di blocco per `::: passo` e
-`::: colonne` con N colonne, con test in `src/lib/markdown.test.ts`), `src/lib/Viewer.svelte`
+`src/lib/slides.test.ts`), `src/lib/markdown.ts` (estensione di blocco per `::: step` e
+`::: columns` con N colonne, con test in `src/lib/markdown.test.ts`), `src/lib/Viewer.svelte`
 (rivelazione dei passi, navigazione, contatore, stili), `src/routes/+page.svelte` (anteprima
 sempre completa), `src/lib/i18n.ts` (testi del contatore), `src/lib/examples.ts` (esempi migrati
 alla nuova sintassi). Nessuna dipendenza nuova, nessun file in `.github/workflows/` né in

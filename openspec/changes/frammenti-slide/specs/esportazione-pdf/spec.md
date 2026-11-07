@@ -20,5 +20,5 @@ pagina mostra la slide completa, con tutti i suoi elementi visibili.
 
 #### Scenario: Slide con passi
 
-- **WHEN** una slide contiene marcatori `<!-- passo -->`
-- **THEN** la pagina di quella slide mostra tutti i blocchi, senza elementi nascosti e senza pagine in più
+- **WHEN** una slide è divisa in parti da righe `:::`
+- **THEN** la pagina di quella slide mostra tutte le parti, senza elementi nascosti e senza pagine in più

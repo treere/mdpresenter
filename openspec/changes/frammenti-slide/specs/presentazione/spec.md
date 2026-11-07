@@ -2,42 +2,81 @@
 
 ## ADDED Requirements
 
+### Requirement: Parti e direttive nella slide
+
+Il Markdown di una slide riconosce un solo vocabolario di direttive, ciascuna su una riga da
+sola: `:::` separa le parti del contenitore corrente, `::: colonne` apre un blocco che termina
+con `::: fine`. Al livello della slide le parti sono passi; dentro un blocco colonne le parti
+sono colonne affiancate. I blocchi si annidano, e una direttiva dentro un blocco di codice è
+testo.
+
+#### Scenario: Slide divisa in parti
+
+- **WHEN** una slide contiene due righe `:::` fuori da un blocco
+- **THEN** la slide ha tre parti, e la prima è il contenuto che precede la prima riga
+
+#### Scenario: Blocco colonne
+
+- **WHEN** una slide contiene `::: colonne` … `::: fine` con due righe `:::` all'interno
+- **THEN** il blocco è reso in tre colonne affiancate su desktop e impilate su telefono
+
+#### Scenario: Blocco dentro una parte
+
+- **WHEN** una parte contiene un blocco `::: colonne` … `::: fine`
+- **THEN** il blocco interno è reso come colonne e la parte resta una sola
+
+#### Scenario: Direttiva dentro un blocco di codice
+
+- **WHEN** una riga `:::`, `::: colonne` o `::: fine` compare dentro un blocco di codice delimitato
+- **THEN** è mostrata come codice e non divide, apre o chiude nulla
+
+#### Scenario: Blocco non chiuso
+
+- **WHEN** un blocco `::: colonne` non ha il suo `::: fine`
+- **THEN** le sue direttive sono mostrate come testo e il resto della slide non viene inghiottito
+
+#### Scenario: Direttiva sconosciuta
+
+- **WHEN** una riga contiene `:::` seguito da una parola che non è `colonne` né `fine`
+- **THEN** è mostrata come testo
+
 ### Requirement: Passi dentro la slide
 
-Una slide può dichiarare un ordine di comparsa dei propri elementi: una riga che contiene solo
-il marcatore `<!-- passo -->` separa il contenuto in passi. La vista presentazione mostra un
-passo alla volta, nell'ordine del testo; gli elementi dei passi successivi occupano il proprio
-spazio ma non sono visibili. Una slide senza marcatori è un unico passo.
+Una slide può dichiarare un ordine di comparsa dei propri elementi: le righe `:::` di primo
+livello separano il contenuto della slide in passi. La vista presentazione mostra i passi
+nell'ordine del testo, uno alla volta e in modo cumulativo: i passi già mostrati restano
+visibili, quelli successivi occupano il proprio spazio ma non sono visibili. Una slide senza
+righe `:::` è un unico passo.
 
 #### Scenario: Contenuto iniziale di una slide con passi
 
-- **WHEN** una slide contiene tre blocchi separati da due marcatori `<!-- passo -->`
-- **THEN** la vista presentazione mostra solo il primo blocco della slide
+- **WHEN** una slide contiene tre parti separate da due righe `:::`
+- **THEN** la vista presentazione mostra solo la prima parte della slide
 
 #### Scenario: Comparsa del blocco successivo
 
-- **WHEN** l'utente avanza su una slide che ha ancora passi da mostrare
-- **THEN** compare il blocco successivo e la slide resta quella corrente
+- **WHEN** l'utente avanza su una slide che ha ancora parti da mostrare
+- **THEN** compare la parte successiva e la slide resta quella corrente
+
+#### Scenario: Parti già mostrate
+
+- **WHEN** la presentazione è oltre la prima parte di una slide
+- **THEN** le parti precedenti restano visibili, non spariscono
 
 #### Scenario: Spazio riservato
 
-- **WHEN** un blocco non è ancora visibile
+- **WHEN** una parte non è ancora visibile
 - **THEN** gli elementi già visibili non si spostano e il testo non si riposiziona
 
-#### Scenario: Slide senza marcatori
+#### Scenario: Slide senza parti
 
-- **WHEN** una slide non contiene marcatori `<!-- passo -->`
+- **WHEN** una slide non contiene righe `:::`
 - **THEN** la slide è visibile tutta e la navigazione passa direttamente alla slide successiva
-
-#### Scenario: Marcatore dentro un blocco di codice
-
-- **WHEN** la riga `<!-- passo -->` compare dentro un blocco di codice delimitato
-- **THEN** è mostrata come codice e non divide la slide in passi
 
 #### Scenario: Anteprima dell'editor
 
 - **WHEN** l'utente guarda l'anteprima nell'editor
-- **THEN** la slide mostra tutti i suoi passi, senza elementi nascosti
+- **THEN** la slide mostra tutte le sue parti, senza elementi nascosti
 
 ## MODIFIED Requirements
 

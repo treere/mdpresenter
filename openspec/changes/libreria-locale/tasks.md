@@ -2,12 +2,12 @@
 
 ## 1. Modulo libreria
 
-- [ ] 1.1 Creare `src/lib/library.ts` con tipi `Presentation` e `Library`, chiave
+- [x] 1.1 Creare `src/lib/library.ts` con tipi `Presentation` e `Library`, chiave
   `mdpresenter-library`, forma `{ version: 1, presentations, lastOpenedId }` e le funzioni
   `loadLibrary`, `saveLibrary`, `createPresentation`, `renamePresentation`,
   `deletePresentation`, `defaultName`. Verifica: `npm run check` senza errori di tipo sul
   nuovo modulo.
-- [ ] 1.2 Gestire i casi limite dentro il modulo: JSON illeggibile o forma inattesa →
+- [x] 1.2 Gestire i casi limite dentro il modulo: JSON illeggibile o forma inattesa →
   libreria vuota con flag `corrupt`; `QuotaExceededError` → `saveLibrary` restituisce `false`;
   `localStorage` inaccessibile → flag `unavailable`. Verifica: `npm test` con i test del
   punto 1.3 verdi.

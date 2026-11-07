@@ -30,7 +30,7 @@
 
 ## 3. Integrazione nella pagina
 
-- [ ] 3.1 In `src/routes/+page.svelte`, inizializzare lo stato: `?t=` presente → testo
+- [x] 3.1 In `src/routes/+page.svelte`, inizializzare lo stato: `?t=` presente → testo
   dell'URL; assente → ultima presentazione (`lastOpenedId`) se esiste, altrimenti `SAMPLE`;
   `localStorage` non disponibile → `SAMPLE` e pannello nascosto. Verifica: aprendo `/` senza
   query si vede l'esempio, ricaricando dopo una modifica si ritrova il testo modificato, e

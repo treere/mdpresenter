@@ -1,9 +1,23 @@
 <script lang="ts">
 	import { Eye, Pencil } from 'lucide-svelte';
 	import Viewer from '../lib/Viewer.svelte';
+	import LibraryPanel from '../lib/Library.svelte';
 	import { pending, preferences } from '../lib/shared.svelte';
 	import { texts } from '../lib/i18n';
 	import { SAMPLE, encode, decode, readQuery, splitSlides, writeQuery } from '../lib/slides';
+	import {
+		addPresentation,
+		createPresentation,
+		deletePresentation,
+		emptyLibrary,
+		findPresentation,
+		loadLibrary,
+		renamePresentation,
+		saveLibrary,
+		sortedPresentations,
+		updatePresentation,
+		type Library
+	} from '../lib/library';
 
 	let text = $state(SAMPLE);
 	let tab: 'editor' | 'preview' = $state('editor');
@@ -11,14 +25,28 @@
 	let ready = $state(false);
 	let invalidLink = $state(false);
 	let slideIndex = $state(0);
+	let library = $state<Library>(emptyLibrary());
+	let currentId = $state<string | null>(null);
+	let quotaWarning = $state(false);
+	/** Text that arrived without an edit (link, sample): it enters the library only when touched. */
+	let silentText: string | null = SAMPLE;
 
 	const isBrowser = typeof window !== 'undefined';
 	const t = $derived(texts[preferences.language]);
 
+	function openAt(presentation: { id: string; text: string; slide: number }): void {
+		currentId = presentation.id;
+		silentText = null;
+		text = presentation.text;
+		slideIndex = Math.max(0, Math.min(presentation.slide, splitSlides(presentation.text).length - 1));
+	}
+
 	if (isBrowser) {
 		void (async () => {
+			library = loadLibrary();
 			if (pending.textToOpen !== null) {
 				text = pending.textToOpen;
+				silentText = text;
 				pending.textToOpen = null;
 			} else {
 				const { raw, slide } = readQuery();
@@ -26,11 +54,16 @@
 					const decoded = await decode(raw);
 					if (decoded !== null) {
 						text = decoded;
+						silentText = decoded;
 						slideIndex = slide;
 					} else {
 						text = '';
+						silentText = '';
 						invalidLink = true;
 					}
+				} else if (!library.unavailable) {
+					const last = findPresentation(library, library.lastOpenedId);
+					if (last !== null) openAt(last);
 				}
 			}
 			ready = true;

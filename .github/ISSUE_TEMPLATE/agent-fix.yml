@@ -1,30 +1,30 @@
-name: Bugfix (comportamento già previsto)
-description: Qualcosa non fa quello che gli spec dicono già. Nessuna change, fix diretto.
+name: Bugfix (already specified behaviour)
+description: Something does not do what the specs already say. No change, direct fix.
 title: "[fix] "
 labels: ["agent-fix"]
 body:
   - type: markdown
     attributes:
       value: |
-        Usa questo modulo solo se il comportamento corretto è **già** descritto in
-        `openspec/specs/`. Se stai chiedendo qualcosa di nuovo, usa «Richiesta con change OpenSpec».
+        Use this form only if the correct behaviour is **already** described in
+        `openspec/specs/`. If you are asking for something new, use "Change request (OpenSpec)".
   - type: textarea
-    id: succede
+    id: happens
     attributes:
-      label: Cosa succede
-      placeholder: Salvo una slide con una tabella e il link condiviso non riapre la tabella.
+      label: What happens
+      placeholder: I save a slide with a table and the shared link does not bring the table back.
     validations:
       required: true
   - type: textarea
-    id: dovrebbe
+    id: should
     attributes:
-      label: Cosa dovrebbe succedere
-      description: Se sai quale spec lo prevede, citala (es. `openspec/specs/presentazione`).
+      label: What should happen
+      description: If you know which spec covers it, name it (e.g. `openspec/specs/presentazione`).
     validations:
       required: true
   - type: input
-    id: dove
+    id: where
     attributes:
-      label: Dove
-      description: Pagina, browser, passi per riprodurre.
-      placeholder: /mdpresenter — Chrome desktop, incollando il link condiviso
+      label: Where
+      description: Page, browser, steps to reproduce.
+      placeholder: /mdpresenter — desktop Chrome, pasting the shared link

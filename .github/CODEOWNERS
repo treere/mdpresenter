@@ -1,17 +1,17 @@
-# Chi deve firmare cosa.
-# Sintassi: percorso  @utente
+# Who signs off on what.
+# Syntax: path  @user
 # Docs: https://docs.github.com/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 
-# I workflow non si toccano: né dall'agente, né da chiunque senza il maintainer.
+# Workflows are off limits: not to the agent, not to anyone without the maintainer.
 /.github/workflows/          @treere
 /.github/CODEOWNERS          @treere
 
-# Gli spec cambiano solo tramite una change archiviata, mai a mano.
+# Specs change only through an archived change, never by hand.
 /openspec/specs/             @treere
 /openspec/config.yaml        @treere
 
-# Le regole con cui lavorano gli agenti.
+# The rules agents work by.
 /AGENTS.md                   @treere
 
-# Porta d'ingresso delle richieste.
+# Front door for requests.
 /.github/ISSUE_TEMPLATE/     @treere

@@ -11,7 +11,7 @@
   libreria vuota con flag `corrupt`; `QuotaExceededError` → `saveLibrary` restituisce `false`;
   `localStorage` inaccessibile → flag `unavailable`. Verifica: `npm test` con i test del
   punto 1.3 verdi.
-- [ ] 1.3 Scrivere `src/lib/library.test.ts` con `// @vitest-environment jsdom`: salvataggio e
+- [x] 1.3 Scrivere `src/lib/library.test.ts` con `// @vitest-environment jsdom`: salvataggio e
   rilettura, nome automatico dal primo heading e dalla prima riga, nome vuoto rifiutato,
   rinomina, cancellazione, dati corrotti, storage non disponibile. Verifica: `npm test` verde
   e i casi coprono ogni scenario della capability `libreria`.

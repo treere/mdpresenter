@@ -4,14 +4,30 @@
 		background: #fff !important;
 		color: #000 !important;
 	}
-	main > h1,
-	main > nav,
-	.pannelli > .editor,
+	/* I contenitori dello schermo (flex column, larghezza massima, griglia a due
+	   colonne) vanno appiattiti: in stampa chiudono la slide a metà foglio e
+	   spezzano l'impaginazione. */
+	.site,
+	.content,
+	.app {
+		display: block !important;
+		max-width: none !important;
+		width: auto !important;
+		min-height: 0 !important;
+		margin: 0 !important;
+		padding: 0 !important;
+	}
+	/* Cornice della pagina: tab, editor, barra dei pulsanti, viewer, link manuale. */
+	.site > header,
+	.site > footer,
+	.content > nav,
+	.panels > .editor,
+	.toolbar,
 	.viewer,
-	.barra {
+	.manual-link {
 		display: none !important;
 	}
-	.pannelli {
+	.panels {
 		display: block !important;
 	}
 	.print {
@@ -30,9 +46,12 @@
 	}
 	.print-page {
 		break-after: page;
+		page-break-after: always;
 		break-inside: avoid;
+		page-break-inside: avoid;
 	}
 	.print-page:last-child {
 		break-after: auto;
+		page-break-after: auto;
 	}
 }

@@ -47,9 +47,16 @@ Ogni richiesta passa da una change OpenSpec. Le skill generate sono in `.hermes/
 Prima di proporre, **leggi `openspec/specs/`**: se la richiesta contraddice un comportamento
 già specificato, non è una change, è una decisione di prodotto. Fermati e dillo sull'issue.
 
+**Eccezione: i chore.** Dipendenze, CI, refactor meccanici e pulizie non hanno comportamento da
+specificare: nessuna change, nessun proposal. Si implementano direttamente, con la verifica piena
+e il diff più piccolo possibile. Se un chore tocca davvero il comportamento, allora è una change
+e va trattata come tale.
+
 ### Etichette di stato
 
 - `agent-change` — richiesta che richiede una change: l'agente può partire col triage.
+- `agent-chore` — lavoro senza cambio di comportamento (dipendenze, CI, refactor meccanici):
+  nessuna change, si implementa e si verifica e basta.
 - `agent-fix` — bugfix che ripristina un comportamento già specificato: nessuna change, fix diretto.
 - `spec-review` — la proposta è pronta e aspetta una persona.
 - `needs-info` — l'agente ha fatto domande e aspetta risposte.

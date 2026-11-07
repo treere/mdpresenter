@@ -46,7 +46,7 @@
 
 ## 4. Verifica finale
 
-- [ ] 4.1 Eseguire `npm ci && npm run check && npm test && npm run build` sul branch:
+- [x] 4.1 Eseguire `npm ci && npm run check && npm test && npm run build` sul branch:
   tutto verde, 0 errori e 0 warning da `svelte-check`. Verifica: output del comando, più
   `grep -c "/mdpresenter/" build/index.html` per confermare che il base path sia applicato
   agli asset di `build/`.

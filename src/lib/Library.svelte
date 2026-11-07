@@ -56,7 +56,7 @@
 </script>
 
 {#if !library.unavailable}
-	<details class="library" open={items.length > 0}>
+	<details class="library" open={items.length > 0 || library.corrupt}>
 		<summary>
 			<span>{t.library.title}</span>
 			<span class="count">{items.length}</span>

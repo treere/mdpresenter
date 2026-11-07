@@ -22,7 +22,7 @@
   invito a scrivere, rinomina, elimina, conferma, annulla, avviso quota, avviso dati corrotti,
   nome predefinito. Verifica: `npm run check` verde, quindi la tipizzazione
   `Record<Language, Texts>` garantisce le chiavi in entrambe le lingue.
-- [ ] 2.2 Creare `src/lib/Library.svelte`: elenco ordinato per `updatedAt` decrescente con
+- [x] 2.2 Creare `src/lib/Library.svelte`: elenco ordinato per `updatedAt` decrescente con
   nome e data relativa, voce corrente evidenziata, rinomina in linea, eliminazione a due
   passi ("Elimina" → "Confermi?"), invito quando è vuota, avvisi per quota e dati corrotti.
   Verifica: `npm run check` e `npm run build` verdi; controllare l'anteprima locale che il

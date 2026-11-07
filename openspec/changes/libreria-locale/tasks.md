@@ -35,7 +35,7 @@
   `localStorage` non disponibile → `SAMPLE` e pannello nascosto. Verifica: aprendo `/` senza
   query si vede l'esempio, ricaricando dopo una modifica si ritrova il testo modificato, e
   aprendo un `?t=` valido vince il testo dell'URL.
-- [ ] 3.2 Salvare in libreria con lo stesso debounce dell'URL, dentro l'`$effect` già
+- [x] 3.2 Salvare in libreria con lo stesso debounce dell'URL, dentro l'`$effect` già
   esistente e con lo stesso contatore di sequenza; un testo arrivato dall'URL entra in
   libreria solo alla prima modifica. Verifica: modificando l'esempio nasce una voce in
   elenco; aprendo un link condiviso e non toccando nulla la libreria non cambia.

@@ -77,20 +77,41 @@
 
 	$effect(() => {
 		if (!isBrowser || !ready) return;
-		const t = text;
-		const s = slideIndex;
+		const value = text;
+		const slide = slideIndex;
 		if (firstRun) {
 			firstRun = false;
 			return;
 		}
 		const mine = ++encodeSeq;
 		const timer = window.setTimeout(() => {
-			void encode(t).then((c) => {
-				if (mine === encodeSeq) writeQuery(c, s);
+			void encode(value).then((c) => {
+				if (mine === encodeSeq) writeQuery(c, slide);
 			});
+			if (mine === encodeSeq) persist(value, slide);
 		}, 500);
 		return () => clearTimeout(timer);
 	});
+
+	/**
+	 * Keeps the open presentation in step with the editor. Text that arrived without an edit
+	 * (a shared link, the sample) is not copied into the library by itself.
+	 */
+	function persist(value: string, slide: number): void {
+		if (library.unavailable) return;
+		const open = findPresentation(library, currentId);
+		if (open !== null && open.text === value && open.slide === slide) return;
+		if (open !== null) {
+			library = updatePresentation(library, open.id, { text: value, slide });
+		} else {
+			if (currentId === null && value === silentText) return;
+			const created = createPresentation(value, slide, t.library.untitled);
+			library = addPresentation(library, created);
+			currentId = created.id;
+			silentText = null;
+		}
+		quotaWarning = !saveLibrary(library);
+	}
 </script>
 
 <svelte:head>

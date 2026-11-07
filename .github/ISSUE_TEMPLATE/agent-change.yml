@@ -1,0 +1,48 @@
+name: Change request (OpenSpec)
+description: A behaviour change. The agent proposes a change, you approve it, then it implements.
+title: "[change] "
+labels: ["agent-change"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Write in plain language: no code, no need to know where anything lives.
+        The agent will read the repository and reply with a proposal for you to approve.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong or missing
+      description: The problem you observe, with the context where it happens. Reproduction steps if you have them.
+      placeholder: In the presentation view, when a slide has a wide image, the text under it runs off the screen.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+      description: What must happen when it is done. Verifiable sentences, not "improve it".
+      placeholder: The image scales down to fit the slide and the text stays visible.
+    validations:
+      required: true
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Out of scope
+      description: Nearby things that must NOT be touched in this request.
+      placeholder: Do not change fullscreen behaviour and do not touch the dark theme.
+  - type: input
+    id: reference
+    attributes:
+      label: Visual reference
+      description: Figma link, screenshot, or the example slide.
+      placeholder: https://figma.com/...
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: How urgent
+      options:
+        - Blocks usage
+        - Recurring annoyance
+        - Improvement
+    validations:
+      required: true

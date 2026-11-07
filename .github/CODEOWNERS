@@ -1,0 +1,17 @@
+# Who signs off on what.
+# Syntax: path  @user
+# Docs: https://docs.github.com/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Workflows are off limits: not to the agent, not to anyone without the maintainer.
+/.github/workflows/          @treere
+/.github/CODEOWNERS          @treere
+
+# Specs change only through an archived change, never by hand.
+/openspec/specs/             @treere
+/openspec/config.yaml        @treere
+
+# The rules agents work by.
+/AGENTS.md                   @treere
+
+# Front door for requests.
+/.github/ISSUE_TEMPLATE/     @treere

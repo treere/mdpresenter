@@ -1,0 +1,30 @@
+name: Bugfix (already specified behaviour)
+description: Something does not do what the specs already say. No change, direct fix.
+title: "[fix] "
+labels: ["agent-fix"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form only if the correct behaviour is **already** described in
+        `openspec/specs/`. If you are asking for something new, use "Change request (OpenSpec)".
+  - type: textarea
+    id: happens
+    attributes:
+      label: What happens
+      placeholder: I save a slide with a table and the shared link does not bring the table back.
+    validations:
+      required: true
+  - type: textarea
+    id: should
+    attributes:
+      label: What should happen
+      description: If you know which spec covers it, name it (e.g. `openspec/specs/presentazione`).
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Where
+      description: Page, browser, steps to reproduce.
+      placeholder: /mdpresenter — desktop Chrome, pasting the shared link

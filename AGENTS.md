@@ -83,11 +83,34 @@ e va trattata come tale.
   nessuna change, si implementa e si verifica e basta.
 - `agent-claimed` — lock: un run dell'agente ha preso in carico l'issue e la sta lavorando.
   Serve a impedire che due run partano sulla stessa issue; si toglie quando la PR esiste.
+- `agent-applied` — consumazione: l'applicazione è già partita. Si toglie quando la PR arriva
+  ready; se il run si ferma su un blocco, resta insieme a `agent-blocked` e impedisce al monitor
+  di rilanciare lo stesso apply a ogni tick. La toglie una persona.
 - `agent-fix` — bugfix che ripristina un comportamento già specificato: nessuna change, fix diretto.
 - `spec-review` — la proposta è pronta e aspetta una persona.
 - `needs-info` — l'agente ha fatto domande e aspetta risposte.
 - `spec-approved` — **solo umano**. Da qui in poi si scrive codice.
 - `agent-blocked` — serve una decisione che l'agente non può prendere.
+
+### Cosa sveglia l'agente
+
+Il job gira ogni dieci minuti, ma l'agente parte solo quando il digest delle issue azionabili
+cambia. `agent-change`, `agent-chore` e `agent-fix` restano la porta d'ingresso del lavoro
+nuovo; ci sono poi due stati **derivati**, che nessuna etichetta dichiara:
+
+- `spec-approved` su una issue la cui PR è ancora **draft** → `APPLY`: la firma è il grilletto
+  dell'applicazione. Il run consuma il grilletto con `agent-applied`; se si ferma su un blocco
+  lascia il marcatore e mette `agent-blocked`.
+- l'ultimo commento del thread — issue, conversazione della PR, commenti inline — **senza** il
+  marcatore `<!-- hermes-agent -->` → `REVISE`: c'è una persona che aspetta una risposta. La riga
+  si spegne quando l'agente risponde con un commento marcato: una revisione lasciata senza
+  risposta si ripete al tick successivo.
+- una PR mergiata la cui change non è ancora in `archive/` → `DONE`, **anche se la issue è già
+  chiusa** da `Closes #N`. L'archivio è una PR separata (`chore(spec): archiviare <id>`, senza
+  `Closes`) ed è ciò che toglie `spec-approved`: se fallisce, la firma resta e il tick riprova.
+
+`agent-applied` e `agent-blocked` non si tolgono da soli: sono la firma che il blocco è
+superato, e le toglie una persona.
 
 ## Dove si parla
 

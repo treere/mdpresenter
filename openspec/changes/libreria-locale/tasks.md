@@ -18,7 +18,7 @@
 
 ## 2. Testi e pannello
 
-- [ ] 2.1 Aggiungere in `src/lib/i18n.ts` (sia `it` sia `en`) i testi della libreria: titolo,
+- [x] 2.1 Aggiungere in `src/lib/i18n.ts` (sia `it` sia `en`) i testi della libreria: titolo,
   invito a scrivere, rinomina, elimina, conferma, annulla, avviso quota, avviso dati corrotti,
   nome predefinito. Verifica: `npm run check` verde, quindi la tipizzazione
   `Record<Language, Texts>` garantisce le chiavi in entrambe le lingue.

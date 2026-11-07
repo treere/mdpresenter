@@ -1,0 +1,54 @@
+name: PR check
+
+# Runs on every pull request: the gate the agent flow relies on.
+# The deploy workflow only runs on main, so before this file every PR was unverified.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Guard protected paths
+        run: |
+          base="${{ github.event.pull_request.base.sha }}"
+          changed=$(git diff --name-only "$base"...HEAD)
+          bad=$(printf '%s\n' "$changed" | grep -E '^\.github/workflows/' || true)
+          if [ -n "$bad" ]; then
+            # Warning, not a failure: this PR may legitimately be the one adding a
+            # workflow. The hard block is CODEOWNERS on /.github/workflows/ plus the
+            # agent token having no Workflows scope.
+            echo "::warning::This PR touches workflows, which needs the maintainer's review: $bad"
+          fi
+          echo "protected paths: checked"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run check
+
+      - name: Tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+        env:
+          BASE_PATH: /mdpresenter

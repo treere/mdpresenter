@@ -20,6 +20,8 @@ L'utente scrive Markdown nell'editor e vede le slide aggiornarsi mentre scrive.
 
 Il testo dell'editor e l'indice della slide corrente vivono nei query param
 (`t` per il testo compresso, `s` per l'indice) e si aggiornano mentre si usa l'app.
+Lo stesso testo è salvato in automatico nella libreria locale del browser: la libreria è la
+copia di lavoro, l'URL resta il modo per condividerlo con chi non ce l'ha.
 
 #### Scenario: Condivisione del link
 
@@ -40,3 +42,8 @@ Il testo dell'editor e l'indice della slide corrente vivono nei query param
 
 - **WHEN** l'URL contiene un codice che non si decodifica
 - **THEN** l'utente vede un avviso e l'editor parte vuoto (non l'esempio)
+
+#### Scenario: Autosalvataggio locale
+
+- **WHEN** l'utente modifica il testo senza toccare il link
+- **THEN** la presentazione aperta nella libreria contiene il testo aggiornato, senza premere salva

@@ -1,101 +1,104 @@
-# AGENTS.md — how to work in this repository
+# AGENTS.md — come si lavora in questo repository
 
-Instructions for agents working on this repo. The owner is `@treere`: anything not
-written here is not authorized.
+Istruzioni per gli agenti che lavorano su questo repo. Il padrone di casa è `@treere`:
+quello che non è scritto qui, non è autorizzato.
 
-## The repo
+## Il repo
 
-`mdpresenter` is a **frontend-only** app: static SvelteKit, published to GitHub Pages
-under `/mdpresenter`, served at `/` locally. No server, no accounts, no database, no
-secrets. Slide content lives in the link.
+`mdpresenter` è un'app **solo frontend**: SvelteKit statico, pubblicato su GitHub Pages
+sotto `/mdpresenter`, servito su `/` in locale. Nessun server, nessun account, nessun
+database, nessun segreto. Il contenuto delle slide vive nel link.
 
-## The single verification command
+## Comando unico di verifica
 
 ```sh
 npm ci && npm run check && npm test && npm run build
 ```
 
-This is the only valid check: if it does not pass, the work is not done and no PR moves
-to ready. Expected baseline: 0 errors, 0 warnings from `svelte-check`.
-Note: `.nvmrc` pins Node 22 (CI uses 22); the working environment may run a newer Node.
-If a behaviour difference shows up only locally, suspect the version before touching code.
+È l'unica verifica valida: se non passa questa, il lavoro non è finito e non si apre
+una PR in stato ready. Baseline attesa: 0 errori, 0 warning da `svelte-check`.
+Nota: `.nvmrc` dice Node 22 (la CI usa 22); l'ambiente di lavoro può avere un Node
+più recente. Se una differenza di comportamento compare solo qui, sospetta la versione
+prima di toccare il codice.
 
-## Hard rules
+## Regole di ferro
 
-1. **Never push to `main`.** Branches are `hermes/<issue-number>-<slug>`. A human merges.
-2. **Never touch `.github/workflows/`.** The agent token has no Workflows scope: GitHub
-   would reject the push. If a task seems to require it, stop and write it on the issue
-   with the `agent-blocked` label.
-3. **Never edit `openspec/specs/` by hand.** Specs are updated only by
-   `openspec-archive-change`, which syncs the deltas of an approved change.
-4. **No new dependencies** without explicit approval on the issue. The project has 12
-   dependencies and keeps them.
-5. **Never apply the `spec-approved` label.** Only a human does that.
-6. **Never merge, never enable auto-merge.**
+1. **Mai push su `main`.** Solo branch `hermes/<numero-issue>-<slug>`. Il merge lo fa una persona.
+2. **Mai toccare `.github/workflows/`.** Il token dell'agente non ha lo scope Workflows:
+   il push verrebbe rifiutato. Se un task sembra richiederlo, fermati e scrivilo
+   sull'issue con l'etichetta `agent-blocked`.
+3. **Mai modificare `openspec/specs/` a mano.** Gli spec si aggiornano solo con
+   `openspec-archive-change`, che sincronizza i delta di una change approvata.
+4. **Nessuna dipendenza nuova** senza approvazione esplicita nell'issue. Il progetto ha
+   12 dipendenze e le tiene.
+5. **Mai mettere l'etichetta `spec-approved`.** Quella la mette solo una persona.
+6. **Mai mergiare, mai abilitare l'auto-merge.**
 
-## The flow: issue → change → gate → apply → archive
+## Il flusso: issue → change → gate → apply → archive
 
-Every request goes through an OpenSpec change. The generated skills live in `.hermes/skills/`:
+Ogni richiesta passa da una change OpenSpec. Le skill generate sono in `.hermes/skills/`:
 
-| Phase | Skill | Output |
+| Fase | Skill | Cosa produce |
 |---|---|---|
-| 1. Triage and proposal | `openspec-propose` | `openspec/changes/<id>/` (proposal, design, tasks) |
-| 2. Apply | `openspec-apply-change` | one commit per task, checkboxes ticked |
-| 3. Close | `openspec-archive-change` + `openspec-sync-specs` | deltas merged into `openspec/specs/`, change moved to `archive/` |
+| 1. Triage e proposta | `openspec-propose` | `openspec/changes/<id>/` (proposal, design, tasks) |
+| 2. Applicazione | `openspec-apply-change` | commit task per task + checkbox girate |
+| 3. Chiusura | `openspec-archive-change` + `openspec-sync-specs` | delta fusi in `openspec/specs/`, change in `archive/` |
 
-Before proposing, **read `openspec/specs/`**: if the request contradicts behaviour that is
-already specified, it is not a change, it is a product decision. Stop and say so on the issue.
+Prima di proporre, **leggi `openspec/specs/`**: se la richiesta contraddice un comportamento
+già specificato, non è una change, è una decisione di prodotto. Fermati e dillo sull'issue.
 
-### State labels
+### Etichette di stato
 
-- `agent-change` — request that needs a change: the agent may start triage.
-- `agent-fix` — bugfix restoring already-specified behaviour: no change, fix directly.
-- `spec-review` — the proposal is ready and waits for a human.
-- `needs-info` — the agent asked questions and waits for answers.
-- `spec-approved` — **human only.** Code is written from here on.
-- `agent-blocked` — a decision the agent cannot make is required.
-- `agent-done` — PR merged and change archived.
+- `agent-change` — richiesta che richiede una change: l'agente può partire col triage.
+- `agent-fix` — bugfix che ripristina un comportamento già specificato: nessuna change, fix diretto.
+- `spec-review` — la proposta è pronta e aspetta una persona.
+- `needs-info` — l'agente ha fatto domande e aspetta risposte.
+- `spec-approved` — **solo umano**. Da qui in poi si scrive codice.
+- `agent-blocked` — serve una decisione che l'agente non può prendere.
 
-## Where the conversation happens
+## Dove si parla
 
-- **Issue = intent and decisions.** What must happen, what is out of scope, the questions.
-- **PR = implementation.** Questions about code, inline comments, verification.
-- An intent question in the PR, or a code question on the issue, is in the wrong place:
-  move the conversation and leave a link.
+- **Issue = intento e decisioni.** Cosa deve succedere, cosa è fuori scope, le domande.
+- **PR = implementazione.** Domande sul codice, commenti inline, verifica.
+- Domanda di intento nella PR, o domanda di codice nell'issue, sono un errore di posto:
+  sposta la conversazione e lascia un link.
 
-Consistency rule: when the PR is opened, the issue gets a one-line comment with the link.
-From then on, new decisions still go on the issue.
+Regola di coerenza: quando la PR nasce, l'issue riceve un commento di una riga con il link.
+Da lì in poi le decisioni nuove tornano comunque sull'issue.
 
-## When something is unclear
+## Quando qualcosa non è chiaro
 
-1. Ask **at most 3 questions**, each **closed**, each with the default you would adopt:
-   "there are `ConfirmDialog` and `Modal`: which one? (default: `ConfirmDialog`)".
-2. Every question cites what produced it: file, line, observed behaviour.
-3. **Never ask what is in the code.** If you don't know where a component lives, search.
-   A question like that means these instructions are thin: say so.
-4. Post the questions as an issue comment, apply `needs-info`, and end the run.
-5. If nobody answers within **one business day**, apply the defaults and write them in the
-   PR body under "Assumptions". An endless wait is worse than a recorded assumption.
+1. Chiedi **al massimo 3 domande**, ognuna **chiusa**, ognuna con il default che adotteresti:
+   «esistono `ConfirmDialog` e `Modal`: quale? (default: `ConfirmDialog`)».
+2. Ogni domanda cita ciò che l'ha generata: file, riga, comportamento osservato.
+3. **Vietato chiedere ciò che è nel codice.** Se non sai dove sta un componente, cerca.
+   Una domanda del genere significa che queste istruzioni sono povere: segnalalo.
+4. Posta le domande come commento sull'issue, metti `needs-info` e chiudi il run.
+5. Se nessuno risponde entro **un giorno lavorativo**, applica i default e scrivili nel
+   corpo della PR sotto «Assunzioni». Un'attesa infinita è peggio di un'assunzione tracciata.
 
-## Project conventions
+## Convenzioni del progetto
 
-- OpenSpec artifacts (proposal, tasks, specs) are written **in Italian**; code, file names,
-  variables and comments **in English**; visible UI text in Italian and English. This file,
-  issues and PR descriptions are in English.
-- Commits in Italian, one per task when applying a change.
-- SvelteKit 3: no `svelte.config.js`, config lives in the Vite `sveltekit()` plugin; `$app/*`
-  types are declared in `app.d.ts`; internal links use `resolve()` to respect the
-  `/mdpresenter` base path.
-- Cross-route shared state in `.svelte.ts` modules holding `$state`; device preferences in
-  `localStorage`, shareable content in the URL (fragment `#`, never the query string).
-- Markdown into `{@html}`: sanitize the **final** HTML with DOMPurify; mermaid initialized
-  with a global `htmlLabels: false`.
-- `@media print` rules go in a global stylesheet imported by the layout: Svelte component
-  styles are scoped and cannot reach siblings.
+- **Questo progetto è tutto in italiano**: artifact OpenSpec, messaggi di commit, titoli e
+  descrizioni delle PR, corpi delle issue, commenti. Codice, nomi di file, variabili e commenti
+  restano **in inglese**; i testi visibili in italiano e inglese.
+- Le descrizioni delle PR hanno cinque sezioni, in questo ordine: **Perché / Cosa cambia /
+  Come verificarlo / Rischi e assunzioni / Note per il revisore**. Sotto le ~40 righe, nessun
+  changelog generato, nessun elenco di file.
+- Commit in italiano, uno per task quando si applica una change.
+- SvelteKit 3: niente `svelte.config.js`, la config sta nel plugin `sveltekit()` di Vite;
+  i tipi `$app/*` si dichiarano in `app.d.ts`; gli import interni usano `resolve()` per
+  rispettare il base path `/mdpresenter`.
+- Stato condiviso fra route in moduli `.svelte.ts` con `$state`; preferenze del dispositivo
+  in `localStorage`, contenuto condivisibile nell'URL (frammento `#`, mai query).
+- Markdown in `{@html}`: sanitizzare l'HTML **finale** con DOMPurify; mermaid inizializzato
+  con `htmlLabels: false` globale.
+- `@media print` va in un foglio globale importato dal layout: gli stili dei componenti
+  Svelte sono scoped e non raggiungono i sibling.
 
-## Before saying "done"
+## Cosa guardare prima di dire «fatto»
 
-- `npm run check && npm test && npm run build` is green.
-- `openspec validate <id>` is green for the change.
-- No file touched outside the ones the tasks name.
-- The diff contains no `.github/workflows/**`, no `openspec/specs/**`, no new dependencies.
+- `npm run check && npm test && npm run build` verde.
+- `openspec validate <id>` verde sulla change.
+- Nessun file toccato fuori da quelli che i task nominano.
+- Il diff non contiene `.github/workflows/**`, `openspec/specs/**` o nuove dipendenze.

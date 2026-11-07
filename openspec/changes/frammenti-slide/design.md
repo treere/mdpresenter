@@ -36,14 +36,22 @@ Vedi proposal.md — Why. Lo stato attuale che conta:
 
 ## Decisions
 
-**Marcatore `<!-- passo -->` su una riga da sola, non `===` né `::: passo`.** `===` è già
-valido Markdown (sottolineatura di un titolo setext) e spezzerebbe documenti esistenti;
-`:::` è il namespace delle direttive usato da `::: colonne` e richiederebbe una chiusura.
-Un commento HTML è invisibile in ogni altro renderer (GitHub, VS Code, un'estensione
-Markdown qualsiasi): lo stesso testo continua a leggersi bene fuori dall'app. Il confronto è
-esatto sulla riga trimmata, come `---` in `splitSlides`; nessuna variante tollerata, per non
-creare dialetti. Alternativa scartata anche: un marcatore dentro il paragrafo (`**|**`), che
-sporca il testo e non si può nascondere in altri renderer.
+**Marcatore `<!-- passo -->` su una riga da sola, non il `:::` di `::: colonne` né `===`.**
+`===` è già valido Markdown (sottolineatura di un titolo setext) e spezzerebbe documenti
+esistenti. `::: passo` sarebbe coerente con `::: colonne`, ma le due cose hanno semantica
+diversa: `:::` apre un contenitore e ha bisogno di una chiusura, il passo è un confine. Riusarlo
+ha tre costi concreti: (a) il `:::` nudo è già la chiusura di `::: colonne`
+(`/^::: +colonne *\n([\s\S]*?)\n::: *(?:\n|$)/`, `src/lib/markdown.ts:20`), quindi il `:::` di
+chiusura di un passo dentro una colonna chiuderebbe la colonna; (b) `splitSteps` lavora sul testo
+prima del rendering, e su `::: passo … :::` dovrebbe bilanciare aperture e chiusure con
+annidamento, cioè replicare il parser Markdown invece di scansionare righe; (c) una chiusura
+dimenticata non è un errore visibile, inghiotte il resto della slide in un unico passo. Un
+commento HTML non ha chiusura, non collide con nessun blocco esistente e resta invisibile in ogni
+altro renderer (GitHub, VS Code, un'estensione Markdown qualsiasi): lo stesso testo continua a
+leggersi bene fuori dall'app. Il confronto è esatto sulla riga trimmata, come `---` in
+`splitSlides`; nessuna variante tollerata, per non creare dialetti. Alternativa scartata anche:
+un marcatore dentro il paragrafo (`**|**`), che sporca il testo e non si può nascondere in altri
+renderer.
 
 **Analisi in `splitSteps(text): string[]` dentro `src/lib/slides.ts`, pura.** Stessa forma di
 `splitSlides` (toggle della fence, scarto dei blocchi vuoti, almeno un elemento), così le due

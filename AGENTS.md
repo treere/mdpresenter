@@ -57,6 +57,8 @@ e va trattata come tale.
 - `agent-change` — richiesta che richiede una change: l'agente può partire col triage.
 - `agent-chore` — lavoro senza cambio di comportamento (dipendenze, CI, refactor meccanici):
   nessuna change, si implementa e si verifica e basta.
+- `agent-claimed` — lock: un run dell'agente ha preso in carico l'issue e la sta lavorando.
+  Serve a impedire che due run partano sulla stessa issue; si toglie quando la PR esiste.
 - `agent-fix` — bugfix che ripristina un comportamento già specificato: nessuna change, fix diretto.
 - `spec-review` — la proposta è pronta e aspetta una persona.
 - `needs-info` — l'agente ha fatto domande e aspetta risposte.
@@ -72,6 +74,11 @@ e va trattata come tale.
 
 Regola di coerenza: quando la PR nasce, l'issue riceve un commento di una riga con il link.
 Da lì in poi le decisioni nuove tornano comunque sull'issue.
+
+**Ogni commento scritto dall'agente inizia con il marcatore invisibile `<!-- hermes-agent -->`.**
+Il token è dello stesso account della persona, quindi il nome dell'autore non distingue i due:
+il marcatore è l'unico modo per riconoscere un commento dell'agente da una risposta umana, e
+senza di esso un run successivo non capisce mai che ha ricevuto una risposta.
 
 ## Quando qualcosa non è chiaro
 

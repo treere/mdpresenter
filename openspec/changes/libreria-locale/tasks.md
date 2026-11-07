@@ -39,7 +39,7 @@
   esistente e con lo stesso contatore di sequenza; un testo arrivato dall'URL entra in
   libreria solo alla prima modifica. Verifica: modificando l'esempio nasce una voce in
   elenco; aprendo un link condiviso e non toccando nulla la libreria non cambia.
-- [ ] 3.3 Collegare il pannello alla pagina: scegliere una voce carica testo e indice slide,
+- [x] 3.3 Collegare il pannello alla pagina: scegliere una voce carica testo e indice slide,
   rinomina ed eliminazione aggiornano l'elenco, cancellare la voce aperta passa alla
   successiva o a `SAMPLE`. Verifica: `npm test`, `npm run check` e `npm run build` verdi;
   prova manuale su viewport da telefono che l'elenco non copra l'editor.

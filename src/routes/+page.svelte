@@ -112,6 +112,39 @@
 		}
 		quotaWarning = !saveLibrary(library);
 	}
+
+	function openPresentation(id: string): void {
+		const chosen = findPresentation(library, id);
+		if (chosen === null) return;
+		openAt(chosen);
+		library = { ...library, lastOpenedId: chosen.id };
+		void saveLibrary(library);
+	}
+
+	function renamePresentationTo(id: string, name: string): void {
+		const before = findPresentation(library, id)?.name;
+		library = renamePresentation(library, id, name);
+		if (findPresentation(library, id)?.name !== before) void saveLibrary(library);
+	}
+
+	/** Deleting the open presentation hands the editor to the next one, or to the sample. */
+	function removePresentation(id: string): void {
+		const wasOpen = id === currentId;
+		library = deletePresentation(library, id);
+		void saveLibrary(library);
+		if (!wasOpen) return;
+		const next = sortedPresentations(library)[0] ?? null;
+		if (next !== null) {
+			openAt(next);
+			library = { ...library, lastOpenedId: next.id };
+			void saveLibrary(library);
+			return;
+		}
+		currentId = null;
+		text = SAMPLE;
+		silentText = SAMPLE;
+		slideIndex = 0;
+	}
 </script>
 
 <svelte:head>
@@ -134,6 +167,18 @@
 		<span>{t.invalidLink.text}</span>
 		<button onclick={() => (invalidLink = false)}>{t.invalidLink.close}</button>
 	</div>
+{/if}
+{#if quotaWarning}
+	<div class="warning" role="alert">{t.library.quota}</div>
+{/if}
+{#if ready}
+	<LibraryPanel
+		{library}
+		{currentId}
+		onopen={openPresentation}
+		onrename={renamePresentationTo}
+		ondelete={removePresentation}
+	/>
 {/if}
 <div class="panels" data-tab={tab}>
 	<textarea

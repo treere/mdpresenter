@@ -1,0 +1,48 @@
+name: Richiesta con change OpenSpec
+description: Una modifica di comportamento. L'agente propone una change, tu la approvi, poi implementa.
+title: "[change] "
+labels: ["agent-change"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Scrivi in linguaggio naturale: non serve codice, non serve sapere dove sta la roba.
+        L'agente leggerà il repository e ti risponderà con una proposta da approvare.
+  - type: textarea
+    id: problema
+    attributes:
+      label: Cosa non va o cosa manca
+      description: Il problema osservato, con il contesto in cui succede. Se puoi, come riprodurlo.
+      placeholder: Nella vista presentazione, quando una slide ha un'immagine larga, il testo sotto esce dallo schermo.
+    validations:
+      required: true
+  - type: textarea
+    id: atteso
+    attributes:
+      label: Comportamento atteso
+      description: Cosa deve succedere quando è fatto. Frasi verificabili, non «migliorare».
+      placeholder: L'immagine si ridimensiona per stare nella slide e il testo resta visibile.
+    validations:
+      required: true
+  - type: textarea
+    id: fuori-scope
+    attributes:
+      label: Cosa resta fuori
+      description: Le cose vicine che NON vanno toccate in questa richiesta.
+      placeholder: Non cambiare il comportamento del fullscreen e non toccare il tema scuro.
+  - type: input
+    id: riferimento
+    attributes:
+      label: Riferimento visivo
+      description: Link a Figma, screenshot o alla slide di esempio.
+      placeholder: https://figma.com/...
+  - type: dropdown
+    id: impatto
+    attributes:
+      label: Quanto è urgente
+      options:
+        - Blocca l'uso
+        - Fastidio ricorrente
+        - Miglioramento
+    validations:
+      required: true

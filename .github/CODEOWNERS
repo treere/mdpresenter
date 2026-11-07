@@ -1,0 +1,17 @@
+# Chi deve firmare cosa.
+# Sintassi: percorso  @utente
+# Docs: https://docs.github.com/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# I workflow non si toccano: né dall'agente, né da chiunque senza il maintainer.
+/.github/workflows/          @treere
+/.github/CODEOWNERS          @treere
+
+# Gli spec cambiano solo tramite una change archiviata, mai a mano.
+/openspec/specs/             @treere
+/openspec/config.yaml        @treere
+
+# Le regole con cui lavorano gli agenti.
+/AGENTS.md                   @treere
+
+# Porta d'ingresso delle richieste.
+/.github/ISSUE_TEMPLATE/     @treere

@@ -20,19 +20,19 @@
 
 ## 2. Renderer dei blocchi
 
-- [ ] 2.1 In `src/lib/markdown.ts` sostituire l'estensione `colonne` con una `directives` che
+- [x] 2.1 In `src/lib/markdown.ts` sostituire l'estensione `colonne` con una `directives` che
   riconosce le direttive tramite `directiveOf`/`isFenceLine`: un blocco è aperto da `::: columns`
   o `::: step` e chiuso dal `::: end` che riporta la profondità a zero (un blocco annidato non
   chiude il padre). Un blocco non chiuso o con nome sconosciuto resta testo. Verifica:
   `npm run check` verde.
-- [ ] 2.2 `::: columns` divide il contenuto sulle righe `::: part` di primo livello, ne fa un
+- [x] 2.2 `::: columns` divide il contenuto sulle righe `::: part` di primo livello, ne fa un
   token per parte con `this.lexer.blockTokens` ed emette `<div class="columns">` con un `<div>` per
   parte, per N qualsiasi; senza `::: part` rende una parte sola a piena larghezza. Verifica:
   `npm run build` verde.
-- [ ] 2.3 `::: step` emette `<div class="step">` con il contenuto parse-ato, e funziona anche
+- [x] 2.3 `::: step` emette `<div class="step">` con il contenuto parse-ato, e funziona anche
   dentro una colonna; un `::: step` dentro un altro `::: step` resta testo. Verifica: `npm run
   build` verde.
-- [ ] 2.4 In `src/lib/markdown.test.ts` coprire: due e tre colonne; passo che contiene un blocco
+- [x] 2.4 In `src/lib/markdown.test.ts` coprire: due e tre colonne; passo che contiene un blocco
   colonne; passo dentro una colonna; `::: step` annidato reso come testo; vecchia sintassi
   `::: left` / `::: right` resa come testo; direttive dentro una fence intatte; blocco non chiuso
   (il test «leaves unclosed column blocks as text» continua a passare). Verifica: `npm test` verde.

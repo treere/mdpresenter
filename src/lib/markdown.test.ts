@@ -44,15 +44,74 @@ describe('renderMarkdown', () => {
 		expect(html).toContain('graph TD');
 	});
 
-	it('renders two-column blocks', () => {
-		const html = renderMarkdown('::: colonne\n::: left\nciao\n:::\n::: right\nPippo\n:::\n');
-		expect(html).toContain('colonne');
-		expect(html).toContain('ciao');
-		expect(html).toContain('Pippo');
+	it('renders two columns', () => {
+		const html = renderMarkdown('::: columns\n\n::: part\n\nciao\n\n::: part\n\nPippo\n\n::: end\n');
+		expect(html).toContain('class="columns"');
+		expect(html.match(/<div>/g)).toHaveLength(2);
+		expect(html).toContain('<p>ciao</p>');
+		expect(html).toContain('<p>Pippo</p>');
 	});
 
-	it('leaves unclosed column blocks as text', () => {
-		const html = renderMarkdown('::: colonne\ntext without end');
-		expect(html).not.toContain('colonne"><div');
+	it('renders three columns from three parts', () => {
+		const html = renderMarkdown('::: columns\n\n::: part\n\na\n\n::: part\n\nb\n\n::: part\n\nc\n\n::: end\n');
+		expect(html.match(/<div>/g)).toHaveLength(3);
+		expect(html).toContain('<p>a</p>');
+		expect(html).toContain('<p>b</p>');
+		expect(html).toContain('<p>c</p>');
+	});
+
+	it('renders one full-width column without parts', () => {
+		const html = renderMarkdown('::: columns\n\nsolo\n\n::: end\n');
+		expect(html).toContain('class="columns"');
+		expect(html.match(/<div>/g)).toHaveLength(1);
+		expect(html).toContain('<p>solo</p>');
+	});
+
+	it('renders a step as a block', () => {
+		const html = renderMarkdown('# Titolo\n\n::: step\n\ndopo\n\n::: end\n');
+		expect(html).toContain('<div class="step">');
+		expect(html).toContain('dopo');
+		expect(html).not.toContain(':::');
+	});
+
+	it('lets a step contain a columns block', () => {
+		const html = renderMarkdown('::: step\n\n::: columns\n\n::: part\n\na\n\n::: part\n\nb\n\n::: end\n\n::: end\n');
+		expect(html).toContain('<div class="step">');
+		expect(html).toContain('class="columns"');
+		expect(html).toContain('<p>a</p>');
+		expect(html).toContain('<p>b</p>');
+	});
+
+	it('lets a column contain a step', () => {
+		const html = renderMarkdown('::: columns\n\n::: part\n\nsubito\n\n::: part\n\n::: step\n\ndopo\n\n::: end\n\n::: end\n');
+		expect(html).toContain('class="columns"');
+		expect(html).toContain('<p>subito</p>');
+		expect(html).toContain('<div class="step">');
+		expect(html).toContain('<p>dopo</p>');
+	});
+
+	it('shows a step nested in a step as text', () => {
+		const html = renderMarkdown('::: step\n\nfuori\n\n::: step\n\ndentro\n\n::: end\n\n::: end\n');
+		expect(html.match(/class="step"/g)).toHaveLength(1);
+		expect(html).toContain('::: step');
+	});
+
+	it('shows the old syntax as text', () => {
+		const html = renderMarkdown('::: colonne\n::: left\nciao\n::: right\nPippo\n:::\n');
+		expect(html).not.toContain('class="columns"');
+		expect(html).toContain('::: left');
+		expect(html).toContain('::: right');
+	});
+
+	it('leaves directives inside a fence intact', () => {
+		const html = renderMarkdown('```\n::: step\n::: end\n```');
+		expect(html).not.toContain('class="step"');
+		expect(html).toContain('::: step');
+	});
+
+	it('leaves unclosed blocks as text', () => {
+		const html = renderMarkdown('::: columns\n\ntext without end');
+		expect(html).not.toContain('class="columns"');
+		expect(html).toContain('::: columns');
 	});
 });

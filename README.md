@@ -32,6 +32,12 @@ npm run build
 
 Pushing to `main` publishes automatically to GitHub Pages via GitHub Actions.
 
+Each open pull request is also published as a preview, under
+`https://treere.github.io/mdpresenter/preview/pr-<n>/` (index at `/preview/`):
+`preview.yml` builds main plus every open PR, `preview-deploy.yml` publishes the
+result. Previews disappear after a merge to `main`, until the next pull request
+event rebuilds them.
+
 ## Specs
 
 Decisions live in `openspec/` (in Italian): proposal, design and tasks per change, with synced specs as source of truth.

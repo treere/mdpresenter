@@ -71,11 +71,11 @@
 
 ## 5. Anteprima dell'editor completa
 
-- [ ] 5.1 Aggiungere al `Viewer` la prop `showAllSteps = false`; quando è `true` nessun passo viene
+- [x] 5.1 Aggiungere al `Viewer` la prop `showAllSteps = false`; quando è `true` nessun passo viene
   nascosto e la navigazione si muove solo fra le slide. In `src/routes/+page.svelte` passare
   `showAllSteps` al `Viewer` dell'anteprima. Verifica: la scheda Anteprima della home mostra una
   slide con `::: step` per intero, mentre `/v` la mostra a passi.
-- [ ] 5.2 Nessun cambiamento a tastiera, swipe, fullscreen, tema e link: le scorciatoie esistenti
+- [x] 5.2 Nessun cambiamento a tastiera, swipe, fullscreen, tema e link: le scorciatoie esistenti
   chiamano già `next`/`prev`. Verifica: in `/v` frecce, swipe su viewport da telefono e schermo
   intero si comportano come prima su una presentazione senza direttive.
 

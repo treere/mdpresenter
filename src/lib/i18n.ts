@@ -25,6 +25,16 @@ const it = {
 		corrupt: 'I dati salvati non erano leggibili: la libreria riparte vuota.',
 		untitled: 'Senza titolo'
 	},
+	transfer: {
+		export: 'Esporta',
+		import: 'Importa',
+		chooseTitle: 'Cosa facciamo con questo file?',
+		chooseText: 'Puoi aprirlo come nuova presentazione oppure sostituire quella aperta.',
+		newPresentation: 'Nuova presentazione',
+		replace: 'Sostituisci questa',
+		cancel: 'Annulla',
+		unreadable: 'Il file non si è potuto leggere: non è cambiato niente.'
+	},
 	footer: 'Codice su GitHub',
 	invalidDiagram: 'Diagramma non valido: controlla la sintassi mermaid.',
 	overflow: 'La slide supera lo schermo: scorri per vedere tutto.',
@@ -74,6 +84,16 @@ const en: Texts = {
 		quota: 'Browser storage is full: the text stays here and in the link, but not in the library.',
 		corrupt: 'The saved data was unreadable: the library starts empty.',
 		untitled: 'Untitled'
+	},
+	transfer: {
+		export: 'Export',
+		import: 'Import',
+		chooseTitle: 'What should we do with this file?',
+		chooseText: 'You can open it as a new presentation or replace the one you have open.',
+		newPresentation: 'New presentation',
+		replace: 'Replace this one',
+		cancel: 'Cancel',
+		unreadable: 'The file could not be read: nothing changed.'
 	},
 	footer: 'Code on GitHub',
 	invalidDiagram: 'Invalid diagram: check the mermaid syntax.',

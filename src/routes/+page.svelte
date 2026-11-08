@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { Eye, Pencil } from 'lucide-svelte';
+	import { Download, Eye, Pencil, Upload } from 'lucide-svelte';
 	import Viewer from '../lib/Viewer.svelte';
 	import LibraryPanel from '../lib/Library.svelte';
 	import { pending, preferences } from '../lib/shared.svelte';
 	import { texts } from '../lib/i18n';
 	import { SAMPLE, encode, decode, readQuery, splitSlides, writeQuery } from '../lib/slides';
+	import { exportFileName, normalizeImportedText } from '../lib/transfer';
 	import {
 		addPresentation,
 		createPresentation,
@@ -30,6 +31,11 @@
 	let quotaWarning = $state(false);
 	/** Text that arrived without an edit (link, sample): it enters the library only when touched. */
 	let silentText: string | null = SAMPLE;
+	/** Hidden file picker, opened by the Import button. */
+	let fileInput = $state<HTMLInputElement | null>(null);
+	/** File waiting for a choice: the editor is untouched until the choice is made. */
+	let pendingImport = $state<{ name: string; text: string } | null>(null);
+	let importWarning = $state(false);
 
 	const isBrowser = typeof window !== 'undefined';
 	const t = $derived(texts[preferences.language]);
@@ -145,6 +151,77 @@
 		silentText = SAMPLE;
 		slideIndex = 0;
 	}
+
+	/** Name of the open presentation; empty when there is none, so the helper picks the default. */
+	function openName(): string {
+		return findPresentation(library, currentId)?.name ?? '';
+	}
+
+	/** Downloads the editor text as it is: separators, directives and code blocks untouched. */
+	function exportPresentation(): void {
+		const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement('a');
+		link.href = url;
+		link.download = exportFileName(openName());
+		document.body.append(link);
+		link.click();
+		link.remove();
+		URL.revokeObjectURL(url);
+	}
+
+	function chooseFile(): void {
+		importWarning = false;
+		fileInput?.click();
+	}
+
+	/** Reads the chosen file and opens the choice; nothing in the editor changes yet. */
+	async function readFile(event: Event): Promise<void> {
+		const input = event.currentTarget as HTMLInputElement;
+		const chosen = input.files?.[0] ?? null;
+		// Cleared at once: choosing the same file twice must fire `change` again.
+		input.value = '';
+		if (chosen === null) return;
+		try {
+			pendingImport = { name: chosen.name, text: normalizeImportedText(await chosen.text()) };
+		} catch {
+			pendingImport = null;
+			importWarning = true;
+		}
+	}
+
+	function cancelImport(): void {
+		pendingImport = null;
+	}
+
+	/**
+	 * Applies the chosen file: "new" gains a library entry named from the content, "replace"
+	 * keeps the open one and its name. Both save at once, so a reload right after the import
+	 * still shows the imported text (the debounce would arrive too late).
+	 */
+	function applyImport(kind: 'new' | 'replace'): void {
+		const incoming = pendingImport;
+		if (incoming === null) return;
+		pendingImport = null;
+		const open = findPresentation(library, currentId);
+		text = incoming.text;
+		silentText = null;
+		slideIndex = 0;
+		if (library.unavailable) {
+			// No library to write into: the text lives in the editor and in the link only.
+			currentId = null;
+			return;
+		}
+		if (kind === 'new' || open === null) {
+			const created = createPresentation(incoming.text, 0, t.library.untitled);
+			library = addPresentation(library, created);
+			currentId = created.id;
+		} else {
+			library = updatePresentation(library, open.id, { text: incoming.text, slide: 0 });
+			currentId = open.id;
+		}
+		quotaWarning = !saveLibrary(library);
+	}
 </script>
 
 <svelte:head>
@@ -179,6 +256,37 @@
 		onrename={renamePresentationTo}
 		ondelete={removePresentation}
 	/>
+{/if}
+<div class="actions">
+	<button onclick={exportPresentation}>
+		<Download size={16} />
+		{t.transfer.export}
+	</button>
+	<button onclick={chooseFile}>
+		<Upload size={16} />
+		{t.transfer.import}
+	</button>
+	<input
+		bind:this={fileInput}
+		type="file"
+		accept=".md,.markdown,.txt,text/markdown,text/plain"
+		hidden
+		onchange={readFile}
+	/>
+</div>
+{#if importWarning}
+	<div class="warning" role="alert">{t.transfer.unreadable}</div>
+{/if}
+{#if pendingImport}
+	<div class="choice" role="group" aria-label={t.transfer.chooseTitle}>
+		<p class="choice-title">{t.transfer.chooseTitle}</p>
+		<p class="choice-text">{t.transfer.chooseText} <code>{pendingImport.name}</code></p>
+		<div class="actions">
+			<button onclick={() => applyImport('new')}>{t.transfer.newPresentation}</button>
+			<button onclick={() => applyImport('replace')}>{t.transfer.replace}</button>
+			<button onclick={cancelImport}>{t.transfer.cancel}</button>
+		</div>
+	</div>
 {/if}
 <div class="panels" data-tab={tab}>
 	<textarea
@@ -230,6 +338,54 @@
 		grid-template-columns: 1fr 1fr;
 		gap: 1rem;
 		align-items: start;
+	}
+	.actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin-bottom: 0.75rem;
+	}
+	.actions button {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0 0.9rem;
+		min-height: 44px;
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		background: var(--surface);
+		color: var(--text);
+		font-size: 0.95rem;
+		font-weight: 600;
+		cursor: pointer;
+		transition:
+			border-color 150ms ease,
+			background-color 150ms ease;
+	}
+	.actions button:hover {
+		border-color: var(--accent);
+	}
+	.choice {
+		margin-bottom: 0.75rem;
+		padding: 0.75rem 1rem;
+		border: 1px solid var(--accent);
+		border-radius: 12px;
+		background: var(--surface);
+		color: var(--text);
+	}
+	.choice-title {
+		margin: 0 0 0.25rem;
+		font-weight: 600;
+	}
+	.choice-text {
+		margin: 0 0 0.6rem;
+		color: var(--text-muted);
+	}
+	.choice code {
+		padding: 0.1rem 0.35rem;
+		border-radius: 6px;
+		background: var(--code-bg);
+		font-size: 0.9em;
 	}
 	.editor {
 		min-height: 60vh;

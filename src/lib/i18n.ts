@@ -7,12 +7,12 @@ const it = {
 	theme: 'Theme',
 	themes: { light: 'Chiaro', dark: 'Scuro', vivid: 'Vivace' },
 	tabs: { editor: 'Editor', preview: 'Anteprima' },
-	toolbar: { screen: 'Schermo', fullscreen: 'Schermo intero', exitFullscreen: 'Esci da screen intero', pdf: 'PDF' },
+	toolbar: { screen: 'Schermo', fullscreen: 'Schermo intero', exitFullscreen: 'Esci da schermo intero', pdf: 'PDF' },
 	sharing: { copy: 'Copia da qui', copyFromStart: "Copia dall'inizio", copied: 'Copiato!', manual: 'Copia questo link' },
 	editorLabel: 'Testo Markdown della presentazione',
 	previousSlide: 'Slide precedente',
 	nextSlide: 'Slide successiva',
-	currentSlide: 'Slide current',
+	currentSlide: 'Slide corrente',
 	library: {
 		title: 'Presentazioni salvate',
 		empty: 'Ancora nessuna presentazione: scrivi nell’editor e questa si salva qui.',
@@ -48,11 +48,11 @@ const it = {
 		open: 'Apri nell’editor'
 	},
 	about: {
-		title: 'Il about',
+		title: 'Il progetto',
 		paragraphs: [
-			'mdpresenter trasforma text Markdown in slide da presentare nel browser.',
-			'Scrivi a left, vedi le slide a right. Le slide si separano con una linea ---.',
-			'Il text vive nell’indirizzo della pagina: condividi il link e chi lo apre vede la tua stessa presentazione.',
+			'mdpresenter trasforma testo Markdown in slide da presentare nel browser.',
+			'Scrivi a sinistra, vedi le slide a destra. Le slide si separano con una linea ---.',
+			'Il testo vive nell’indirizzo della pagina: condividi il link e chi lo apre vede la tua stessa presentazione.',
 			'Nessun account, nessun server: tutto resta nel tuo browser. Il codice è aperto.'
 		],
 		repository: 'Repository GitHub'

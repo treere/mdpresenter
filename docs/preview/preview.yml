@@ -1,0 +1,122 @@
+name: Preview delle PR
+
+# Un repository ha un solo sito Pages e ogni deploy sostituisce l'intero sito:
+# non esiste un deploy per branch. Qui si prepara tutto in una volta — main in
+# radice, ogni PR aperta sotto preview/pr-<n> — e si lasciano le cartelle come
+# artifact.
+#
+# Il deploy vera e propria sta in preview-deploy.yml, che gira sul ref di main:
+# l'environment github-pages accetta solo il branch main, quindi pubblicare da
+# qui (ref refs/pull/<n>/merge) verrebbe rifiutato dalle regole di protezione.
+#
+# Questo workflow non ha permessi di scrittura: la build delle PR è codice non
+# fidato, e l'unica cosa che può produrre è la propria artifact.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, closed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: preview-build
+  cancel-in-progress: true
+
+jobs:
+  list:
+    name: Elenco PR aperte
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      matrix: ${{ steps.list.outputs.matrix }}
+      count: ${{ steps.list.outputs.count }}
+    steps:
+      - name: Interroga le PR aperte
+        id: list
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh pr list --repo "$GITHUB_REPOSITORY" --state open --limit 50 \
+            --json number,title,headRefName,isDraft,author > prs.json
+          count=$(jq 'length' prs.json)
+          # Una matrice vuota non è ammissibile: quando non c'è nessuna PR si
+          # passa un segnaposto, che i job successivi saltano.
+          if [ "$count" -eq 0 ]; then
+            matrix='{"include":[{"number":"0"}]}'
+          else
+            matrix=$(jq -c '{include: [.[] | {number: (.number | tostring)}]}' prs.json)
+          fi
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          echo "PR aperte: $count"
+      - name: Salva l'elenco per l'indice
+        uses: actions/upload-artifact@v4
+        with:
+          name: prs
+          path: prs.json
+          retention-days: 2
+
+  site-main:
+    name: Build di main
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Build
+        run: npm run build
+        env:
+          BASE_PATH: /mdpresenter
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site-main
+          path: build
+          retention-days: 2
+
+  preview:
+    name: Build PR ${{ matrix.number }}
+    needs: list
+    if: needs.list.outputs.count != '0'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.list.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+        if: matrix.number != '0'
+        with:
+          ref: refs/pull/${{ matrix.number }}/head
+      - uses: actions/setup-node@v4
+        if: matrix.number != '0'
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Installa
+        if: matrix.number != '0'
+        run: npm ci
+      - name: Build
+        if: matrix.number != '0'
+        run: npm run build
+        env:
+          # Base annidata: la build deve credersi servita sotto la sua cartella,
+          # altrimenti i link interni puntano alla radice del sito.
+          BASE_PATH: /mdpresenter/preview/pr-${{ matrix.number }}
+      - name: Carica la build della PR
+        if: matrix.number != '0'
+        uses: actions/upload-artifact@v4
+        with:
+          name: preview-${{ matrix.number }}
+          path: build
+          retention-days: 2

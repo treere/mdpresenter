@@ -1,0 +1,76 @@
+name: Deploy del preview
+
+# Pubblica il sito costruito da "Preview delle PR". Gira sul ref di main, unico
+# branch autorizzato dall'environment github-pages, e non esegue codice delle
+# PR: prende le artifact già costruite e le ricompone.
+#
+# Un deploy sostituisce l'intero sito, quindi qui ci sono sempre main in radice
+# e tutte le PR aperte sotto preview/pr-<n>. Il deploy di main (deploy.yml)
+# ripubblica senza la cartella preview/: dopo un merge i preview spariscono
+# fino al prossimo evento sulle PR.
+
+on:
+  workflow_run:
+    workflows: ["Preview delle PR"]
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: pages-preview
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Pubblica il sito
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Radice da main
+        uses: actions/download-artifact@v4
+        with:
+          name: site-main
+          path: site
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+      - name: Elenco PR
+        uses: actions/download-artifact@v4
+        with:
+          name: prs
+          path: .
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+      - name: Build delle PR
+        uses: actions/download-artifact@v4
+        with:
+          pattern: preview-*
+          path: previews
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+        continue-on-error: true
+      - name: Assembla sito e indice
+        run: |
+          python3 .github/scripts/assemble_preview_site.py \
+            --site site \
+            --previews previews \
+            --prs prs.json
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

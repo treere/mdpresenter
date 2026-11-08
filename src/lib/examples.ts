@@ -50,18 +50,29 @@ A[Idea] --> B[Codice]
 		},
 		{
 			title: 'Colonne',
-		description: 'Testo e immagini affiancati.',
-		text: `# Confronto
+			description: 'Testo e immagini affiancati, anche a comparsa.',
+			text: `# Confronto
 
-::: colonne
-::: left
+::: columns
+
+::: part
+
 Ciao a sinistra, con un elenco:
 
 - Primo punto
 - Secondo punto
-::: right
+
+::: part
+
 ![Gatto](https://picsum.photos/seed/colonne/600/400)
-:::`
+
+::: step
+
+Il dettaglio a destra arriva quando si avanza.
+
+::: end
+
+::: end`
 		},
 		{
 			title: 'Link e immagini',
@@ -112,18 +123,29 @@ A[Idea] --> B[Code]
 		},
 		{
 			title: 'Columns',
-		description: 'Text and images side by side.',
-		text: `# Comparison
+			description: 'Text and images side by side, revealed on demand.',
+			text: `# Comparison
 
-::: colonne
-::: left
+::: columns
+
+::: part
+
 Hello on the left, with a list:
 
 - First point
 - Second point
-::: right
+
+::: part
+
 ![Cat](https://picsum.photos/seed/columns/600/400)
-:::`
+
+::: step
+
+The detail on the right shows up on advance.
+
+::: end
+
+::: end`
 		},
 		{
 			title: 'Links and images',

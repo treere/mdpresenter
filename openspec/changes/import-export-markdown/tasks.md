@@ -46,13 +46,13 @@
 
 ## 5. Verifica finale
 
-- [ ] 5.1 Eseguire `npm ci && npm run check && npm test && npm run build`: tutto verde.
+- [x] 5.1 Eseguire `npm ci && npm run check && npm test && npm run build`: tutto verde.
   Prova manuale in locale: esporta la presentazione di esempio, reimportala come nuova
   presentazione e confronta il testo con l'originale (identico); importa lo stesso file su una
   presentazione aperta scegliendo «sostituisci» e controlla che il nome resti e la slide torni
   alla prima; annulla una scelta e verifica che testo e link non cambino; ricarica subito dopo
   una sostituzione e verifica che resti il testo importato.
-- [ ] 5.2 Controllare il diff: solo i file nominati dai task (`src/lib/transfer.ts`,
+- [x] 5.2 Controllare il diff: solo i file nominati dai task (`src/lib/transfer.ts`,
   `src/lib/transfer.test.ts`, `src/lib/i18n.ts`, `src/routes/+page.svelte`, gli artifact della
   change), nessuna dipendenza nuova in `package.json`, nessun file in `.github/workflows/` né in
   `openspec/specs/`. Verifica: `git diff --stat main...HEAD` e `git diff main...HEAD --

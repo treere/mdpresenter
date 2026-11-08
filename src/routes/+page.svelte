@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { Download, Eye, Pencil } from 'lucide-svelte';
+	import { Download, Eye, Pencil, Upload } from 'lucide-svelte';
 	import Viewer from '../lib/Viewer.svelte';
 	import LibraryPanel from '../lib/Library.svelte';
 	import { pending, preferences } from '../lib/shared.svelte';
 	import { texts } from '../lib/i18n';
 	import { SAMPLE, encode, decode, readQuery, splitSlides, writeQuery } from '../lib/slides';
-	import { exportFileName } from '../lib/transfer';
+	import { exportFileName, normalizeImportedText } from '../lib/transfer';
 	import {
 		addPresentation,
 		createPresentation,
@@ -31,6 +31,11 @@
 	let quotaWarning = $state(false);
 	/** Text that arrived without an edit (link, sample): it enters the library only when touched. */
 	let silentText: string | null = SAMPLE;
+	/** Hidden file picker, opened by the Import button. */
+	let fileInput = $state<HTMLInputElement | null>(null);
+	/** File waiting for a choice: the editor is untouched until the choice is made. */
+	let pendingImport = $state<{ name: string; text: string } | null>(null);
+	let importWarning = $state(false);
 
 	const isBrowser = typeof window !== 'undefined';
 	const t = $derived(texts[preferences.language]);
@@ -164,6 +169,42 @@
 		link.remove();
 		URL.revokeObjectURL(url);
 	}
+
+	function chooseFile(): void {
+		importWarning = false;
+		fileInput?.click();
+	}
+
+	/** Reads the chosen file and opens the choice; nothing in the editor changes yet. */
+	async function readFile(event: Event): Promise<void> {
+		const input = event.currentTarget as HTMLInputElement;
+		const chosen = input.files?.[0] ?? null;
+		// Cleared at once: choosing the same file twice must fire `change` again.
+		input.value = '';
+		if (chosen === null) return;
+		try {
+			pendingImport = { name: chosen.name, text: normalizeImportedText(await chosen.text()) };
+		} catch {
+			pendingImport = null;
+			importWarning = true;
+		}
+	}
+
+	function cancelImport(): void {
+		pendingImport = null;
+	}
+
+	/** Applies the chosen file to the editor; the library side comes with the next step. */
+	function applyImport(kind: 'new' | 'replace'): void {
+		const incoming = pendingImport;
+		if (incoming === null) return;
+		pendingImport = null;
+		// A new presentation must not keep writing into the one that was open.
+		if (kind === 'new') currentId = null;
+		text = incoming.text;
+		silentText = null;
+		slideIndex = 0;
+	}
 </script>
 
 <svelte:head>
@@ -204,7 +245,32 @@
 		<Download size={16} />
 		{t.transfer.export}
 	</button>
+	<button onclick={chooseFile}>
+		<Upload size={16} />
+		{t.transfer.import}
+	</button>
+	<input
+		bind:this={fileInput}
+		type="file"
+		accept=".md,.markdown,.txt,text/markdown,text/plain"
+		hidden
+		onchange={readFile}
+	/>
 </div>
+{#if importWarning}
+	<div class="warning" role="alert">{t.transfer.unreadable}</div>
+{/if}
+{#if pendingImport}
+	<div class="choice" role="group" aria-label={t.transfer.chooseTitle}>
+		<p class="choice-title">{t.transfer.chooseTitle}</p>
+		<p class="choice-text">{t.transfer.chooseText} <code>{pendingImport.name}</code></p>
+		<div class="actions">
+			<button onclick={() => applyImport('new')}>{t.transfer.newPresentation}</button>
+			<button onclick={() => applyImport('replace')}>{t.transfer.replace}</button>
+			<button onclick={cancelImport}>{t.transfer.cancel}</button>
+		</div>
+	</div>
+{/if}
 <div class="panels" data-tab={tab}>
 	<textarea
 		class="editor"
@@ -281,6 +347,28 @@
 	}
 	.actions button:hover {
 		border-color: var(--accent);
+	}
+	.choice {
+		margin-bottom: 0.75rem;
+		padding: 0.75rem 1rem;
+		border: 1px solid var(--accent);
+		border-radius: 12px;
+		background: var(--surface);
+		color: var(--text);
+	}
+	.choice-title {
+		margin: 0 0 0.25rem;
+		font-weight: 600;
+	}
+	.choice-text {
+		margin: 0 0 0.6rem;
+		color: var(--text-muted);
+	}
+	.choice code {
+		padding: 0.1rem 0.35rem;
+		border-radius: 6px;
+		background: var(--code-bg);
+		font-size: 0.9em;
 	}
 	.editor {
 		min-height: 60vh;

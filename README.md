@@ -19,6 +19,7 @@ Live at <https://treere.github.io/mdpresenter/>
 npm install
 npm run dev    # serves on /
 npm test       # unit tests
+npm run test:e2e  # browser tests, built under the Pages base path
 npm run check  # types + Svelte diagnostics
 ```
 

@@ -6,12 +6,15 @@ import { defineConfig } from 'vite';
 // La CI passa BASE_PATH=/mdpresenter, in locale resta stringa vuota.
 const base = (process.env.BASE_PATH ?? '') as '' | `/${string}`;
 
+// I test end-to-end costruiscono in una cartella propria, così `build/` resta quella locale.
+const outDir = process.env.BUILD_DIR ?? 'build';
+
 export default defineConfig({
 	plugins: [
 		sveltekit({
 			adapter: adapter({
-				pages: 'build',
-				assets: 'build',
+				pages: outDir,
+				assets: outDir,
 				fallback: '404.html'
 			}),
 			paths: { base },

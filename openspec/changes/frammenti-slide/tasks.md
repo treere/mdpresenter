@@ -81,11 +81,11 @@
 
 ## 6. Stampa ed export
 
-- [ ] 6.1 Verificare che `allHtml` costruito da `renderMarkdown(slide)` in `src/lib/Viewer.svelte`
+- [x] 6.1 Verificare che `allHtml` costruito da `renderMarkdown(slide)` in `src/lib/Viewer.svelte`
   produca pagine con tutti i passi visibili: la regola di visibilità è limitata a `.slide .step` e
   `.print-page` non è dentro `.slide`. Verifica: `npm run build` verde e, dall'anteprima di stampa,
   la slide con tre passi occupa una sola pagina con tutto il contenuto.
-- [ ] 6.2 Controllare che `src/print.css` non richieda modifiche. Verifica: diff che non tocca
+- [x] 6.2 Controllare che `src/print.css` non richieda modifiche. Verifica: diff che non tocca
   `src/print.css`.
 
 ## 7. Verifica finale

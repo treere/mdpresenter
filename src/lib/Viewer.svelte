@@ -7,9 +7,13 @@
 	import { texts } from './i18n';
 	import { tick } from 'svelte';
 	import { renderMarkdown } from './markdown';
-	import { encode } from './slides';
+	import { encode, initialRevealed } from './slides';
 
-	let { slides, index = $bindable(0) }: { slides: string[]; index?: number } = $props();
+	let {
+		slides,
+		index = $bindable(0),
+		showAllSteps = false
+	}: { slides: string[]; index?: number; showAllSteps?: boolean } = $props();
 	const t = $derived(texts[preferences.language]);
 
 	let startX = $state<number | null>(null);
@@ -29,19 +33,52 @@
 	let slideEl: HTMLDivElement | undefined = $state();
 	let renderSeq = 0;
 	let mermaidReady: Promise<unknown> | null = null;
+
+	// Steps: `revealed` is how many are shown; Infinity means all (when coming back to a slide).
+	let revealed = $state(0);
+	let stepCount = $state(0);
+	let revealAllNext = false;
+	const shownSteps = $derived(Math.min(revealed, stepCount));
+	const hasSteps = $derived(stepCount > 1);
+
 	$effect(() => {
 		const c = current;
-		const ss = slides;
 		void preferences.theme;
 		if (!isBrowser) return;
 		html = DOMPurify.sanitize(renderMarkdown(c));
-		allHtml = ss.map((s) => DOMPurify.sanitize(renderMarkdown(s)));
+		allHtml = slides.map((s) => DOMPurify.sanitize(renderMarkdown(s)));
 		const mine = ++renderSeq;
 		void tick().then(() => {
 			checkOverflow();
 			if (mine === renderSeq) void renderMermaid().then(() => checkOverflow());
 		});
 	});
+
+	// Reset the revealed count on slide change only: a theme switch re-renders, it does not rewind.
+	$effect(() => {
+		void current;
+		if (!isBrowser) return;
+		revealed = revealAllNext ? Number.POSITIVE_INFINITY : initialRevealed(current);
+		revealAllNext = false;
+	});
+
+	// The visibility is applied to the sanitized DOM, so the numbered steps are the ones really rendered.
+	$effect(() => {
+		void html;
+		void revealed;
+		void showAllSteps;
+		if (!isBrowser) return;
+		void tick().then(applySteps);
+	});
+
+	function applySteps() {
+		if (!slideEl) return;
+		const steps = Array.from(slideEl.querySelectorAll<HTMLElement>('.step'));
+		stepCount = steps.length;
+		for (const [i, el] of steps.entries()) {
+			el.classList.toggle('is-hidden', !showAllSteps && i >= revealed);
+		}
+	}
 
 	async function getMermaid() {
 		if (!mermaidReady) {
@@ -88,11 +125,23 @@
 	});
 
 	function next() {
+		if (!showAllSteps && revealed < stepCount) {
+			revealed += 1;
+			return;
+		}
 		if (index < total - 1) index += 1;
 	}
 
 	function prev() {
-		if (index > 0) index -= 1;
+		if (!showAllSteps && Number.isFinite(revealed) && revealed > initialRevealed(current)) {
+			revealed -= 1;
+			return;
+		}
+		if (index > 0) {
+			// A slide we already left is shown again with all of its steps.
+			revealAllNext = true;
+			index -= 1;
+		}
 	}
 
 	function handleKey(e: KeyboardEvent) {
@@ -204,7 +253,7 @@
 	<button class="navbtn right" onclick={next} aria-label={t.nextSlide}>
 		<ChevronRight size={28} />
 	</button>
-	<p class="counter">{index + 1}/{total}{#if overflowing}<span class="overflow" title={t.overflow}>!</span>{/if}</p>
+	<p class="counter">{index + 1}/{total}{#if hasSteps && !showAllSteps}<span class="steps-counter" aria-label={`${t.step} ${shownSteps}/${stepCount}`}> · {shownSteps}/{stepCount}</span>{/if}{#if overflowing}<span class="overflow" title={t.overflow}>!</span>{/if}</p>
 </div>
 <div class="print" aria-hidden="true">
 	{#each allHtml as h}
@@ -416,6 +465,10 @@
 		max-width: 100%;
 		height: auto;
 		border-radius: 8px;
+	}
+	/* Steps not shown yet keep their space: nothing moves between one step and the next. */
+	.slide :global(.step.is-hidden) {
+		visibility: hidden;
 	}
 	:global(.columns) {
 		display: grid;

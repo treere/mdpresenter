@@ -51,21 +51,21 @@
 
 ## 4. Rivelazione dei passi
 
-- [ ] 4.1 In `src/lib/Viewer.svelte` aggiungere `revealed` come stato locale, azzerato su `index`
+- [x] 4.1 In `src/lib/Viewer.svelte` aggiungere `revealed` come stato locale, azzerato su `index`
   a `initialRevealed(current)`. Dopo l'aggiornamento di `html`, leggere `slideEl.querySelectorAll('.step')`
   e applicare a quelli con indice ≥ `revealed` la classe che nasconde. Verifica: `npm run check` e
   `npm run build` verdi; con una slide a due passi, `/v` mostra solo il contenuto fuori dai passi e
   il primo passo.
-- [ ] 4.2 Aggiornare `next()`/`prev()`: avanti di un passo finché ce ne sono, poi slide successiva
+- [x] 4.2 Aggiornare `next()`/`prev()`: avanti di un passo finché ce ne sono, poi slide successiva
   con `initialRevealed`; indietro di un passo, altrimenti slide precedente con tutti i passi
   visibili. Verifica: prova manuale su `/v` con una presentazione di due slide e una con tre passi,
   uno dei quali dentro una colonna — avanti tre volte poi cambia slide, indietro riporta alla slide
   precedente tutta visibile, un link `?s=1` parte dal valore iniziale della sua slide.
-- [ ] 4.3 Contatore: mostrare `{index+1}/{total}` e, quando la slide ha passi,
+- [x] 4.3 Contatore: mostrare `{index+1}/{total}` e, quando la slide ha passi,
   `· {revealed}/{n}`, con `aria-label` dalla nuova chiave `step` aggiunta in `src/lib/i18n.ts` per
   `it` e `en`. Verifica: `npm run check` verde (la tipizzazione `Texts` impone le due lingue) e il
   contatore visibile in entrambe le lingue.
-- [ ] 4.4 Stili: regola `.step` nascosta con `visibility: hidden`, nessuna transizione, nessun
+- [x] 4.4 Stili: regola `.step` nascosta con `visibility: hidden`, nessuna transizione, nessun
   cambio di layout fra passo e passo. Verifica: nella vista `/v`, avanzando di passo gli elementi
   già visibili non si spostano (confronto visivo a schermo e su viewport 390×844).
 

@@ -18,7 +18,6 @@
 
 	let startX = $state<number | null>(null);
 	let container: HTMLDivElement | undefined = $state();
-	let root: HTMLDivElement | undefined = $state();
 	let fullscreen = $state(false);
 
 	const isBrowser = typeof window !== 'undefined';
@@ -28,10 +27,19 @@
 	// HTML computed in $effect (not $derived): isBrowser is not reactive and
 	// the empty prerendered {@html} would not update on hydration.
 	let html = $state('');
+	// Print pages hold the whole deck. They are refilled after the last edit, never during it:
+	// rebuilding them on every keystroke was most of the typing cost.
 	let allHtml: string[] = $state([]);
 	let overflowing = $state(false);
 	let slideEl: HTMLDivElement | undefined = $state();
+	let printEl: HTMLDivElement | undefined = $state();
 	let renderSeq = 0;
+	let mermaidSeq = 0;
+	let renderedHtml = '';
+	let renderedTheme = '';
+	let builtTheme = '';
+	const printCache = new Map<string, string>();
+	let printTimer: ReturnType<typeof setTimeout> | undefined;
 	let mermaidReady: Promise<unknown> | null = null;
 
 	// Steps: `revealed` is how many are shown; Infinity means all (when coming back to a slide).
@@ -43,15 +51,26 @@
 
 	$effect(() => {
 		const c = current;
+		// The diagram colours are baked into the SVG, so a theme switch re-renders them too.
 		void preferences.theme;
+		// Any edit dirties the print pages, also when it lands on a slide that is not the current one.
+		void slides.length;
 		if (!isBrowser) return;
 		html = DOMPurify.sanitize(renderMarkdown(c));
-		allHtml = slides.map((s) => DOMPurify.sanitize(renderMarkdown(s)));
 		const mine = ++renderSeq;
 		void tick().then(() => {
 			checkOverflow();
-			if (mine === renderSeq) void renderMermaid().then(() => checkOverflow());
+			// The diagram is redrawn only when the slide HTML or the theme really changed: a
+			// keystroke landing on another slide must not re-render this one's diagram.
+			const theme = document.documentElement.dataset.theme ?? '';
+			if (mine === renderSeq && (html !== renderedHtml || theme !== renderedTheme)) {
+				renderedHtml = html;
+				renderedTheme = theme;
+				// Forced: the HTML is new (or the theme changed), so every block in the slide must redraw.
+				void renderMermaid(slideEl, true).then(() => checkOverflow());
+			}
 		});
+		schedulePrintPages();
 	});
 
 	// Reset the revealed count on slide change only: a theme switch re-renders, it does not rewind.
@@ -98,15 +117,34 @@
 		return mermaid;
 	}
 
-	async function renderMermaid() {
-		const blocks = Array.from(root?.querySelectorAll('.mermaid-block') ?? []);
+	const diagrams = new Map<string, { id: string; svg: string }>();
+
+	async function renderMermaid(scope: HTMLElement | undefined, force = false) {
+		const blocks = Array.from(scope?.querySelectorAll('.mermaid-block') ?? []).filter(
+			// Already drawn blocks are left alone: the SVG does not change until the source does.
+			(el) => force || !el.firstElementChild
+		);
 		if (blocks.length === 0) return;
+		const theme = document.documentElement.dataset.theme ?? '';
 		try {
 			const mermaid = await getMermaid();
-			for (const [i, el] of blocks.entries()) {
+			for (const el of blocks) {
 				const source = decodeURIComponent(el.getAttribute('data-source') ?? '');
+				const id = `mermaid-${++mermaidSeq}`;
+				const cached = diagrams.get(`${theme}|${source}`);
+				if (cached) {
+					// Reusing a diagram means reusing its internal ids too: rename them, or two copies
+					// of the same source (visible slide and print page) would collide in the document.
+					el.innerHTML = DOMPurify.sanitize(cached.svg.split(cached.id).join(id));
+					continue;
+				}
 				try {
-					const { svg } = await mermaid.render(`mermaid-${renderSeq}-${i}`, source);
+					const { svg } = await mermaid.render(id, source);
+					diagrams.set(`${theme}|${source}`, { id, svg });
+					if (diagrams.size > 40) {
+						const oldest = diagrams.keys().next();
+						if (!oldest.done) diagrams.delete(oldest.value);
+					}
 					el.innerHTML = DOMPurify.sanitize(svg);
 				} catch {
 					el.innerHTML = DOMPurify.sanitize(
@@ -118,6 +156,41 @@
 		} catch {
 			// mermaid failed to load: blocks stay empty without breaking the slide
 		}
+	}
+
+	// Filling the print pages means parsing every slide: deferred after the last edit, and
+	// repeated right before the export, so they are never stale and never on the typing path.
+	function schedulePrintPages() {
+		if (!isBrowser) return;
+		clearTimeout(printTimer);
+		printTimer = setTimeout(() => {
+			printTimer = undefined;
+			void buildPrintPages();
+		}, 200);
+	}
+
+	async function buildPrintPages() {
+		const sources = slides;
+		// Rendered markdown is cached per slide text: an edit renders the slide it touched, not the deck.
+		const pages = sources.map((s) => {
+			const cached = printCache.get(s);
+			if (cached !== undefined) return cached;
+			const rendered = DOMPurify.sanitize(renderMarkdown(s));
+			printCache.set(s, rendered);
+			return rendered;
+		});
+		if (printCache.size > pages.length) {
+			const live = new Set(sources);
+			for (const key of printCache.keys()) if (!live.has(key)) printCache.delete(key);
+		}
+		allHtml = pages;
+		await tick();
+		// Pages that really changed have empty blocks: the others keep their diagram. A theme
+		// change invalidates all of them, so in that case every block is redrawn.
+		const theme = document.documentElement.dataset.theme ?? '';
+		const redraw = theme !== builtTheme;
+		builtTheme = theme;
+		await renderMermaid(printEl, redraw);
 	}
 
 	$effect(() => {
@@ -163,8 +236,14 @@
 		else await container.requestFullscreen();
 	}
 
-	function print() {
-		if (isBrowser) window.print();
+	async function print() {
+		if (!isBrowser) return;
+		clearTimeout(printTimer);
+		printTimer = undefined;
+		// The export is the only moment the print pages need fresh HTML and diagrams in the right theme.
+		await buildPrintPages();
+		await renderMermaid(printEl, true);
+		window.print();
 	}
 
 	let copied = $state(false);
@@ -203,7 +282,7 @@
 	onresize={() => checkOverflow()}
 />
 
-<div class="app" bind:this={root}>
+<div class="app">
 <div class="toolbar">
 	<button onclick={toggleFullscreen} aria-label={fullscreen ? t.toolbar.exitFullscreen : t.toolbar.fullscreen}>
 		{#if fullscreen}<Minimize size={18} />{:else}<Maximize size={18} />{/if}
@@ -255,7 +334,7 @@
 	</button>
 	<p class="counter">{index + 1}/{total}{#if hasSteps && !showAllSteps}<span class="steps-counter" aria-label={`${t.step} ${shownSteps}/${stepCount}`}> · {shownSteps}/{stepCount}</span>{/if}{#if overflowing}<span class="overflow" title={t.overflow}>!</span>{/if}</p>
 </div>
-<div class="print" aria-hidden="true">
+<div class="print" bind:this={printEl} aria-hidden="true">
 	{#each allHtml as h}
 		<div class="print-page">{@html h}</div>
 	{/each}

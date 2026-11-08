@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { Eye, Pencil } from 'lucide-svelte';
+	import { Download, Eye, Pencil } from 'lucide-svelte';
 	import Viewer from '../lib/Viewer.svelte';
 	import LibraryPanel from '../lib/Library.svelte';
 	import { pending, preferences } from '../lib/shared.svelte';
 	import { texts } from '../lib/i18n';
 	import { SAMPLE, encode, decode, readQuery, splitSlides, writeQuery } from '../lib/slides';
+	import { exportFileName } from '../lib/transfer';
 	import {
 		addPresentation,
 		createPresentation,
@@ -145,6 +146,24 @@
 		silentText = SAMPLE;
 		slideIndex = 0;
 	}
+
+	/** Name of the open presentation; empty when there is none, so the helper picks the default. */
+	function openName(): string {
+		return findPresentation(library, currentId)?.name ?? '';
+	}
+
+	/** Downloads the editor text as it is: separators, directives and code blocks untouched. */
+	function exportPresentation(): void {
+		const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement('a');
+		link.href = url;
+		link.download = exportFileName(openName());
+		document.body.append(link);
+		link.click();
+		link.remove();
+		URL.revokeObjectURL(url);
+	}
 </script>
 
 <svelte:head>
@@ -180,6 +199,12 @@
 		ondelete={removePresentation}
 	/>
 {/if}
+<div class="actions">
+	<button onclick={exportPresentation}>
+		<Download size={16} />
+		{t.transfer.export}
+	</button>
+</div>
 <div class="panels" data-tab={tab}>
 	<textarea
 		class="editor"
@@ -230,6 +255,32 @@
 		grid-template-columns: 1fr 1fr;
 		gap: 1rem;
 		align-items: start;
+	}
+	.actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin-bottom: 0.75rem;
+	}
+	.actions button {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0 0.9rem;
+		min-height: 44px;
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		background: var(--surface);
+		color: var(--text);
+		font-size: 0.95rem;
+		font-weight: 600;
+		cursor: pointer;
+		transition:
+			border-color 150ms ease,
+			background-color 150ms ease;
+	}
+	.actions button:hover {
+		border-color: var(--accent);
 	}
 	.editor {
 		min-height: 60vh;

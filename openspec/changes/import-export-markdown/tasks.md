@@ -23,7 +23,7 @@
 
 ## 3. Esportazione
 
-- [ ] 3.1 In `src/routes/+page.svelte` aggiungere una riga di azioni sopra `.panels` con il
+- [x] 3.1 In `src/routes/+page.svelte` aggiungere una riga di azioni sopra `.panels` con il
   pulsante di esportazione: costruisce un `Blob` con il testo dell'editor, crea un object URL,
   innesca il download con `exportFileName` del nome della presentazione aperta e revoca l'URL
   subito dopo. Verifica: `npm run check` e `npm run build` verdi; in locale il file scaricato

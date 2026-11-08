@@ -90,12 +90,12 @@
 
 ## 7. Verifica finale
 
-- [ ] 7.1 Eseguire sul branch `npm ci && npm run check && npm test && npm run build`: tutto verde,
+- [x] 7.1 Eseguire sul branch `npm ci && npm run check && npm test && npm run build`: tutto verde,
   0 errori e 0 warning da `svelte-check`. Verifica: output del comando.
-- [ ] 7.2 Eseguire `npx -y @fission-ai/openspec@latest validate frammenti-slide`: valido.
+- [x] 7.2 Eseguire `npx -y @fission-ai/openspec@latest validate frammenti-slide`: valido.
   Verifica: output del comando (i warning RFC 2119 sulle spec in italiano sono attesi, come nelle
   change precedenti).
-- [ ] 7.3 Controllare il diff: nessun file fuori da `src/lib/slides.ts`, `src/lib/slides.test.ts`,
+- [x] 7.3 Controllare il diff: nessun file fuori da `src/lib/slides.ts`, `src/lib/slides.test.ts`,
   `src/lib/markdown.ts`, `src/lib/markdown.test.ts`, `src/lib/Viewer.svelte`, `src/lib/i18n.ts`,
   `src/lib/examples.ts`, `src/routes/+page.svelte` e dagli artifact della change; nessuna
   dipendenza nuova, niente in `.github/workflows/` né in `openspec/specs/`. Verifica:

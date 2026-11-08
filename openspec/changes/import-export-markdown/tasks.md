@@ -36,7 +36,7 @@
   del file viene letta con `file.text()`, passata a `normalizeImportedText`, e apre il blocco di
   scelta con le tre azioni; `input.value` viene azzerato dopo ogni scelta. Verifica: `npm run
   check` verde; scegliendo due volte di seguito lo stesso file il blocco di scelta ricompare.
-- [ ] 4.2 Applicare le due scelte: «nuova presentazione» crea la voce con
+- [x] 4.2 Applicare le due scelte: «nuova presentazione» crea la voce con
   `createPresentation`/`addPresentation`, imposta `currentId`, svuota `silentText`, porta
   `slideIndex` a 0 e salva subito la libreria; «sostituisci questa» tiene `currentId` e il nome,
   cambia il testo, azzera `silentText` e `slideIndex` e salva subito; «annulla» non tocca nulla.

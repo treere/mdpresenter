@@ -2,19 +2,19 @@
 
 ## 1. Grammatica delle direttive (funzione pura)
 
-- [ ] 1.1 In `src/lib/slides.ts` aggiungere `directiveOf(line)` che classifica una riga trimmata
+- [x] 1.1 In `src/lib/slides.ts` aggiungere `directiveOf(line)` che classifica una riga trimmata
   come `{ kind: 'open', name: 'step' | 'columns' }`, `{ kind: 'separator', name: 'part' }`,
   `{ kind: 'close' }` oppure `null`, con i nomi case-insensitive e gli spazi interni tollerati;
   aggiungere `isFenceLine(line)` e usarlo in `splitSlides` al posto del toggle inline. Verifica:
   `npm run check` senza errori di tipo sul modulo.
-- [ ] 1.2 Aggiungere `initialRevealed(text: string): 0 | 1`: `1` quando il testo prima del primo
+- [x] 1.2 Aggiungere `initialRevealed(text: string): 0 | 1`: `1` quando il testo prima del primo
   `::: step` fuori dalle fence è vuoto, `0` altrimenti. Verifica: `npm run check` verde.
-- [ ] 1.3 In `src/lib/slides.test.ts` coprire: `directiveOf` su `::: step`, `::: columns`,
+- [x] 1.3 In `src/lib/slides.test.ts` coprire: `directiveOf` su `::: step`, `::: columns`,
   `::: part`, `::: end`, con spazi e maiuscole; righe vicine ma diverse (`::::`, `:: :`,
   `::: steps`, `::: colonne`, `::: left`, `:::` nudo) → `null`; `initialRevealed` su una slide
   che comincia con un passo, su una che ha un titolo prima, su una che ha `::: step` solo dentro
   una fence. Verifica: `npm test` verde.
-- [ ] 1.4 Verificare che `splitSlides` continui a comportarsi come prima dopo l'estrazione
+- [x] 1.4 Verificare che `splitSlides` continui a comportarsi come prima dopo l'estrazione
   dell'helper: i test esistenti delle slide devono passare senza modifiche. Verifica: `npm test`
   verde con i casi di `splitSlides` invariati nel diff.
 

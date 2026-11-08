@@ -8,7 +8,7 @@
   risultato vuoto → `presentazione`, estensione `.md` aggiunta una volta sola) e
   `normalizeImportedText(raw: string): string` (BOM iniziale rimosso, `\r\n` e `\r` → `\n`).
   Verifica: `npm run check` senza errori sul nuovo modulo.
-- [ ] 1.2 Scrivere `src/lib/transfer.test.ts` con i casi limite: nome con accenti, con spazi,
+- [x] 1.2 Scrivere `src/lib/transfer.test.ts` con i casi limite: nome con accenti, con spazi,
   con barre, nome vuoto o fatto di soli caratteri vietati, nome lunghissimo, nome che finisce
   già in `.md`; testo con BOM, con CRLF, con CR isolato, già in LF e testo vuoto. Verifica:
   `npm test` verde e ogni scenario dei requirement «Nome del file», «Nome non utilizzabile» e

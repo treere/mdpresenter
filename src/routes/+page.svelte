@@ -194,16 +194,33 @@
 		pendingImport = null;
 	}
 
-	/** Applies the chosen file to the editor; the library side comes with the next step. */
+	/**
+	 * Applies the chosen file: "new" gains a library entry named from the content, "replace"
+	 * keeps the open one and its name. Both save at once, so a reload right after the import
+	 * still shows the imported text (the debounce would arrive too late).
+	 */
 	function applyImport(kind: 'new' | 'replace'): void {
 		const incoming = pendingImport;
 		if (incoming === null) return;
 		pendingImport = null;
-		// A new presentation must not keep writing into the one that was open.
-		if (kind === 'new') currentId = null;
+		const open = findPresentation(library, currentId);
 		text = incoming.text;
 		silentText = null;
 		slideIndex = 0;
+		if (library.unavailable) {
+			// No library to write into: the text lives in the editor and in the link only.
+			currentId = null;
+			return;
+		}
+		if (kind === 'new' || open === null) {
+			const created = createPresentation(incoming.text, 0, t.library.untitled);
+			library = addPresentation(library, created);
+			currentId = created.id;
+		} else {
+			library = updatePresentation(library, open.id, { text: incoming.text, slide: 0 });
+			currentId = open.id;
+		}
+		quotaWarning = !saveLibrary(library);
 	}
 </script>
 

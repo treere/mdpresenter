@@ -2,7 +2,7 @@
 
 ## 1. Modulo di trasporto e test
 
-- [ ] 1.1 Creare `src/lib/transfer.ts` con due funzioni pure: `exportFileName(name: string): string`
+- [x] 1.1 Creare `src/lib/transfer.ts` con due funzioni pure: `exportFileName(name: string): string`
   (minuscole non forzate, caratteri vietati `/ \ : * ? " < > |` e di controllo sostituiti con
   `-`, spazi consecutivi compressi in `-`, trattini ai bordi tolti, lunghezza massima 60,
   risultato vuoto → `presentazione`, estensione `.md` aggiunta una volta sola) e

@@ -188,7 +188,7 @@
 		spellcheck={false}
 	></textarea>
 	<div class="preview">
-		<Viewer {slides} bind:index={slideIndex} />
+		<Viewer {slides} bind:index={slideIndex} showAllSteps />
 	</div>
 </div>
 

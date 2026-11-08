@@ -16,7 +16,7 @@
 
 ## 2. Testi dell'interfaccia
 
-- [ ] 2.1 Aggiungere in `src/lib/i18n.ts`, sia in `it` sia in `en`, un blocco `transfer` con:
+- [x] 2.1 Aggiungere in `src/lib/i18n.ts`, sia in `it` sia in `en`, un blocco `transfer` con:
   etichetta esporta, etichetta importa, titolo della scelta, testo della scelta, azione «nuova
   presentazione», azione «sostituisci questa», annulla, avviso file illeggibile. Verifica:
   `npm run check` verde — la tipizzazione `en: Texts` garantisce che nessuna chiave manchi.

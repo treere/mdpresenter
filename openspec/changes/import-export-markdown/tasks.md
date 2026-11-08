@@ -31,7 +31,7 @@
 
 ## 4. Importazione
 
-- [ ] 4.1 In `src/routes/+page.svelte` aggiungere il pulsante di importazione con
+- [x] 4.1 In `src/routes/+page.svelte` aggiungere il pulsante di importazione con
   `<input type="file" accept=".md,.markdown,.txt,text/markdown,text/plain">` nascosto: la scelta
   del file viene letta con `file.text()`, passata a `normalizeImportedText`, e apre il blocco di
   scelta con le tre azioni; `input.value` viene azzerato dopo ogni scelta. Verifica: `npm run

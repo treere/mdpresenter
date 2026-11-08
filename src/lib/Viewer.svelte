@@ -417,9 +417,9 @@
 		height: auto;
 		border-radius: 8px;
 	}
-	:global(.colonne) {
+	:global(.columns) {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
+		grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
 		gap: 1rem;
 	}
 	.overflow {
@@ -435,7 +435,7 @@
 		font-weight: 800;
 	}
 	@media (max-width: 700px) {
-		:global(.colonne) {
+		:global(.columns) {
 			grid-template-columns: 1fr;
 		}
 	}

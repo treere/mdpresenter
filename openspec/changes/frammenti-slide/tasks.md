@@ -39,12 +39,12 @@
 
 ## 3. Stili e testi di esempio
 
-- [ ] 3.1 In `src/lib/Viewer.svelte` rinominare il selettore `.colonne` in `.columns` (stessa
+- [x] 3.1 In `src/lib/Viewer.svelte` rinominare il selettore `.colonne` in `.columns` (stessa
   classe emessa da `markdown.ts` al punto 2.2) e portarlo a
   `grid-template-columns: repeat(auto-fit, minmax(0, 1fr))`, lasciando il breakpoint ≤700px a una
   colonna. Verifica: in `/v` un blocco con due e uno con tre colonne hanno larghezze uguali, e su
   viewport 390×844 sono impilate.
-- [ ] 3.2 In `src/lib/examples.ts` riscrivere le due slide «Colonne» con la nuova sintassi
+- [x] 3.2 In `src/lib/examples.ts` riscrivere le due slide «Colonne» con la nuova sintassi
   (`::: columns`, `::: part`, `::: end`) e aggiungere un passo dentro una colonna in una delle
   due. Verifica: nella home gli esempi «Colonne» si vedono senza direttive a schermo e la colonna
   con il passo mostra il contenuto solo avanzando in `/v`.

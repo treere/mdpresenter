@@ -2,7 +2,7 @@
 
 ## 1. Modulo di editing e test
 
-- [ ] 1.1 Creare `src/lib/editing.ts` con funzioni pure sull'intervallo di selezione, da
+- [x] 1.1 Creare `src/lib/editing.ts` con funzioni pure sull'intervallo di selezione, da
   `{ text, start, end }` a `{ text, start, end }`: `wrapInline` (grassetto, corsivo, codice, con
   interruttore quando i marcatori sono adiacenti alla selezione e un avvolgimento per riga sulle
   selezioni multi-riga), `applyLinePrefix` (titolo, elenco, citazione, blocco di codice, con

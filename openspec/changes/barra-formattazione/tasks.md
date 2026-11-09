@@ -25,7 +25,7 @@
 
 ## 3. Componente della barra
 
-- [ ] 3.1 Creare `src/lib/FormatBar.svelte`: riceve l'elenco delle azioni (`id`, icona,
+- [x] 3.1 Creare `src/lib/FormatBar.svelte`: riceve l'elenco delle azioni (`id`, icona,
   etichetta) ed emette l'id premuto; niente stato, niente accesso all'editor. Icone da
   `lucide-svelte`, `<button type="button">` con `aria-label` e `title`, area di tocco minima
   44 px, raggruppamento visivo fra in linea, blocchi e presentazione. Verifica: `npm run check`

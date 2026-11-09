@@ -38,7 +38,7 @@
 
 ## 4. Innesto nell'editor
 
-- [ ] 4.1 In `src/routes/+page.svelte` montare `FormatBar` sopra `.editor`, leggere
+- [x] 4.1 In `src/routes/+page.svelte` montare `FormatBar` sopra `.editor`, leggere
   `selectionStart`/`selectionEnd` al clic, chiamare la funzione di `editing.ts`, scrivere il
   risultato con `document.execCommand('insertText')` (fallback `setRangeText` + evento `input`,
   con commento che spiega la perdita dell'undo), ripristinare `selectionStart`/`selectionEnd` e

@@ -1,13 +1,15 @@
 <script lang="ts">
-	import type { Component } from 'svelte';
+	import { Bold } from 'lucide-svelte';
+	import type { FormatActionId } from './editing';
 
 	/**
 	 * One button of the bar: what it does, how it looks, what it says. The page builds the list,
-	 * so the bar carries no state and never touches the editor.
+	 * so the bar carries no state and never touches the editor. Icons are lucide components,
+	 * typed by one of them: they all take the same props.
 	 */
 	export type FormatAction = {
-		id: string;
-		icon: Component<{ size?: number }>;
+		id: FormatActionId;
+		icon: typeof Bold;
 		label: string;
 		title: string;
 		group: 'inline' | 'blocks' | 'structure';
@@ -20,7 +22,7 @@
 	}: {
 		actions: FormatAction[];
 		label: string;
-		onaction: (id: string) => void;
+		onaction: (id: FormatActionId) => void;
 	} = $props();
 
 	/** Fixed order: the visual grouping follows it, whatever order the actions arrive in. */

@@ -289,12 +289,14 @@
 	</div>
 {/if}
 <div class="panels" data-tab={tab}>
-	<textarea
-		class="editor"
-		bind:value={text}
-		aria-label={t.editorLabel}
-		spellcheck={false}
-	></textarea>
+	<div class="editor-panel">
+		<textarea
+			class="editor"
+			bind:value={text}
+			aria-label={t.editorLabel}
+			spellcheck={false}
+		></textarea>
+	</div>
 	<div class="preview">
 		<Viewer {slides} bind:index={slideIndex} showAllSteps />
 	</div>
@@ -338,6 +340,13 @@
 		grid-template-columns: 1fr 1fr;
 		gap: 1rem;
 		align-items: start;
+	}
+	/* The bar belongs to the editor column: one row above the textarea, which stays the part that grows. */
+	.editor-panel {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		min-width: 0;
 	}
 	.actions {
 		display: flex;
@@ -439,7 +448,7 @@
 		.panels[data-tab='editor'] .preview {
 			display: none;
 		}
-		.panels[data-tab='preview'] .editor {
+		.panels[data-tab='preview'] .editor-panel {
 			display: none;
 		}
 	}

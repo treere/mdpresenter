@@ -30,7 +30,7 @@
   `lucide-svelte`, `<button type="button">` con `aria-label` e `title`, area di tocco minima
   44 px, raggruppamento visivo fra in linea, blocchi e presentazione. Verifica: `npm run check`
   verde e `npm run build` verde.
-- [ ] 3.2 Stili: riga sopra la `textarea`, `display: flex` con `overflow-x: auto` e nessun
+- [x] 3.2 Stili: riga sopra la `textarea`, `display: flex` con `overflow-x: auto` e nessun
   `flex-wrap`, così su telefono scorre in orizzontale e la `textarea` resta la parte che cresce;
   sulle schede strette la barra appartiene al pannello dell'editor e non compare in anteprima.
   Verifica: a 360 px di larghezza la barra scorre senza coprire l'editor e ogni pulsante resta

@@ -9,7 +9,7 @@
   interruttore e applicazione a ogni riga della selezione), `insertSlideBreak`,
   `insertDirectiveBlock` (`::: step` e `::: columns` con `::: part`, cursore dentro) e
   `applyLink`. Verifica: `npm run check` senza errori sul nuovo modulo.
-- [ ] 1.2 Scrivere `src/lib/editing.test.ts` con i casi limite: nessuna selezione, selezione
+- [x] 1.2 Scrivere `src/lib/editing.test.ts` con i casi limite: nessuna selezione, selezione
   dentro una parola, selezione che include già i marcatori, selezione su due righe per i
   marcatori in linea, prefisso già presente, riga vuota, cursore a inizio e fine del testo,
   testo vuoto, blocco inserito a metà di una slide. Verifica: `npm test` verde e ogni scenario

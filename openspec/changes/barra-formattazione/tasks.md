@@ -18,7 +18,7 @@
 
 ## 2. Testi e icone
 
-- [ ] 2.1 Aggiungere in `src/lib/i18n.ts`, sia in `it` sia in `en`, un blocco `format` con le
+- [x] 2.1 Aggiungere in `src/lib/i18n.ts`, sia in `it` sia in `en`, un blocco `format` con le
   etichette di tutte le azioni (grassetto, corsivo, codice, titolo, elenco, citazione, blocco di
   codice, separatore, passo, colonne, collegamento) e il `title` di ciascuna. Verifica:
   `npm run check` verde — la tipizzazione `en: Texts` garantisce che nessuna chiave manchi.

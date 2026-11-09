@@ -296,7 +296,19 @@
 		}
 		el.setSelectionRange(next.start, next.end);
 	}
-
+	/**
+	 * Ctrl/Cmd shortcuts, only while the caret is in the editor: outside it the keyboard keeps
+	 * doing what it did — the arrow keys still walk the slides, handled by `Viewer`.
+	 */
+	function onEditorKeydown(event: KeyboardEvent): void {
+		if (!(event.ctrlKey || event.metaKey) || event.altKey || event.shiftKey) return;
+		const key = event.key.toLowerCase();
+		const action: FormatActionId | null =
+			key === 'b' ? 'bold' : key === 'i' ? 'italic' : key === 'k' ? 'link' : null;
+		if (action === null) return;
+		event.preventDefault();
+		applyFormat(action);
+	}
 </script>
 
 <svelte:head>
@@ -372,6 +384,7 @@
 			bind:value={text}
 			aria-label={t.editorLabel}
 			spellcheck={false}
+			onkeydown={onEditorKeydown}
 		></textarea>
 	</div>
 	<div class="preview">

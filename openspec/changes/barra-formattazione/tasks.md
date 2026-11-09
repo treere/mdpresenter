@@ -45,7 +45,7 @@
   riportare il fuoco sulla `textarea`. Verifica: `npm run check` verde; in locale un'azione
   della barra seguita da `Ctrl+Z` riporta il testo esattamente a prima, senza perdere le
   digitazioni precedenti.
-- [ ] 4.2 Aggiungere il gestore `keydown` sull'editor per `Ctrl/Cmd+B`, `Ctrl/Cmd+I` e
+- [x] 4.2 Aggiungere il gestore `keydown` sull'editor per `Ctrl/Cmd+B`, `Ctrl/Cmd+I` e
   `Ctrl/Cmd+K`, con `preventDefault` solo quando l'azione esiste. Verifica: con il fuoco
   nell'editor le tre scorciatoie funzionano; con il fuoco fuori dall'editor il testo non cambia;
   le frecce continuano a navigare le slide.
